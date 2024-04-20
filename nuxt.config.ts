@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     // '@pinia/nuxt',
     '@nuxtjs/supabase',
   ],
+  css: [`assets/css/main.css`],
   supabase: {
     // Options
     redirectOptions: {
