@@ -11,6 +11,14 @@ const toggleTheme = () => {
     Mode.value = theme.global.name.value;
     localStorage.scheme === 'customLightTheme' ? localStorage.scheme = 'customDarkTheme' : localStorage.scheme = 'customLightTheme';
 };
+onNuxtReady(() => {
+    const val = localStorage.getItem('scheme');
+    // Check if 'scheme' is found in localStorage
+    if (val === 'customDarkTheme' || val === 'customLightTheme') {
+        // If found, set the global theme name and Mode value accordingly
+        theme.global.name.value = Mode.value = val;
+    }
+});
 </script>
 <template>
     <div>

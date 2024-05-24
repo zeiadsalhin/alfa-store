@@ -57,10 +57,12 @@ onMounted(async () => {
                     </p>
                     <Colors />
                     <br />
-                    <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">Add
-                        To Cart</v-btn>
+                    <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
+                        <v-icon size="30" class="m-1">mdi-plus</v-icon>Add To Cart</v-btn>
                     <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
-                        class="m-2" color="grey-lighten-1">Buy Now</v-btn>
+                        class="m-2" color="grey-lighten-1"><v-icon size="30"
+                            class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
+                        Now</v-btn>
                     <v-btn v-if="admin" @click="DeleteProducts" min-height="45" min-width="150" class="m-2"
                         color="red-darken-4">Delete
                         product</v-btn>
