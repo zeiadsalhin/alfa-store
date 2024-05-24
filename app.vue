@@ -13,7 +13,7 @@ useSeoMeta({
   ogTitle: 'Alfa Store',
   description: '',
   ogDescription: '',
-  ogImage: 'https://alfastorecommerce.netlify.app/logoc.png',
+  ogImage: 'https://alfastorecommerce.netlify.app/icon.ico',
   twitterCard: 'summary_large_image',
 })
 </script>
