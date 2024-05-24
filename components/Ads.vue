@@ -1,5 +1,6 @@
 <template>
-    <v-carousel class="mt-20" height="50vh" :hide-delimiters="true" :show-arrows="false" :cycle="true" :interval="4000">
+    <v-carousel class="mt-20 mb-5" height="40vh" :hide-delimiters="true" :show-arrows="false" :cycle="true"
+        :interval="4000">
         <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="item.image" height="40vh">
         </v-carousel-item>
         <v-carousel-item v-else>

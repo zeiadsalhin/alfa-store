@@ -23,7 +23,7 @@ export default {
     },
     mounted() {
         if (!localStorage.getItem("scheme")) {
-            localStorage.setItem("scheme", "dark")
+            localStorage.setItem("scheme", "customDarkTheme")
         }
     },
 }

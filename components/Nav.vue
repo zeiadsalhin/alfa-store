@@ -1,6 +1,4 @@
 <script setup>
-
-
 import { useMainStore } from '@/store';
 import { useTheme } from 'vuetify'
 const mainStore = useMainStore();
@@ -44,7 +42,7 @@ const toggleTheme = () => {
             <v-btn v-else nuxt to="/cart" icon>
                 <v-icon size="20">mdi-cart-outline</v-icon>
             </v-btn>
-            <v-btn v-if="Mode == 'dark'" @click="toggleTheme" icon>
+            <v-btn v-if="Mode == 'customDarkTheme'" @click="toggleTheme" icon>
                 <v-icon size="20">mdi-brightness-2</v-icon>
             </v-btn>
             <v-btn v-else @click="toggleTheme" icon>
