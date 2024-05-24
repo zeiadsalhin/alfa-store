@@ -8,7 +8,7 @@ export default defineNuxtConfig({
       title: 'Alfa Store',
       link: [{ rel: 'icon', type: 'image/x-icon', href: "/icon.ico" }],
   meta: [
-    { name: 'description', content: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services' }
+    { hid: 'description', name: 'description', content: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services' }
   ],
     },
     pageTransition: { name: 'page', mode: 'out-in' }
