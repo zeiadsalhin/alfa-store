@@ -5,7 +5,7 @@
                 <div class="flex justify-center items-center h-full">
                     <div class="flex flex-col items-center">
                         <div>
-                            <v-progress-circular width="1" size="40" color="darken-blue-4" class=""
+                            <v-progress-circular width="1" size="40" color="darken-blue-4" class="text-zinc-400"
                                 indeterminate></v-progress-circular>
                         </div>
                         <div class="mt-4">
