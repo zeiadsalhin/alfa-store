@@ -11,8 +11,8 @@
 useSeoMeta({
   title: 'Alfa Store',
   ogTitle: 'Alfa Store',
-  description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
-  ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+  description: '',
+  ogDescription: '',
   ogImage: 'https://alfastorecommerce.netlify.app/icon.ico',
   twitterCard: 'summary_large_image',
 })
