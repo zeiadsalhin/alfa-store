@@ -4,30 +4,35 @@ import '@mdi/font/css/materialdesignicons.css'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 
-// const customDarkTheme = {
-//   dark: true,
-//   colors: {
-//     background: "#15202b",
-//     surface: "#15202b",
-//     primary: "#3f51b5",
-//     secondary: "#03dac6",
-//     error: "#f44336",
-//     info: "#2196F3",
-//     success: "#4caf50",
-//     warning: "#fb8c00",
-//   },
-// };
+const customDarkTheme = {
+  dark: true,
+  colors: {
+    background: "#000",
+    surface: "#111",
+    primary: "#3f51b5",
+    secondary: "#9E9E9E",
+    error: "#f44336",
+    info: "#2196F3",
+    success: "#4caf50",
+    warning: "#fb8c00",
+  },
+};
 
-// const customLightTheme = {
-//   dark: false,
-//   colors: {
-//     background: "#eee",
-//     surface: "#15202b",
-//     primary: "#3f51b5",
-//     secondary: "#00ccff",
-//     error: "#ffcc00",
-//   },
-// };
+const customLightTheme = {
+  dark: false,
+  colors: {
+    background: "#f0f0f0",
+    surface: "#444",
+    primary: '#212121',
+    secondary: '#BDBDBD',
+    accent: '#795548',
+    error: '#e91e63',
+    warning: '#ffc107',
+    info: '#ffeb3b',
+    success: '#4caf50'
+  },
+};
+
 
 export default defineNuxtPlugin((app) => {
   const vuetify = createVuetify({
@@ -36,8 +41,8 @@ export default defineNuxtPlugin((app) => {
     theme: {
         defaultTheme:  'dark',
         themes: {
-          // customDarkTheme,
-          // customLightTheme,
+          customDarkTheme,
+          customLightTheme,
         },
     },
     display: {

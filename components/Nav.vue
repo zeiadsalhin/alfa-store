@@ -9,9 +9,9 @@ const theme = useTheme();
 const Mode = ref(theme.global.name.value);
 
 const toggleTheme = () => {
-    theme.global.name.value = Mode.value === 'dark' ? 'light' : 'dark';
+    theme.global.name.value = Mode.value === 'customDarkTheme' ? 'customLightTheme' : 'customDarkTheme';
     Mode.value = theme.global.name.value;
-    localStorage.scheme === 'light' ? localStorage.scheme = 'dark' : localStorage.scheme = 'light';
+    localStorage.scheme === 'customLightTheme' ? localStorage.scheme = 'customDarkTheme' : localStorage.scheme = 'customLightTheme';
 };
 </script>
 <template>
@@ -20,15 +20,15 @@ const toggleTheme = () => {
             <nuxt-link to="/">
                 <v-toolbar-title class="p-4">
                     <!-- <h1 class="font-bold text-xl">Alfa Store</h1> -->
-                    <img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-black'"
+                    <img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-'"
                         class="md:p-2" width="250" alt="logo">
                 </v-toolbar-title>
             </nuxt-link>
             <v-spacer />
-            <nuxt-link to="/">
+            <!-- <nuxt-link to="/">
                 <v-btn class="mr-md-2" icon>
                     <v-icon size="20">mdi-home</v-icon></v-btn>
-            </nuxt-link>
+            </nuxt-link> -->
             <nuxt-link to="/admin">
                 <v-btn class="mr-md-2" icon>
                     <v-icon size="20">mdi-account-outline</v-icon></v-btn>

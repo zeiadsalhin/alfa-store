@@ -1,5 +1,6 @@
 <template>
     <div>
+        <Ads />
         <Carousel />
         <v-container>
             <h1 class="text-3xl p-5">Check out</h1>

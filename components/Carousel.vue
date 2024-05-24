@@ -2,7 +2,7 @@
     <v-carousel height="80vh" hide-delimiter-background>
         <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="item.image" cover>
             <v-img height="100vh">
-                <v-container class="fill-height mt-32">
+                <v-container class="fill-height mt-5">
                     <v-row dense>
                         <v-col md="7">
                             <div class="pa-md-10 pa-3 rounded-lg black--text text-white text-center text-md-left"

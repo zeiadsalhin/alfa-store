@@ -1,9 +1,25 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
+const loggedIn = ref(false)
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
+// Add review for registered users only
+onMounted(async () => {
+    try {
+        const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
+        if (data.session) {
+            loggedIn.value = true
+        } else {
+            admin.value = false
+        }
+    } catch (error) {
+        console.log(error);
+    }
+});
 </script>
 <template>
-    <div class="p-4 mt-10 ">
+    <div v-if="loggedIn" class="p-4 mt-10 ">
         <h1 class="text-2xl mb-10">Write a Review</h1>
         <form class="space-y-2" @submit.prevent="submitReview">
 
@@ -32,6 +48,11 @@ const theme = useTheme();
                 class="w-48 flex justify-center mx-auto p-2 ring-zinc-400 focus:ring-4 mt-10 bg-zinc-900 text-white rounded-sm">Submit
                 Review</button>
         </form>
+    </div>
+    <div v-else class="p-4 mt-10 flex-col justify-center mx-auto text-center space-y-5">
+        <h1 class="my-auto text-xl font-semibold">Please Login to Add Review</h1>
+        <v-btn @click="navigateTo('/login')" min-height="40" min-width="150" class="m-2"
+            color="grey-darken-4">Login</v-btn>
     </div>
 </template>
 <script>

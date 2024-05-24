@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/confirm',
-      include: ['/admin(/*)?', '/cart'],
+      include: ['/admin(/*)?'],
       exclude: ['/'],
       cookieRedirect: false,
     }

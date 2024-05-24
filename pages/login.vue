@@ -66,18 +66,18 @@ watch(user, () => {
         <!--Login Form Body-->
         <!--will only render when no user exist-->
         <div v-if="dataview"
-            class="p-1 md:p-5 md:my-20 mt-32 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md">
-            <img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-black'"
-                class="p-2 mx-auto" width="350" alt="logo">
+            class="p-1 md:p-5 md:my-20 mt-32 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
+            <v-img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-900'"
+                class="p-2 mx-auto" width="350" alt="logo"></v-img>
             <h1 class="text-3xl md:text-5xl text-center font-bold p-5">Log in</h1>
 
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div>
             <form id="form" class="space-y-5 p-5 w-full h-fit text-center mx-auto justify-center flex-col"
                 @submit.prevent="signIn">
                 <!--input fields-->
-                <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-white text-black'"
+                <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
                     class="text relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 md:w-1/4 mx-auto">
-                    <label :class="theme.global.current.value.dark ? 'text-white' : 'text-zinc-800'"
+                    <label :class="theme.global.current.value.dark ? 'text-white' : 'bg-zinc-100 text-zinc-800'"
                         class="label hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
                         for="email">Email</label>
                     <input id="email" name="email" v-model="email" placeholder="" type="email" @focus="move"
@@ -85,7 +85,7 @@ watch(user, () => {
                         :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                 </div>
                 <!---->
-                <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-white text-black'"
+                <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
                     class="pass mt-8 relative outline outline-1 px- outline-zinc-700 rounded-lg my-auto w-11/12 md:w-1/4 mx-auto">
                     <label :class="theme.global.current.value.dark ? 'text-white' : 'text-zinc-800'"
                         class="labelp hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
