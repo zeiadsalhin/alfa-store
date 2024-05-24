@@ -1,6 +1,18 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   // devtools: { enabled: true },
+  app: {
+    head: {
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
+      title: 'Alfa Store',
+      link: [{ rel: 'icon', type: 'image/x-icon', href: "/icon.ico" }],
+  meta: [
+    { name: 'description', content: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services' }
+  ],
+    },
+    pageTransition: { name: 'page', mode: 'out-in' }
+  },
   build: {
     transpile: ['vuetify'],
   },

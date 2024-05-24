@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
     <v-app>
-      <!-- <Loader /> -->
+      <Loader />
       <Nav />
       <NuxtPage />
     </v-app>
@@ -13,14 +13,14 @@ useSeoMeta({
   ogTitle: 'Alfa Store',
   description: '',
   ogDescription: '',
-  // ogImage: 'https://example.com/image.png',
-  // twitterCard: 'summary_large_image',
+  ogImage: 'https://alfastorecommerce.netlify.app/logoc.png',
+  twitterCard: 'summary_large_image',
 })
 </script>
 <style>
 .page-enter-active,
 .page-leave-active {
-  transition: all 0.2s;
+  transition: all 0.1s;
 }
 
 .page-enter-from,
