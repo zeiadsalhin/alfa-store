@@ -4,6 +4,7 @@ const theme = useTheme();
 import Swal from 'sweetalert2'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const router = useRouter()
 const isFocused1 = ref(false)
 const isFocused2 = ref(false)
 const isFocused3 = ref(false)
@@ -12,6 +13,11 @@ const errMsg = ref()
 const displayname = ref('')
 const email = ref('')
 const password = ref('')
+const capital = ref(false)
+const special = ref(false)
+const number = ref(false)
+const minlength = ref(false)
+const passwordStrength = computed(() => Math.min(password.value.length * 15, 100));
 const showPassword = ref(false)
 const phone = ref('')
 const dataview = ref()
@@ -20,7 +26,45 @@ const authenticating = ref(false)
 function toggleVisibility() {
     showPassword.value = !showPassword.value;
 }
+// validate password
+function validatePassword() {
+    var hasCapitalLetter = /[A-Z]/.test(password.value);
+    var hasNumber = /\d/.test(password.value);
+    var hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(password.value);
+    var hasMinLength = password.value.length >= 6;
 
+    if (hasCapitalLetter) {
+        // console.log('capital letter');
+        capital.value = true
+        // passwordStrengthColor
+    } else {
+        capital.value = false
+    } if (hasNumber) {
+        // console.log('has number');
+        number.value = true
+    } else {
+        number.value = false
+    } if (hasSpecialCharacter) {
+        // console.log('has special');
+        special.value = true
+    } else {
+        special.value = false
+    } if (hasMinLength) {
+        // console.log('min length reached');
+        minlength.value = true
+    } else {
+        minlength.value = false
+    }
+}
+const passwordStrengthColor = computed(() => {
+    if (capital.value && special.value && number.value && minlength.value) {
+        return 'green';
+    } else if (capital.value || special.value || number.value) {
+        return 'orange';
+    } else {
+        return 'red';
+    }
+});
 async function signUpNewUser() { // Registration new user
     try {
         authenticating.value = true
@@ -48,8 +92,23 @@ async function signUpNewUser() { // Registration new user
             timer: 2000,
             showConfirmButton: false,
         }).then(() => {
-            navigateTo("Login") // Navigate to login
+            router.push({ path: '/login', query: { confirmemail: email.value, token: data.user.id } }) // Navigate to login and pass email and token
+            // console.log(data);
         })
+
+        // register user in newsletter
+        const { data2, error2 } = await supabase.from('NewsletterSubs').insert({ email: email.value });
+        if (error2) {
+            Swal.fire({
+                title: 'Error Submitting',
+                icon: 'error',
+                text: error2.message,
+                toast: true,
+                timer: 3000,
+                showConfirmButton: false,
+            })
+            throw error2
+        }; // throw console error
     } catch (error) {
         errMsg.value = error
         console.log(error)
@@ -60,7 +119,7 @@ async function signUpNewUser() { // Registration new user
 watch(user, () => {
     if (user.value) {
         // Redirect to protected page
-        return navigateTo('/')
+        navigateTo('/')
     } else {
         dataview.value = true
     }
@@ -108,7 +167,7 @@ watch(user, () => {
                     <input id="phone" v-model="phone" spellcheck="false"
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused3 ? 'ring-2' : 'ring-1'"
                         class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
-                        type="text" typeof="tel" @focus="isFocused3 = true" @blur="isFocused3 = false" required />
+                        type="number" min="7" @focus="isFocused3 = true" @blur="isFocused3 = false" required />
                 </div>
 
                 <div class="form mt-3 mb-5 flex justify-center">
@@ -117,19 +176,32 @@ watch(user, () => {
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
                         <input id="password" v-model="password"
                             class="focus:outline-none rounded-md h-fit my-auto p-2 md:p-3 w-full"
-                            :type="showPassword ? 'text' : 'password'" @focus="isFocused4 = true"
-                            @blur="isFocused4 = false" required />
+                            :type="showPassword ? 'text' : 'password'" @input="validatePassword()" minlength="6"
+                            @focus="isFocused4 = true" @blur="isFocused4 = false" required />
                         <v-icon class="my-auto m-2 " size="25" @click="toggleVisibility">
                             {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                     </div>
                 </div>
                 <!--Error Message password-->
                 <p id="errorp" class="hidden text-sm text-red-700">Please Check your Password</p>
-                <span class="block text-sm opacity-40 p-2 -mt-2 mb-5 space-y-1">
+                <span class="tick-list block text-sm opacity-70 p-2 -mt-2 mb-5 space-y-1">
+                    <div class="passwordchecker w-10/12 mx-auto">
+                        <v-progress-linear v-if="password" :model-value="passwordStrength"
+                            :color="passwordStrengthColor" height="5"></v-progress-linear>
+                    </div>
                     <ul>Ex: Min 6 Characters and Must Include</ul>
-                    <li>Capital letter</li>
-                    <li>Special Character</li>
-                    <li>At least one number</li>
+                    <li :class="capital ? 'text-green-500' : 'text-red-600'"><v-icon size="20">{{ capital ?
+                        'mdi-check' : 'mdi-close' }}</v-icon>Capital letter
+                    </li>
+                    <li :class="special ? 'text-green-500' : 'text-red-600'"><v-icon size="20">{{ special ?
+                        'mdi-check' : 'mdi-close' }}</v-icon>Special Character
+                    </li>
+                    <li :class="number ? 'text-green-500' : 'text-red-600'"><v-icon size="20">{{ number ? 'mdi-check'
+                        : 'mdi-close' }}</v-icon>At least one number
+                    </li>
+                    <li :class="minlength ? 'text-green-500' : 'text-red-600'"><v-icon size="20">{{ minlength
+                        ? 'mdi-check' : 'mdi-close' }}</v-icon>Min length 6
+                    </li>
                 </span>
                 <!--Submit button-->
                 <button id="submitbtn" @click="" type="submit"
@@ -158,3 +230,8 @@ watch(user, () => {
         </div>
     </div>
 </template>
+<style>
+.tick-list {
+    list-style-type: none;
+}
+</style>

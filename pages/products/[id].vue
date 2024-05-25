@@ -1,12 +1,28 @@
 <script setup>
 import Swal from 'sweetalert2'
 import { useMainStore } from '@/store';
+const selectedoption = ref('');
+const handleOptionSelected = (option) => {
+    selectedoption.value = option;
+    console.log('Selected option:', option);
+};
 
 const mainStore = useMainStore();
 
 const addToCart = (product) => {
-    mainStore.addToCart(product);
-
+    if (selectedoption.value) {
+        mainStore.addToCart(product, selectedoption.value);
+    } else {
+        Swal.fire({
+            title: 'Warning!',
+            icon: 'warning',
+            text: 'You must select an option',
+            toast: true,
+            timer: 2000,
+            showConfirmButton: false,
+        })
+    }
+    // console.log(selectedoption.value); // Log the value of selectedoption
 };
 
 const supabase = useSupabaseClient()
@@ -28,8 +44,6 @@ onMounted(async () => {
     }
 
 });
-
-
 </script>
 <template>
     <div>
@@ -56,17 +70,19 @@ onMounted(async () => {
                         <p class="text-h5 mb-7">
                             Price: {{ product.price + ' $' }}
                         </p>
-                        <Colors />
+                        <Colors :options="product.options" @option-selected="handleOptionSelected" />
                         <br />
-                        <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
-                            <v-icon size="30" class="m-1">mdi-plus</v-icon>Add To Cart</v-btn>
-                        <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
-                            class="m-2" color="grey-lighten-1"><v-icon size="30"
-                                class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
-                            Now</v-btn>
-                        <v-btn v-if="admin" @click="DeleteProducts" min-height="45" min-width="150" class="m-2"
-                            color="red-darken-4">Delete
-                            product</v-btn>
+                        <div class="button flex flex-col md:flex-row">
+                            <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
+                                <v-icon size="30" class="m-1 w-full">mdi-plus</v-icon>Add To Cart</v-btn>
+                            <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
+                                class="m-2" color="grey-lighten-1"><v-icon size="30"
+                                    class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
+                                Now</v-btn>
+                            <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="150" class="m-2"
+                                color="red-darken-4">Delete
+                                product</v-btn>
+                        </div>
                     </v-col>
 
                 </v-row>
@@ -124,7 +140,24 @@ export default {
                 console.error('Error fetching products:', error.message);
             }
         },
-
+        DeleteProductBegin() {
+            Swal.fire({
+                title: 'Warning!',
+                icon: 'warning',
+                text: 'This product will be deleted!',
+                // toast: true,
+                // timer: 2000,
+                showConfirmButton: true,
+                showCancelButton: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // console.log("deleted");
+                    this.DeleteProducts();
+                } else {
+                    // console.log('no');
+                }
+            });
+        },
         // Delete product by admin
         async DeleteProducts() {
             const supabase = useSupabaseClient()
@@ -136,7 +169,7 @@ export default {
                     .delete()
                     .eq('id', productId)
 
-                // console.log(productId)
+                console.log(productId)
                 if (error) {
                     console.log(error)
                 } else {
@@ -164,7 +197,6 @@ export default {
                 console.log(error)
             }
         },
-
     },
 };
 </script>

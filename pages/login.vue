@@ -3,12 +3,15 @@ import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const route = useRoute()
 const errMsg = ref()
+const emailconfirm = computed(() => route.query.confirmemail)
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
 const dataview = ref()
 const authenticating = ref(false)
+const props = defineProps(['emailtest']);
 function move() {
     document.querySelector(".label").classList.add("-translate-y-8")
     document.querySelector(".label").classList.add("-translate-x-1")
@@ -69,6 +72,14 @@ watch(user, () => {
             class="p-1 md:p-5 md:my-20 mt-32 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
             <v-img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-900'"
                 class="p-2 mx-auto" width="350" alt="logo"></v-img>
+            <!--Confirmation-->
+            <p v-if="emailconfirm"
+                class="fleax flex-roaw w-10/12 mt-5 mx-auto shadow-md rounded-sm bg-green-600 text-white my-2 p-3">A
+                confirmation
+                sent to Your
+                email:
+            <p class="underline inline-block">{{ emailconfirm
+                }}</p>, Please confirm it before signing in.</p>
             <h1 class="text-3xl md:text-5xl text-center font-bold p-5">Log in</h1>
 
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div>

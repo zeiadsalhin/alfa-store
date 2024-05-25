@@ -9,16 +9,18 @@ export const useMainStore = defineStore('main', {
     increment() {
       this.counter++;
     },
-    addToCart(product) {
-       const existingItemIndex = this.items.findIndex(item => item.product.id === product.id);
-       if (existingItemIndex !== -1) {
-         this.items[existingItemIndex].quantity++;
-       } else {
-         this.items.push({ product, quantity: 1 });
-       }
+    addToCart(product, selectedOption) {
+      const existingItemIndex = this.items.findIndex(item => item.product.id === product.id && item.selectedOption === selectedOption);
+      if (existingItemIndex !== -1) {
+        this.items[existingItemIndex].quantity++;
+      } else {
+        this.items.push({ product, selectedOption, quantity: 1 });
+      } 
       Swal.fire({
         title: "Added successfully",
         icon: "success",
+        toast: true,
+        showConfirmButton: false,
         timer: 1000,
         timerProgressBar: true,
 

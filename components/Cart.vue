@@ -11,11 +11,12 @@
                 <div class="info my-auto p-2 w-fit">
                     <div class="name">{{ item.product.name }}</div>
                     <div class="price">Price: ${{ item.product.price }}</div>
+                    <div class="price">Option: {{ item.selectedOption }}</div>
                     <div class="price">X {{ item.quantity }}</div>
                     <div class="remove flex my-auto space-x-2 p-2 mt-2"><button @click="removeFromCart(index)"
-                            class="bg-red-700 my-auto px-2 py-1 rounded-md">Remove</button>
+                            class="bg-red-700 text-white my-auto px-2 py-1 rounded-md">Remove</button>
                         <nuxt-link :to="`/products/${item.product.id}`"
-                            class="bg-green-700 my-auto px-2 py-1 rounded-md">View</nuxt-link>
+                            class="bg-green-700 text-white my-auto px-2 py-1 rounded-md">View</nuxt-link>
                     </div>
                 </div>
             </li>
@@ -50,6 +51,7 @@ import { useMainStore } from '@/store';
 
 const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
+// console.log(cartItems.value);
 
 // Calculate the total price of all items in the cart
 const totalPrice = computed(() => {

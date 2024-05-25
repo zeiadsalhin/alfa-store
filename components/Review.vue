@@ -1,22 +1,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
-const loggedIn = ref(false)
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
 // Add review for registered users only
-onMounted(async () => {
-    try {
-        const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
-        if (data.session) {
-            loggedIn.value = true
-        } else {
-            admin.value = false
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
 </script>
 <template>
     <div v-if="loggedIn" class="p-4 mt-10 ">
@@ -26,8 +11,8 @@ onMounted(async () => {
             <div class="name flex space-x-5 p-2 md:w-1/2 mx-auto">
                 <label for="name">Name:</label>
                 <input type="text" id="name"
-                    :class="theme.global.current.value.dark ? 'bg-zinc-700' : 'bg-zinc-200 text-black'"
-                    class="w-full p-2 bg-zinc-700 rounded-sm" v-model="review.name" required>
+                    :class="theme.global.current.value.dark ? 'bg-zinc-950' : 'bg-zinc-200 text-black'"
+                    class="w-full p-2 bg-zinc-700 rounded-sm outline-none" v-model="review.name" readonly required>
             </div>
 
             <div class="review flex space-x-2 p-2 md:w-1/2 mx-auto">
@@ -45,7 +30,9 @@ onMounted(async () => {
             </div>
 
             <button type="submit" :class="theme.global.current.value.dark ? 'bg-zinc-900' : 'bg-zinc-500'"
-                class="w-48 flex justify-center mx-auto p-2 ring-zinc-400 focus:ring-4 mt-10 bg-zinc-900 text-white rounded-sm">Submit
+                class="w-48 flex justify-center mx-auto p-2 ring-zinc-400 focus:ring-4 mt-10 bg-zinc-900 text-white rounded-sm">
+                <v-progress-circular v-if="Submitting" width="2" size="20" color="darken-blue-4" class="m-1"
+                    indeterminate></v-progress-circular> Submit
                 Review</button>
         </form>
     </div>
@@ -60,38 +47,73 @@ import Swal from 'sweetalert2'
 export default {
     data() {
         return {
+            loggedIn: false,
+            Submitting: false,
             review: {
-                name: '',
+                name: null,
                 text: '',
                 rating: null,
             }
         };
     },
+    mounted() {
+        this.get_username()
+    },
     methods: {
+        async get_username() {
+            const supabase = useSupabaseClient()
+            const user = useSupabaseUser()
+            try {
+                const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
+                if (data.session) {
+                    this.loggedIn = true
+                    this.username = data.session.user.identities[0].identity_data.first_name
+                    this.review.name = this.username
+                } else {
+                    // admin.value = false
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
         async submitReview() {
             const supabase = useSupabaseClient();
             const productId = parseInt(this.$route.params.id);
+            this.Submitting = true
             try {
-                const { data, error } = await supabase.from('Reviews').insert({ post_id: productId, name: this.review.name, text: this.review.text, rating: this.review.rating });
+                if (this.review.rating != null) {
+                    const { data, error } = await supabase.from('Reviews').insert({ post_id: productId, name: this.review.name, text: this.review.text, rating: this.review.rating });
 
-                if (error) {
-                    console.error(error);
-                    // Handle error
+                    if (error) {
+                        console.error(error);
+                        // Handle error
+                    } else {
+                        Swal.fire({
+                            title: 'Success',
+                            icon: 'success',
+                            text: 'Review added successfully!',
+                            toast: true,
+                            timer: 2000,
+                            showConfirmButton: false,
+                        })
+
+                        this.review = {
+                            name: this.username,
+                            text: '',
+                            rating: null
+                        };
+                        this.Submitting = false
+                    }
                 } else {
                     Swal.fire({
-                        title: 'Success',
-                        icon: 'success',
-                        text: 'Review added successfully!',
+                        title: 'Warning',
+                        icon: 'warning',
+                        text: 'Your rating is required',
                         toast: true,
                         timer: 2000,
                         showConfirmButton: false,
                     })
-
-                    this.review = {
-                        name: '',
-                        text: '',
-                        rating: null
-                    };
+                    this.Submitting = true
                 }
             } catch (error) {
                 console.error('Error submitting review:', error.message);

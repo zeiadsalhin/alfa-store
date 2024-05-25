@@ -4,15 +4,20 @@
 <template>
     <div>
         <div class="mt-10">
-            <h2 class="text-2xl mb-5">All Reviews</h2>
+            <h2 class="text-2xl mb-5">All Reviews ({{ total }})</h2>
             <div class="text-lg space-y-1" v-for="(review, index) in reviews" :key="index">
                 <div class="name flex-col p-2">
-                    <v-rating class="mx-auto" color="yellow-darken-3" density="compact" :model-value="review.rating"
-                        readonly></v-rating>
-                    <h3 class="font-bold text-xl">{{ review.name }}</h3>
+                    <h3 class="font-bold text-xl px-2 mb-4">{{ review.name }}</h3>
+                    <div class="fle justify-start mt-2">
+                        <v-rating class="m-auto" color="yellow-darken-3" density="compact" :model-value="review.rating"
+                            readonly></v-rating>
+                        <p class="px-2 text-sm opacity-70">at {{ review.created_at.slice(0, 10) }}
+                            {{ review.created_at.slice(11, 16) }}</p>
+                    </div>
+
                 </div>
 
-                <p class="p-2">User review:<br />{{ review.text }}</p>
+                <p class="px-4">User review:<br />{{ review.text }}</p>
                 <!-- <p>Rating: {{ review.rating }}</p> -->
                 <div class="h-0.5 w-full bg-zinc-900 rounded-full mt-5 mb-5"></div>
             </div>
@@ -24,6 +29,7 @@ export default {
     data() {
         return {
             reviews: null,
+            total: null,
         };
     },
     mounted() {
@@ -41,12 +47,18 @@ export default {
                     // Handle error
                 } else {
                     this.reviews = data
-                    // console.log(data)
+                    this.total = data.length
+                    // console.log(data.length)
                 }
             } catch (error) {
                 console.error('Error submitting review:', error.message);
                 // Handle error
             }
+        }
+    },
+    computed: {
+        totalreviews() {
+            // return this.data.length;
         }
     }
 };
