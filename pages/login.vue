@@ -72,11 +72,11 @@ watch(user, () => {
             <h1 class="text-3xl md:text-5xl text-center font-bold p-5">Log in</h1>
 
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div>
-            <form id="form" class="space-y-5 p-5 w-full h-fit text-center mx-auto justify-center flex-col"
+            <form id="form" class="space-y-5 p-5 w-11/12 md:w-1/2 h-fit text-center mx-auto justify-center flex-col"
                 @submit.prevent="signIn">
                 <!--input fields-->
                 <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
-                    class="text relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 md:w-1/4 mx-auto">
+                    class="text relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 mx-auto">
                     <label :class="theme.global.current.value.dark ? 'text-white' : 'bg-zinc-100 text-zinc-800'"
                         class="label hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
                         for="email">Email</label>
@@ -85,17 +85,22 @@ watch(user, () => {
                         :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                 </div>
                 <!---->
-                <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
-                    class="pass mt-8 relative outline outline-1 px- outline-zinc-700 rounded-lg my-auto w-11/12 md:w-1/4 mx-auto">
-                    <label :class="theme.global.current.value.dark ? 'text-white' : 'text-zinc-800'"
-                        class="labelp hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
-                        for="pass">Password</label>
-                    <input id="pass" name="password" v-model="password" placeholder="" @focus="movep" @blur="backp"
-                        class="text-black outline-none bg-transparent text-lg mt-4 mb-3 w-5/6   "
-                        :class="theme.global.current.value.dark ? 'text-white' : 'text-black'"
-                        :type="showPassword ? 'text' : 'password'" required>
-                    <v-icon class="md:mx-1 px-4 " size="25" @click="toggleVisibility">
-                        {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+                <div class="password flex ml-4">
+                    <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
+                        class="pass mt-4 relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 mx-auto">
+                        <label :class="theme.global.current.value.dark ? 'text-white' : 'text-zinc-800'"
+                            class="labelp hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
+                            for="pass">Password</label>
+                        <input id="pass" name="password" v-model="password" placeholder="" @focus="movep" @blur="backp"
+                            class="text-black outline-none bg-transparent text-lg mt-4 mb-3 w-full   "
+                            :class="theme.global.current.value.dark ? 'text-white' : 'text-black'"
+                            :type="showPassword ? 'text' : 'password'" required>
+
+                    </div>
+                    <div class="mt-8">
+                        <v-icon class="ml-1" size="25" @click="toggleVisibility">
+                            {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+                    </div>
                 </div>
                 <!--Display error message if any-->
                 <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>

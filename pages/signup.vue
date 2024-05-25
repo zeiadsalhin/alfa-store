@@ -78,48 +78,50 @@ watch(user, () => {
             <h1 class="text-3xl md:text-5xl text-center font-bold p-2">Sign Up</h1>
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-9010"></div>
 
-            <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full"
+            <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full md:w-1/2"
                 @submit.prevent="signUpNewUser">
                 <!--Display error message if any-->
                 <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
-                <div class="form flex justify-center  w-full md:w-1/3  mx-auto">
-                    <label class="p-3 text-md md:text-xl text-right md:mr-14 mr-7">Name</label>
+                <div class="form mt-3 flex justify-center">
+                    <label class=" text-lg md:text-xl text-right p-3">Name</label>
                     <input id="name" type="name" v-model="displayname" spellcheck="false"
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500 h-fit my-auto p-1 md:p-2 rounded-md focus:outline-none border-2  w-full"
+                        class=" ring-zinc-500 h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                         @focus="isFocused1 = true" @blur="isFocused1 = false" required />
                 </div>
                 <!--Error Message-->
                 <p id="errorn" class="hidden text-sm text-red-700">Please Check your Name</p>
 
-                <div class="form mt-3 flex justify-center  w-full md:w-1/3  mx-auto">
-                    <label class="px-4 py-3 text-md md:text-xl md:mr-20 mr-6">Email</label>
+                <div class="form mt-3 flex justify-center">
+                    <label class="  text-lg md:text-xl  p-3">Email</label>
                     <input id="email" v-model="email" spellcheck="false"
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500  h-fit my-auto p-1 md:p-2 rounded-md focus:outline-none border-2  w-full"
+                        class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                         type="email" @focus="isFocused2 = true" @blur="isFocused2 = false" required />
 
                 </div>
                 <!--Error Message email-->
                 <p id="errore" class="hidden text-sm text-red-700">Please Check your Email</p>
 
-                <div class="form mt-3 flex justify-center w-full md:w-1/3  mx-auto">
-                    <label class="px-4 py-3 text-md md:text-xl md:mr-20 mr-4">Phone</label>
+                <div class="form mt-3 flex justify-cente">
+                    <label class="  text-lg md:text-xl p-3">Phone</label>
                     <input id="phone" v-model="phone" spellcheck="false"
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused3 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500  h-fit my-auto p-1 md:p-2 rounded-md focus:outline-none border-2  w-full"
+                        class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                         type="text" typeof="tel" @focus="isFocused3 = true" @blur="isFocused3 = false" required />
                 </div>
 
-                <div class="form mt-3 mb-5 flex justify-center w-full md:w-1/3 mx-auto">
-                    <label class="py-3 text-md md:text-xl text-center md:mr- mr-6">Password</label>
-                    <input id="password" v-model="password"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500 h-fit my-auto p-1 md:p-2 rounded-md focus:outline-none border-2  w-full md:w-full "
-                        :type="showPassword ? 'text' : 'password'" @focus="isFocused4 = true" @blur="isFocused4 = false"
-                        required />
-                    <v-icon class="my-auto m-1 " size="25" @click="toggleVisibility">
-                        {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+                <div class="form mt-3 mb-5 flex justify-center">
+                    <label class=" text-lg md:text-xl text-center p-3">Password</label>
+                    <div class="flex ring-zinc-500  w-full  rounded-md "
+                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
+                        <input id="password" v-model="password"
+                            class="focus:outline-none rounded-md h-fit my-auto p-2 md:p-3 w-full"
+                            :type="showPassword ? 'text' : 'password'" @focus="isFocused4 = true"
+                            @blur="isFocused4 = false" required />
+                        <v-icon class="my-auto m-2 " size="25" @click="toggleVisibility">
+                            {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+                    </div>
                 </div>
                 <!--Error Message password-->
                 <p id="errorp" class="hidden text-sm text-red-700">Please Check your Password</p>
@@ -137,16 +139,20 @@ watch(user, () => {
                         indeterminate></v-progress-circular>Sign Up
                 </button>
                 <!--separator-->
-                <div class="">
-                    <div class="relative md:w-1/4 h-1 m-5 rounded-xl mx-auto bg-gray-800">
-
+                <div class="flex w-fit space-x-5 mx-auto mt-10">
+                    <div class=" w-1 h-8 my-auto rounded-xl mx-auto bg-gray-800">
                     </div>
+                    <!--navigate to login page-->
+                    <p class="mr-10 my-auto text-center">Already have an account?</p>
+                    <NuxtLink to="/login" onclick=""
+                        :class="theme.global.current.value.dark ? 'bg-gray-800 text-white hover:bg-gray-600' : 'bg-zinc-900 hover:bg-zinc-800 text-white hover:text-gray-50'"
+                        class="text-center mx-auto flex w-fit h-fit justify-center m-3 px-6 py-2 rounded-md hover:cursor-pointer">
+                        login</NuxtLink>
                 </div>
-                <!--navigate to login page-->
-                <p class="m-5 text-center">Already have an account?</p>
-                <NuxtLink to="/login" onclick=""
-                    class="text-center mx-auto flex w-48 justify-center px-5 py-2 rounded-md hover:cursor-pointer dark:bg-gray-800 text-white hover:bg-gray-600 ">
-                    login</NuxtLink>
+                <NuxtLink to="/" onclick="" :class="theme.global.current.value.dark ? 'text-zinc-400' : 'text-zinc-700'"
+                    class="text-center mx-auto flex w-fit h-fit justify-center m-3 px-6 py-2 rounded-md hover:underline hover:cursor-pointer">
+                    Help</NuxtLink>
+
             </form>
             <!--End of body-->
         </div>

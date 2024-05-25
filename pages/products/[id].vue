@@ -33,56 +33,64 @@ onMounted(async () => {
 </script>
 <template>
     <div>
-        <v-container v-if="product" class="mt-20">
-            <v-row justify="center">
-                <v-col cols="11" md="7">
-                    <h2 class="text-center text-h4 font-weight-bold">
-                        {{ product.name }}
-                    </h2>
-                    <div class="mt-2 text-center">
-                        <v-rating readonly half-increments class="p-5" color="yellow darken-2"
-                            background-color="grey lighten-1" :value="product.ratings" dense size="20"></v-rating>
-                        <v-chip small label outlined class="mr-1" v-for="(t, i) in product.tags"
-                            :key="`prod${product.id}-${i}`">
-                            {{ t }}
-                        </v-chip>
-                    </div>
-                    <br />
-                    <v-img width="100%" class="el rounded-lg" height="50vh" :src="product.image"></v-img>
-                    <p class="mt-5 mb-5">
-                        {{ product.description }}
-                    </p>
-                    <p class="text-h5 mb-7">
-                        Price: {{ product.price + ' $' }}
-                    </p>
-                    <Colors />
-                    <br />
-                    <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
-                        <v-icon size="30" class="m-1">mdi-plus</v-icon>Add To Cart</v-btn>
-                    <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
-                        class="m-2" color="grey-lighten-1"><v-icon size="30"
-                            class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
-                        Now</v-btn>
-                    <v-btn v-if="admin" @click="DeleteProducts" min-height="45" min-width="150" class="m-2"
-                        color="red-darken-4">Delete
-                        product</v-btn>
-                </v-col>
+        <div v-if="product">
+            <v-container class="mt-20">
+                <v-row justify="center">
+                    <v-col cols="11" md="7">
+                        <h2 class="text-center text-h4 font-weight-bold">
+                            {{ product.name }}
+                        </h2>
+                        <div class="mt-2 text-center">
+                            <v-rating readonly half-increments class="p-5" color="yellow darken-2"
+                                background-color="grey lighten-1" :value="product.ratings" dense size="20"></v-rating>
+                            <v-chip small label outlined class="mr-1" v-for="(t, i) in product.tags"
+                                :key="`prod${product.id}-${i}`">
+                                {{ t }}
+                            </v-chip>
+                        </div>
+                        <br />
+                        <v-img width="100%" class="el rounded-lg" height="50vh" :src="product.image"></v-img>
+                        <p class="mt-5 mb-5">
+                            {{ product.description }}
+                        </p>
+                        <p class="text-h5 mb-7">
+                            Price: {{ product.price + ' $' }}
+                        </p>
+                        <Colors />
+                        <br />
+                        <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
+                            <v-icon size="30" class="m-1">mdi-plus</v-icon>Add To Cart</v-btn>
+                        <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
+                            class="m-2" color="grey-lighten-1"><v-icon size="30"
+                                class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
+                            Now</v-btn>
+                        <v-btn v-if="admin" @click="DeleteProducts" min-height="45" min-width="150" class="m-2"
+                            color="red-darken-4">Delete
+                            product</v-btn>
+                    </v-col>
 
-            </v-row>
-            <div class="added mt-5 px-5">
-                <p class="">Available from:</p>
-                <p class="text-left opacity-80">
-                    {{ product.created_at.slice(0, 10) }}
-                    {{ product.created_at.slice(11, 16) }}
-                </p>
+                </v-row>
+                <div class="added mt-5 px-5">
+                    <p class="">Available from:</p>
+                    <p class="text-left opacity-80">
+                        {{ product.created_at.slice(0, 10) }}
+                        {{ product.created_at.slice(11, 16) }}
+                    </p>
+                </div>
+                <Review />
+                <div class="h-1 w-full bg-zinc-800 rounded-full mt-5"></div>
+                <AllReviews />
+            </v-container>
+            <br /><br />
+            <Footer />
+        </div>
+        <div v-else class="loader mt-32 w-full h-full">
+            <div class="p-5 flex-col justify-center mx-auto">
+                <div class="flex justify-center p-5"><v-progress-circular color="dark-blue"
+                        indeterminate></v-progress-circular>
+                </div>
             </div>
-            <Review />
-            <div class="h-1 w-full bg-zinc-800 rounded-full mt-5"></div>
-            <AllReviews />
-        </v-container>
-        <br /><br />
-        <Footer />
-        <ScrollTop />
+        </div>
     </div>
 </template>
 
