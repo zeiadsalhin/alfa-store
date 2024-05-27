@@ -16,13 +16,18 @@ const cc = ref("4333-3387-8788-6620");
 const expdate = ref("06/15");
 const cvv = ref("123");
 const errorMessage = ref('')
+const isDisabled = ref(false);
+const notapplied = ref(true)
 const rules = [
     (value) => {
         if (value) return true;
         return 'required';
     },
 ];
+const coupon = ref(null)
 const FinalPrice = ref(null)
+const FPMsg = ref(null)
+const FPErMsg = ref(null)
 
 
 // Card format
@@ -44,6 +49,36 @@ const totalPrice = computed(() => {
     return cartItems.value.reduce((total, item) => {
         return total + (item.product.price * item.quantity);
     }, 0);
+});
+
+// Apply Coupon
+const couponapply = () => {
+    if (coupon.value == 'FREE') {
+        console.log("coupon applied")
+        const originalvalue = totalPrice.value;
+        FinalPrice.value = (originalvalue * 0.001).toFixed(2)
+        FPMsg.value = 'Congratulations! you got 99% discount'
+        isDisabled.value = true;
+        mainStore.setDiscountedPrice(FinalPrice);
+        notapplied.value = false
+    } else {
+        FPErMsg.value = 'Please try another coupon'
+    }
+}
+
+// remove coupon
+const removecoupon = () => {
+    mainStore.setDiscountedPrice(0);
+    notapplied.value = true
+    isDisabled.value = false
+    coupon.value = ''
+    FPMsg.value = ''
+}
+
+// Clear coupon 
+onBeforeMount(() => {
+    removecoupon();
+    // console.log("Coupon removed");
 });
 
 // process
@@ -142,6 +177,18 @@ async function proccess() {
 
                 <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
                 <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
+                <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
+                    <p class="text-lg">Have coupon? :</p>
+                    <v-text-field v-model="coupon" variant="outlined" density="compact"
+                        :disabled="isDisabled"></v-text-field>
+                    <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
+                    <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
+                    <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span>
+                </div>
+                <div class="pay mt-5 flex-col text-center">
+                    <Paypal />
+                    <p>Or</p>
+                </div>
                 <div class="buttons flex justify-center w-f space-x-3 py-2">
                     <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
                     <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">Complete &
@@ -157,5 +204,6 @@ async function proccess() {
         </v-container>
         <br /><br />
         <Footer />
+        <!-- <ScrollTop /> -->
     </div>
 </template>

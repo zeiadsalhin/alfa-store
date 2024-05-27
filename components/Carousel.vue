@@ -11,13 +11,18 @@
                                 <h2 class="text-md-h4 text-h5">
                                     {{ item.name }}
                                 </h2>
-                                <p
-                                    class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
-                                    {{ (Math.random() * (item.price * 1.3 - item.price) + item.price).toFixed() + ' $'
-                                    }}
-                                </p>-30% off
+                                <div v-if="item.discount_price" class="discounted price flex ">
+                                    <p
+                                        class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
+                                        {{ ((item.price)).toFixed() + ' $'
+                                        }}
+                                    </p>
+                                    <p class="mr-4 mt-2">-% {{ ((item.discount_price / item.price) * 100).toFixed() }}
+                                        off
+                                    </p>
+                                </div>
                                 <p class="text-h5 primary--text mt-3">
-                                    {{ item.price + ' $' }}
+                                    {{ (item.price - item.discount_price) + ' $' }}
                                 </p>
                                 <p class="text-md-body-2 md:mb-5 mb-2"></p>
                                 <v-btn depressed :to="`/products/${item.id}`" color="primary" class="text-capitalize"

@@ -47,9 +47,17 @@ export default {
                             timer: 3000,
                             showConfirmButton: false,
                         });
-                        this.email = '';
                     }
                 }
+                this.email = '';
+                Swal.fire({
+                    title: 'Subscribed Successfuly',
+                    icon: 'success',
+                    text: 'Your email has been added to newsletter list', // or any appropriate message
+                    toast: true,
+                    timer: 2000,
+                    showConfirmButton: false,
+                });
             } catch (error) {
                 // console.error('Error submitting review:', error.message);
             }

@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     // '@nuxtjs/google-fonts',
     '@nuxt/content',
+    'nuxt-paypal',
     '@pinia/nuxt',
     '@nuxtjs/supabase',
     (_options, nuxt) => {
@@ -36,6 +37,9 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+  },
+  paypal: {
+    clientId: import.meta.env.PAYPAL,
   },
   supabase: {
     // Options

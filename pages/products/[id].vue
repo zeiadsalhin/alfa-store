@@ -67,14 +67,26 @@ onMounted(async () => {
                         <p class="mt-5 mb-5">
                             {{ product.description }}
                         </p>
+                        <div v-if="product.discount_price" class="discounted price flex space-x-1 py-1 opacity-80 ">
+                            <p class="mt-2 font-semibold">Original Price:</p>
+                            <p
+                                class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
+                                {{ ((product.price)).toFixed() + ' $'
+                                }}
+                            </p>
+                            <p class="mr-4 mt-2">-% {{ ((product.discount_price / product.price) * 100).toFixed() }}
+                                off
+                            </p>
+                        </div>
                         <p class="text-h5 mb-7">
-                            Price: {{ product.price + ' $' }}
+                            Price:
+                            {{ (product.price - product.discount_price) + ' $' }}
                         </p>
                         <Colors :options="product.options" @option-selected="handleOptionSelected" />
                         <br />
                         <div class="button flex flex-col md:flex-row">
                             <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
-                                <v-icon size="30" class="m-1 w-full">mdi-plus</v-icon>Add To Cart</v-btn>
+                                <v-icon size="30" class="m-1 w-full">mdi-cart</v-icon>Add To Cart</v-btn>
                             <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
                                 class="m-2" color="grey-lighten-1"><v-icon size="30"
                                     class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
