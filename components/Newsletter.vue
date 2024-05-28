@@ -1,16 +1,23 @@
 <template>
-    <v-card rounded="md" class="m-10 text-center w-11/12 mx-auto" color="grey-darken-1
+    <div class="content">
+        <div class="flex">
+            <div class="bg-zinc-800 w-1.5 h-12 m-2 my-auto"></div>
+            <p class="text-xl p-2">Get latest offers by subscribing to our newsletter</p>
+        </div>
+        <v-card rounded="md" class="m-10 pa-2 text-center w-11/12 md:w-1/3 mx-auto" color="grey-darken-1
 
-" dark>
-        <h2 class="text-3xl font-semibold p-2">Newsletter</h2>
-        <p class="text-xl p-2">Subscribe</p>
-        <form @submit.prevent="subscribe">
-            <v-sheet color="transparent" class="mx-auto text-center p-2">
-                <v-text-field label="Email" type="email" variant="outlined" v-model="email" required></v-text-field>
-                <v-btn type="submit" outline min-height="50" block class="mx-auto text-left">Subscribe</v-btn>
-            </v-sheet>
-        </form>
-    </v-card>
+" :dark='true'>
+            <h2 class="text-3xl font-semibold p-2">Newsletter</h2>
+            <p class="text-xl p-2">Subscribe</p>
+            <form @submit.prevent="subscribe">
+                <v-sheet color="transparent" class="mx-auto text-center p-2">
+                    <v-text-field label="Email" type="email" variant="outlined" v-model="email" required></v-text-field>
+                    <v-btn type="submit" outline min-height="50" block class="mx-auto text-left">Subscribe</v-btn>
+                </v-sheet>
+            </form>
+        </v-card>
+
+    </div>
 </template>
 <script>
 import Swal from 'sweetalert2'

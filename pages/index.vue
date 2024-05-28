@@ -13,6 +13,12 @@
             <Newsletter />
         </v-container>
         <Footer />
+        <div class="flex w-screen h-32 " style=" 
+        background-attachment: fixed;
+        background-position-x: center;
+        background-image: url('/stripes.svg'); 
+        background-repeat: no-repeat;
+        background-size: cover"></div>
     </div>
 </template>
 <script>
@@ -27,9 +33,6 @@ export default {
 
     },
     mounted() {
-        if (!localStorage.getItem("scheme")) {
-            localStorage.setItem("scheme", "customDarkTheme")
-        }
+        if (!localStorage.getItem(" scheme")) { localStorage.setItem("scheme", "customDarkTheme") }
     },
-}
-</script>
+} </script>

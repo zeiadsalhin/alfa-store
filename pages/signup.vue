@@ -126,42 +126,44 @@ watch(user, () => {
 }, { immediate: true })
 </script>
 <template>
-    <div>
+    <div class="back">
         <!--Form Body-->
         <!--will only render when no user exist-->
         <div v-if="dataview"
-            class="p-1 md:p-10 1my-5 mt-20 flex-col justify-center mx-auto h-fit w-11/12 rounded-md shadow-inner">
+            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'"
+            class="p-1 md:p-10 mt-20 flex-col justify-center mx-auto h-fit w-10/12 rounded-md shadow-inner">
             <v-img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-900'"
                 class="p-2 mx-auto" width="350" alt="logo"></v-img>
 
             <h1 class="text-3xl md:text-5xl text-center font-bold p-2">Sign Up</h1>
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-9010"></div>
 
-            <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full md:w-1/2"
+            <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full md:w-2/3"
                 @submit.prevent="signUpNewUser">
-                <!--Display error message if any-->
-                <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
-                <div class="form mt-3 flex justify-center">
-                    <label class=" text-lg md:text-xl text-right p-3">Name</label>
-                    <input id="name" type="name" v-model="displayname" spellcheck="false"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500 h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
-                        @focus="isFocused1 = true" @blur="isFocused1 = false" required />
+                <div class="userdata fleax flex-arow w-full md:grid grid-cols-2  gap-1">
+                    <!--Display error message if any-->
+                    <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
+                    <div class="form mt-3 flex justify-center">
+                        <label class=" text-lg md:text-xl text-right p-3">Name</label>
+                        <input id="name" type="name" v-model="displayname" spellcheck="false"
+                            :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
+                            class=" ring-zinc-500 h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
+                            @focus="isFocused1 = true" @blur="isFocused1 = false" required />
+                    </div>
+                    <!--Error Message-->
+                    <p id="errorn" class="hidden text-sm text-red-700">Please Check your Name</p>
+
+                    <div class="form mt-3 flex justify-center">
+                        <label class="  text-lg md:text-xl  p-3">Email</label>
+                        <input id="email" v-model="email" spellcheck="false"
+                            :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
+                            class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
+                            type="email" @focus="isFocused2 = true" @blur="isFocused2 = false" required />
+
+                    </div>
+                    <!--Error Message email-->
+                    <p id="errore" class="hidden text-sm text-red-700">Please Check your Email</p>
                 </div>
-                <!--Error Message-->
-                <p id="errorn" class="hidden text-sm text-red-700">Please Check your Name</p>
-
-                <div class="form mt-3 flex justify-center">
-                    <label class="  text-lg md:text-xl  p-3">Email</label>
-                    <input id="email" v-model="email" spellcheck="false"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
-                        type="email" @focus="isFocused2 = true" @blur="isFocused2 = false" required />
-
-                </div>
-                <!--Error Message email-->
-                <p id="errore" class="hidden text-sm text-red-700">Please Check your Email</p>
-
                 <div class="form mt-3 flex justify-cente">
                     <label class="  text-lg md:text-xl p-3">Phone</label>
                     <input id="phone" v-model="phone" spellcheck="false"
@@ -171,7 +173,7 @@ watch(user, () => {
                 </div>
 
                 <div class="form mt-3 mb-5 flex justify-center">
-                    <label class=" text-lg md:text-xl text-center p-3">Password</label>
+                    <label class=" text-lg md:text-xl text-center p-2">Password</label>
                     <div class="flex ring-zinc-500  w-full  rounded-md "
                         :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
                         <input id="password" v-model="password"
@@ -182,13 +184,15 @@ watch(user, () => {
                             {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                     </div>
                 </div>
+
                 <!--Error Message password-->
                 <p id="errorp" class="hidden text-sm text-red-700">Please Check your Password</p>
-                <span class="tick-list block text-sm opacity-70 p-2 -mt-2 mb-5 space-y-1">
+                <span class="tick-list block text-sm p-2 -mt-2 mb-5 space-y-1">
                     <div class="passwordchecker w-10/12 mx-auto">
                         <v-progress-linear v-if="password" :model-value="passwordStrength"
                             :color="passwordStrengthColor" height="5"></v-progress-linear>
                     </div>
+
                     <ul>Ex: Min 6 Characters and Must Include</ul>
                     <li :class="capital ? 'text-green-500' : 'text-red-600'"><v-icon size="20">{{ capital ?
                         'mdi-check' : 'mdi-close' }}</v-icon>Capital letter
@@ -205,7 +209,7 @@ watch(user, () => {
                 </span>
                 <!--Submit button-->
                 <button id="submitbtn" @click="" type="submit"
-                    :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white hover:bg-zinc-700' : 'bg-zinc-500 hover:bg-zinc-700 text-white hover:text-gray-50'"
+                    :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white hover:bg-zinc-700' : 'bg-zinc-500 hover:bg-zinc-700 text-white hover:text-gray-50'"
                     class="px-5 py-2 w-32 rounded-md hover:cursor-pointer">
                     <v-progress-circular v-if="authenticating" width="2" size="20" color="darken-blue-4" class="m-1"
                         indeterminate></v-progress-circular>Sign Up
@@ -217,7 +221,7 @@ watch(user, () => {
                     <!--navigate to login page-->
                     <p class="mr-10 my-auto text-center">Already have an account?</p>
                     <NuxtLink to="/login" onclick=""
-                        :class="theme.global.current.value.dark ? 'bg-gray-800 text-white hover:bg-gray-600' : 'bg-zinc-900 hover:bg-zinc-800 text-white hover:text-gray-50'"
+                        :class="theme.global.current.value.dark ? 'bg-zinc-600 text-white hover:bg-gray-600' : 'bg-zinc-900 hover:bg-zinc-800 text-white hover:text-gray-50'"
                         class="text-center mx-auto flex w-fit h-fit justify-center m-3 px-6 py-2 rounded-md hover:cursor-pointer">
                         login</NuxtLink>
                 </div>
@@ -233,5 +237,13 @@ watch(user, () => {
 <style>
 .tick-list {
     list-style-type: none;
+}
+
+.back {
+    background-attachment: fixed;
+    background-position-x: center;
+    background-image: url('/stripes.svg');
+    background-repeat: no-repeat;
+    background-size: cover
 }
 </style>

@@ -11,13 +11,14 @@
                                 <h2 class="text-md-h4 text-h5">
                                     {{ item.name }}
                                 </h2>
-                                <div v-if="item.discount_price" class="discounted price flex ">
+                                <div v-if="item.discount_price" class="discounted price">
                                     <p
                                         class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
                                         {{ ((item.price)).toFixed() + ' $'
                                         }}
                                     </p>
-                                    <p class="mr-4 mt-2">-% {{ ((item.discount_price / item.price) * 100).toFixed() }}
+                                    <p class="mr-4 mt-2 inline-block">-% {{ ((item.discount_price / item.price) *
+                                        100).toFixed() }}
                                         off
                                     </p>
                                 </div>

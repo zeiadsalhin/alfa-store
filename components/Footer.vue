@@ -1,6 +1,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
+const date = new Date().getFullYear()
 </script>
 <template>
     <div class="custom-card transition ease-in-out duration-300 w-full h-32 -mb-12"
@@ -41,6 +42,9 @@ const theme = useTheme();
             </div>
         </div>
         <br />
+        <br />
+        <div class="h-0.5 w-1/3 mx-auto bg-zinc-800 rounded-full mt-5 mb-5"></div>
+        <p class="opacity-80">©{{ date }} - Alfa Stores</p>
     </v-card>
 
 </template>
@@ -60,7 +64,7 @@ export default {
                 { icon: "", name: "Products", link: "/products" },
                 { icon: "", name: "News", link: "#" },
                 { icon: "", name: "Offers", link: "#" },
-                { icon: "", name: "Contact Us", link: "#" },
+                { icon: "", name: "Contact Us", link: "/Contact-us" },
             ],
         };
     },
