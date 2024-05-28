@@ -19,14 +19,14 @@ async function handleuser() {
     }
     if (!data.session) {
         console.log('User Must be exist');
-        // return navigateTo('/login')
+        alert('no user found')
+        return navigateTo('/login')
 
     } else {
         // console.log('User is already logged in:');
     }
 }
 
-//get user info
 
 // show password
 function toggleVisibility() {
