@@ -3,6 +3,7 @@ import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
 const theme = useTheme();
 const route = useRoute()
+const router = useRouter()
 const password = ref('')
 const passwordconfirm = ref('')
 const showPassword = ref(false)
@@ -12,19 +13,34 @@ onBeforeMount(() => {
     handleuser()
 })
 async function handleuser() {
+    const queryString = route.fullPath.split('?')[1];
+    const queryParams = new URLSearchParams(queryString);
+    let params = '';
+    for (const [key, value] of queryParams) {
+        params += `${key}=${value}&`;
+    }
+    params = params.slice(0, -1); // Remove the trailing '&'
+
+    console.log(params);
     const supabase = useSupabaseClient()
     const { data, error } = await supabase.auth.getSession();
+    const { data2, error2 } = await supabase.auth.exchangeCodeForSession(params)
+
     if (error) {
         console.error('Error fetching session:', error.message);
         return;
     }
     if (!data.session) {
         console.log('User Must be exist');
-        // alert('no user found')
-        // return navigateTo('/login')
+        alert('no user found')
+        return navigateTo('/login')
 
     } else {
         // console.log('User is already logged in:');
+    }
+    if (error2) {
+        console.error('Error fetching session:', error2.message);
+        return;
     }
 }
 
@@ -37,8 +53,9 @@ function toggleVisibility() {
 // Update Password
 async function resetpassword() {// password reset for user
     const supabase = useSupabaseClient()
-    const token = route.query.token;
-    console.log(token);
+    // const token = route.query.token;
+    // console.log(token);
+
     try {
         if (password.value == passwordconfirm.value) {
             const { data, error } = await supabase.auth.updateUser({// update user info
