@@ -1,21 +1,21 @@
 <script setup>
-onMounted(() => {
-    handleMagicLinkLogin()
-})
-async function handleMagicLinkLogin() {
-    const supabase = useSupabaseClient()
-    const { data, error } = await supabase.auth.getSession();
-    if (error) {
-        console.error('Error fetching session:', error.message);
-        return;
-    }
-    if (!data.session) {
-        console.log('no user found');
+// onMounted(() => {
+//     // handleuser()
+// })
+// async function handleuser() {
+//     const supabase = useSupabaseClient()
+//     const { data, error } = await supabase.auth.getSession();
+//     if (error) {
+//         console.error('Error fetching session:', error.message);
+//         return;
+//     }
+//     if (!data.session) {
+//         console.log('no user found');
 
-    } else {
-        console.log('User is already logged in:');
-    }
-}
+//     } else {
+//         console.log('User is already logged in:');
+//     }
+// }
 </script>
 <template>
     <div>

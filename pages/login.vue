@@ -122,6 +122,10 @@ watch(user, () => {
                         indeterminate></v-progress-circular>
                     Log in
                 </button>
+                <NuxtLink to="requestPasswordReset"><button
+                        class="px-5 m-5 py-2 opacity-70 w-fit hover:cursor-pointer mx-auto block hover:underline">
+                        Forget Password?
+                    </button></NuxtLink>
                 <!--Return to Sign Up page-->
                 <NuxtLink to="/signup"><button
                         class="px-5 m-5 py-2 w-fit hover:cursor-pointer mx-auto block hover:underline">
