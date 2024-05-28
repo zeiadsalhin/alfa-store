@@ -2,6 +2,7 @@
 import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
 const theme = useTheme();
+const route = useRoute()
 const password = ref('')
 const passwordconfirm = ref('')
 const showPassword = ref(false)
@@ -19,8 +20,8 @@ async function handleuser() {
     }
     if (!data.session) {
         console.log('User Must be exist');
-        alert('no user found')
-        return navigateTo('/login')
+        // alert('no user found')
+        // return navigateTo('/login')
 
     } else {
         // console.log('User is already logged in:');
@@ -36,9 +37,11 @@ function toggleVisibility() {
 // Update Password
 async function resetpassword() {// password reset for user
     const supabase = useSupabaseClient()
+    const token = route.query.token;
+    console.log(token);
     try {
         if (password.value == passwordconfirm.value) {
-            const { data, error } = await supabase.auth.updateUser({// update user info
+            const { data, error } = await supabase.auth.updateUser(token, {// update user info
                 password: password.value
             })
             if (error) {
