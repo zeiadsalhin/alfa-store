@@ -1,6 +1,6 @@
 <script setup>
 const props = defineProps({
-    options: String,
+    options: Array,
     required: true
 });
 const emit = defineEmits(['option-selected']);

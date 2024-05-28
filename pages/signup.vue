@@ -146,7 +146,7 @@ watch(user, () => {
                     <div class="form mt-3 flex justify-center">
                         <label class=" text-lg md:text-xl text-right p-3">Name</label>
                         <input id="name" type="name" v-model="displayname" spellcheck="false"
-                            :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
+                            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
                             class=" ring-zinc-500 h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                             @focus="isFocused1 = true" @blur="isFocused1 = false" required />
                     </div>
@@ -156,7 +156,7 @@ watch(user, () => {
                     <div class="form mt-3 flex justify-center">
                         <label class="  text-lg md:text-xl  p-3">Email</label>
                         <input id="email" v-model="email" spellcheck="false"
-                            :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
+                            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
                             class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                             type="email" @focus="isFocused2 = true" @blur="isFocused2 = false" required />
 
@@ -167,7 +167,7 @@ watch(user, () => {
                 <div class="form mt-3 flex justify-cente">
                     <label class="  text-lg md:text-xl p-3">Phone</label>
                     <input id="phone" v-model="phone" spellcheck="false"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused3 ? 'ring-2' : 'ring-1'"
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused3 ? 'ring-2' : 'ring-1'"
                         class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
                         type="number" min="7" @focus="isFocused3 = true" @blur="isFocused3 = false" required />
                 </div>
@@ -175,7 +175,7 @@ watch(user, () => {
                 <div class="form mt-3 mb-5 flex justify-center">
                     <label class=" text-lg md:text-xl text-center p-2">Password</label>
                     <div class="flex ring-zinc-500  w-full  rounded-md "
-                        :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
                         <input id="password" v-model="password"
                             class="focus:outline-none rounded-md h-fit my-auto p-2 md:p-3 w-full"
                             :type="showPassword ? 'text' : 'password'" @input="validatePassword()" minlength="6"

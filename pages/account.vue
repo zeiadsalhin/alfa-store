@@ -1,4 +1,6 @@
 <script setup>
+import { useTheme } from 'vuetify'
+const theme = useTheme();
 import Swal from 'sweetalert2'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -49,11 +51,13 @@ async function LogOut() {
 </script>
 <template>
     <div>
-        <div v-if="dataview" class="mt-20 md:w-1/2 bg-zinc-900 p-10 text-center mx-auto text-white">
+        <div v-if="dataview" class="mt-20 md:w-1/2  p-10 text-center mx-auto"
+            :class="theme.global.current.value.dark ? 'text-white bg-zinc-900' : 'text-zinc-800 bg-zinc-100'">
             <p class="font-semibold text-3xl">Welcome, {{ name }}</p>
             <div class="icon p-5"><v-icon size="100">mdi-account</v-icon></div>
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>
-
+            <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
+            <h1 class="text-2xl p-2">Account Details:</h1>
             <div class="w-full p-2 space-x-10">
                 <label for="id" class="text-xl">Phone:</label>
                 <label class="text-lg">{{ phone }}</label>
@@ -66,8 +70,8 @@ async function LogOut() {
                 <label for="auth" class="text-xl">Account:</label>
                 <label class="text-lg">{{ auth }}</label>
             </div>
-
-
+            <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
+            <ResetPassword />
         </div>
     </div>
 </template>
