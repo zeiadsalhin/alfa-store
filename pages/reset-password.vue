@@ -19,14 +19,14 @@ async function handleuser() {
     }
     if (!data.session) {
         console.log('User Must be exist');
-        return navigateTo('/login')
+        // return navigateTo('/login')
 
     } else {
         // console.log('User is already logged in:');
     }
 }
 
-
+//get user info
 
 // show password
 function toggleVisibility() {
@@ -73,8 +73,8 @@ async function resetpassword() {// password reset for user
 }
 </script>
 <template>
-    <div class="py-5">
-        <h1 class="text-2xl font-semibold">Reset password:</h1>
+    <div class="my-auto md:w-1/2 mx-auto">
+        <h1 class="text-2xl font-bold p-5">Reset password:</h1>
         <form @submit.prevent="resetpassword" class="p-5">
             <div class="password grid md:grid-cols-2">
                 <div class="1 p-2">
@@ -114,7 +114,8 @@ async function resetpassword() {// password reset for user
 
             </div>
             <p v-if="errMsg" class=" text-md text-red-700">{{ errMsg }}</p>
-            <v-btn type="submit" class="ma-5 flex w-1/3 justify-center" min-height="40" color="primary">Reset</v-btn>
+            <v-btn type="submit" class="ma-5 flex w-1/3 justify-center" min-height="40"
+                color="grey-darken-2">Reset</v-btn>
         </form>
     </div>
 </template>
