@@ -41,7 +41,7 @@ async function resetpassword() {// password reset for user
     console.log(token);
     try {
         if (password.value == passwordconfirm.value) {
-            const { data, error } = await supabase.auth.updateUser(token, {// update user info
+            const { data, error } = await supabase.auth.updateUser({// update user info
                 password: password.value
             })
             if (error) {
