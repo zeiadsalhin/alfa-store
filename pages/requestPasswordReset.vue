@@ -9,7 +9,7 @@ async function resetpassword() { // reset password by email link included token
     const supabase = useSupabaseClient()
     try {
         const { data, error } = await supabase.auth.resetPasswordForEmail(email.value, {
-            redirectTo: 'https://alfastorecommerce.netlify.app/reset-password',
+            // redirectTo: 'https://alfastorecommerce.netlify.app/reset-password',
         })
         console.log("link sent")
         succMsg.value = 'Link sent Successfully, please check your email' // display user message for success

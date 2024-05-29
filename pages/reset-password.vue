@@ -13,35 +13,37 @@ onBeforeMount(() => {
     handleuser()
 })
 async function handleuser() {
-    const queryString = route.fullPath.split('?')[1];
-    const queryParams = new URLSearchParams(queryString);
-    let params = '';
-    for (const [key, value] of queryParams) {
-        params += `${key}=${value}&`;
-    }
-    params = params.slice(0, -1); // Remove the trailing '&'
+    // const queryString = route.fullPath.split('?')[1];
+    // const queryParams = new URLSearchParams(queryString);
+    // let params = '';
+    // for (const [key, value] of queryParams) {
+    //     params += `${key}=${value}&`;
+    // }
+    // params = params.slice(0, -1); // Remove the trailing '&'
 
-    console.log(params);
+    // console.log(params);
     const supabase = useSupabaseClient()
-    const { data, error } = await supabase.auth.getSession();
-    const { data2, error2 } = await supabase.auth.exchangeCodeForSession(params)
 
-    if (error) {
-        console.error('Error fetching session:', error.message);
-        return;
-    }
-    if (!data.session) {
-        console.log('User Must be exist');
-        alert('no user found')
-        return navigateTo('/login')
+    const { data: { user } } = await supabase.auth.getUser()
+    // const { data2, error2 } = await supabase.auth.exchangeCodeForSession(params)
+
+    // if (error) {
+    //     console.error('Error fetching session:', error.message);
+    //     return;
+    // }
+    if (user) {
+        console.log(user);
+        // console.log('User is already logged in:');
 
     } else {
-        // console.log('User is already logged in:');
+        console.log('User Must be exist');
+        // alert('no user found')
+        return navigateTo('/login')
     }
-    if (error2) {
-        console.error('Error fetching session:', error2.message);
-        return;
-    }
+    // if (error2) {
+    //     console.error('Error fetching session:', error2.message);
+    //     return;
+    // }
 }
 
 
@@ -53,6 +55,7 @@ function toggleVisibility() {
 // Update Password
 async function resetpassword() {// password reset for user
     const supabase = useSupabaseClient()
+    const user = useSupabaseUser()
     // const token = route.query.token;
     // console.log(token);
 
