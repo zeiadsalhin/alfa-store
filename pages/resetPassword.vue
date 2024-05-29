@@ -8,23 +8,34 @@ const password = ref('')
 const passwordconfirm = ref('')
 const showPassword = ref(false)
 const errMsg = ref()
-const token = route.query.token
+// const token = route.query.token
 
 onBeforeMount(() => {
     handleuser()
-    console.log(token);
+    // console.log(token);
 })
 async function handleuser() {
     const supabase = useSupabaseClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) {
-        console.log(user);
+    const { token_hash, type } = Object.fromEntries(new URLSearchParams(window.location.search))
+    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash, type })
 
+    // const { data: { user } } = await supabase.auth.getUser()
+    if (token_hash) {
+        console.log(token_hash);
     } else {
-        console.log('token Must be exist');
+        console.log('token hash Must be exist');
         // alert('no user found')
         // return navigateTo('/login')
+    }
+    if (session) {
+        console.log('Session Started:', session);
+    } else {
+        console.log('no session started');
+    }
+    if (error) {
+        console.log(error);
+        throw error;
     }
 }
 
