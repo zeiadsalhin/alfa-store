@@ -8,25 +8,23 @@ const password = ref('')
 const passwordconfirm = ref('')
 const showPassword = ref(false)
 const errMsg = ref()
-// const token = route.query.token
 
 onBeforeMount(() => {
     handleuser()
-    // console.log(token);
 })
+
 async function handleuser() {
     const supabase = useSupabaseClient()
+    const type = 'email'
+    const token_hash = route.query.token
 
-    const { token_hash, type } = Object.fromEntries(new URLSearchParams(window.location.search))
     const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash, type })
 
-    // const { data: { user } } = await supabase.auth.getUser()
     if (token_hash) {
         console.log(token_hash);
     } else {
         console.log('token hash Must be exist');
-        // alert('no user found')
-        // return navigateTo('/login')
+        return navigateTo('/login')
     }
     if (session) {
         console.log('Session Started:', session);
@@ -35,6 +33,7 @@ async function handleuser() {
     }
     if (error) {
         console.log(error);
+        errMsg.value = error.message;
         throw error;
     }
 }
@@ -51,7 +50,7 @@ async function resetpassword() {// password reset for user
 
     try {
         if (password.value == passwordconfirm.value) {
-            const { data, error } = await supabase.auth.updateUser(token, {// update user info
+            const { data, error } = await supabase.auth.updateUser({// update user info
                 password: password.value
             })
             if (error) {
