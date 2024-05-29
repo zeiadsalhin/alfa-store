@@ -2,91 +2,70 @@
 import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
 const theme = useTheme();
-const route = useRoute()
+// const route = useRoute()
 const router = useRouter()
 const password = ref('')
 const passwordconfirm = ref('')
 const showPassword = ref(false)
 const errMsg = ref()
+const supabase = useSupabaseClient()
+// onBeforeMount(() => {
+//     handleuser()
+// })
 
-onBeforeMount(() => {
-    handleuser()
-})
-async function handleuser() {
-    // const queryString = route.fullPath.split('?')[1];
-    // const queryParams = new URLSearchParams(queryString);
-    // let params = '';
-    // for (const [key, value] of queryParams) {
-    //     params += `${key}=${value}&`;
-    // }
-    // params = params.slice(0, -1); // Remove the trailing '&'
+//import Auth client
+// import { createClient } from '@supabase/supabase-js'
 
-    // console.log(params);
-    const supabase = useSupabaseClient()
+// const router = useRouter()
+// const client = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_KEY)
+// refs for inputs
+// const pass1 = ref()
+// const pass2 = ref()
+// const errMsg = ref()
+const succMsg = ref()
+const dataview = ref()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    // const { data2, error2 } = await supabase.auth.exchangeCodeForSession(params)
+// definePageMeta({
+//     middleware: ["notauth"]// will not be loaded when there is no Authentication
+// })
 
-    // if (error) {
-    //     console.error('Error fetching session:', error.message);
-    //     return;
-    // }
-    if (user) {
-        console.log(user);
-        // console.log('User is already logged in:');
-
-    } else {
-        console.log('User Must be exist');
-        // alert('no user found')
-        return navigateTo('/login')
+// get user info from cookies to render form if exist
+onMounted(async () => {
+    try {
+        const { data, error } = await supabase.auth.getSession(); // get session info
+        if (data.session) {
+            dataview.value = true // render form when Token received
+        } else {
+            // router.push("/login")
+        }
+    } catch (error) {
+        console.log(error);
     }
-    // if (error2) {
-    //     console.error('Error fetching session:', error2.message);
-    //     return;
-    // }
-}
 
-
+});
 // show password
 function toggleVisibility() {
     showPassword.value = !showPassword.value;
 }
 
-// Update Password
 async function resetpassword() {// password reset for user
-    const supabase = useSupabaseClient()
-    const user = useSupabaseUser()
-    // const token = route.query.token;
-    // console.log(token);
-
     try {
         if (password.value == passwordconfirm.value) {
             const { data, error } = await supabase.auth.updateUser({// update user info
                 password: password.value
             })
-            if (error) {
-                console.log(error);
-                errMsg.value = error.msg// display error if passwords not match
-                throw error
-            } else {
-                errMsg.value = ''
-                // display success message
-                console.log("updated")
+            // display success message and redirect to login page
+            console.log("updated")
+            errMsg.value = ''
+            succMsg.value = 'Password updated successfully'
 
-                Swal.fire({
-                    title: 'Success',
-                    icon: 'success',
-                    text: 'Password updated successfully',
-                    toast: true,
-                    timer: 2000,
-                    showConfirmButton: false,
-                }).then(() => {
-                    password.value = ''
-                    passwordconfirm.value = ''
-                })
-            }
+            setTimeout(() => {
+                router.push("/login")
+            }, 1000);
+
+
         } else {
-            errMsg.value = 'Password does not match'
+            errMsg.value = 'Password not match'// display error if passwords not match
         }
 
     } catch (error) {
@@ -94,6 +73,30 @@ async function resetpassword() {// password reset for user
         errMsg.value = error // display error message from API
     }
 }
+
+//Regex password
+// function checkpassword() {
+//     const input = document.querySelector("#pass1")
+//     const b = document.querySelector("#submitbtn")
+//     const e = document.querySelector("#errorp")
+
+//     if (input.value.length < 6) {// min 6 and max 30
+//         input.classList.add("border-red-500")
+//         e.classList.remove("hidden")
+//     } else {
+//         if (input.value.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[#$@!%&*?])[A-Za-z\d#$@!%&*?]{6,30}$/)) { // Regex validation
+//             input.classList.remove("border-red-500")
+//             input.classList.add("border-green-500")
+//             e.classList.add("hidden")
+//             b.removeAttribute("disabled", "true")// prevent submit
+//         } else {
+//             input.classList.add("border-red-500")
+//             e.classList.remove("hidden")
+//             b.setAttribute("disabled", "true")// allow submit
+//         }
+
+//     }
+// }
 </script>
 <template>
     <div class="my-auto md:w-1/2 mx-auto">
