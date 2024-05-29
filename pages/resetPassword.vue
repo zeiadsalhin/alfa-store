@@ -23,16 +23,16 @@ async function handleuser() {
     if (token_hash) {
         console.log(token_hash);
     } else {
-        console.log('token hash Must be exist');
+        // console.log('token hash Must be exist');
         return navigateTo('/login')
     }
     if (session) {
-        console.log('Session Started:', session);
+        // console.log('Session Started:', session);
     } else {
-        console.log('no session started');
+        // console.log('no session started');
     }
     if (error) {
-        console.log(error);
+        // console.log(error);
         errMsg.value = error.message;
         throw error;
     }
@@ -72,6 +72,7 @@ async function resetpassword() {// password reset for user
                 }).then(() => {
                     password.value = ''
                     passwordconfirm.value = ''
+                    navigateTo('/account')
                 })
             }
         } else {
