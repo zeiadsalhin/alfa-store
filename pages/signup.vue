@@ -132,8 +132,8 @@ watch(user, () => {
         <div v-if="dataview"
             :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'"
             class="p-1 md:p-10 mt-20 flex-col justify-center mx-auto h-fit w-10/12 rounded-md shadow-inner">
-            <v-img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-900'"
-                class="p-2 mx-auto" width="350" alt="logo"></v-img>
+            <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-700'"
+                class="p-5 mx-auto mb-5" width="350" alt="logo"></v-img>
 
             <h1 class="text-3xl md:text-5xl text-center font-bold p-2">Sign Up</h1>
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-9010"></div>

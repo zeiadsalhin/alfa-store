@@ -24,10 +24,10 @@ onNuxtReady(() => {
     <div>
         <v-app-bar color="gray" :elevation="2" app>
             <nuxt-link to="/">
-                <v-toolbar-title class="p-4">
+                <v-toolbar-title class="md:p-4">
                     <!-- <h1 class="font-bold text-xl">Alfa Store</h1> -->
-                    <img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-'"
-                        class="md:p-2" width="250" alt="logo">
+                    <img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-'" class="md:p-"
+                        width="150" alt="logo">
                 </v-toolbar-title>
             </nuxt-link>
             <v-spacer />

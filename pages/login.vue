@@ -70,7 +70,7 @@ watch(user, () => {
         <!--will only render when no user exist-->
         <div v-if="dataview"
             class="p-1 md:p-5 md:my-20 mt-32 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
-            <v-img src="/logoc.png" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-900'"
+            <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-800'"
                 class="p-2 mx-auto" width="350" alt="logo"></v-img>
             <!--Confirmation-->
             <p v-if="emailconfirm"

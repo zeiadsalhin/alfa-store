@@ -1,5 +1,6 @@
 <script setup>
 import { useTheme } from 'vuetify'
+import ContactUs from '~/pages/Contact-us.vue';
 const theme = useTheme();
 const date = new Date().getFullYear()
 </script>
@@ -10,7 +11,7 @@ const date = new Date().getFullYear()
     <v-card :tile="true" :flat="true" class="pa-md-10 pa-5 text-center" color="surface">
         <div class="main md:flex flex-row justify-around p-5">
             <div class="1 p-5">
-                <v-img src="/logoc.png" class="p-5 mx-auto" width="250" alt="logo"></v-img>
+                <v-img src="/icon.ico" class="p-5 mx-auto" width="250" alt="logo"></v-img>
             </div>
             <div class="2 p-5 flex flex-col">
                 <p class="text-lg text-left font-weight-bold mt-5 mb-2">Shop</p>
@@ -42,9 +43,10 @@ const date = new Date().getFullYear()
             </div>
         </div>
         <br />
-        <br />
-        <div class="h-0.5 w-1/3 mx-auto bg-zinc-800 rounded-full mt-5 mb-5"></div>
-        <p class="opacity-80">©{{ date }} - Alfa Stores</p>
+        <!-- <br /> -->
+        <ContactUs />
+        <!-- <div class="h-0.5 w-1/3 mx-auto bg-zinc-800 rounded-full mt-5 mb-5"></div> -->
+        <p class="opacity-80 mt-5">©{{ date }} - Alfa Stores</p>
     </v-card>
 
 </template>

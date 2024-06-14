@@ -6,7 +6,7 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       title: 'Alfa Store',
-      link: [{ rel: 'icon', type: 'image/x-icon', href: "/icon.ico" }],
+      link: [{ rel: 'icon', type: 'image/x-icon', href: "/mainicon.ico" }],
   meta: [
     { hid: 'description', name: 'description', content: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services' }
   ],
