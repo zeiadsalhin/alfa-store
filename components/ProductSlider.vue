@@ -1,7 +1,7 @@
 <template>
-    <v-slide-group show-arrows v-if="products">
+    <v-slide-group show-arrows1 center-active class="-pa-4" v-if="products">
         <v-slide-group-item v-for="(p, i) in products" :key="i">
-            <v-card :to="`/products/${p.id}`" color="surface" width="300" class="m-5">
+            <v-card :to="`/products/${p.id}`" color="surface" width="250" class="m-5">
                 <v-img height="200" :src="p.image" cover>
                     <template #placeholder>
                         <v-row class="fill-height" justify="center" align="center">
@@ -11,9 +11,9 @@
                 </v-img>
                 <v-card-title class="text-md-body-1 font-weight-bold">{{
                     p.name
-                    }}</v-card-title>
-                <v-card-subtitle class="primary--text pb-3">
-                    ${{ p.price }}
+                }}</v-card-title>
+                <v-card-subtitle class="primary--text p-3 text-lg-body-1">
+                    ${{ p.discount_price ? p.discount_price : p.price }}
                 </v-card-subtitle>
                 <v-card-text>
                     <v-chip x-small label outlined class="mr-1" v-for="(t, i) in p.tags" :key="`prod${p.id}-${i}`">

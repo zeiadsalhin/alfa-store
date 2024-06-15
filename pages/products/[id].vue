@@ -54,10 +54,11 @@ onMounted(async () => {
                         <h2 class="text-center text-h4 font-weight-bold">
                             {{ product.name }}
                         </h2>
-                        <div class="mt-2 text-center">
+                        <div class="mt-2 md:flex justify-center text-center">
                             <v-rating readonly half-increments class="p-5" color="yellow darken-2"
-                                background-color="grey lighten-1" :value="product.ratings" dense size="20"></v-rating>
-                            <v-chip small label outlined class="mr-1" v-for="(t, i) in product.tags"
+                                background-color="grey lighten-1" :model-value="reviews" dense size="20"></v-rating>
+                            <p class="my-auto md:mr-5">{{ reviews ? reviews : 0 }} out of 5</p>
+                            <v-chip small label outlined class="mr-1 mt-5" v-for="(t, i) in product.tags"
                                 :key="`prod${product.id}-${i}`">
                                 {{ t }}
                             </v-chip>
@@ -133,13 +134,36 @@ export default {
     data() {
         return {
             product: null,
+            reviews: null,
         };
     },
     mounted() {
         this.fetchProducts();
+        this.getreviews();
     },
     methods: {
+        async getreviews() {
+            const supabase = useSupabaseClient()
+            const productId = parseInt(this.$route.params.id);
+            try {
+                const { data, error } = await supabase
+                    .from('Reviews')
+                    .select('rating')
+                    .eq('post_id', `${productId}`)
 
+                // get average reviews
+                const sum = data.reduce((acc, review) => acc + review.rating, 0);
+                const average = sum / data.length;
+                this.reviews = average;
+                // console.log('Average Rating:', average);
+                if (error) {
+                    console.log(error.message);
+                }
+
+            } catch (error) {
+                console.error('Error fetching rating:', error.message);
+            }
+        },
         async fetchProducts() {
             const supabase = useSupabaseClient()
             const user = useSupabaseUser()
@@ -157,6 +181,7 @@ export default {
             } catch (error) {
                 console.error('Error fetching products:', error.message);
             }
+
         },
         DeleteProductBegin() {
             Swal.fire({

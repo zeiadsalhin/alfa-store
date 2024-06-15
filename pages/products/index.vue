@@ -58,7 +58,7 @@
                                 <v-card-title class="text-md-body-1 font-weight-bold">{{
                                     p.name
                                     }}</v-card-title>
-                                <v-card-subtitle class="primary--text pb-3">
+                                <v-card-subtitle class="primary--text pb-3 text-lg-body-1">
                                     ${{ p.price }}
                                 </v-card-subtitle>
                                 <v-card-text>
