@@ -1,13 +1,17 @@
 <script setup>
 import Swal from 'sweetalert2'
+import { useTheme } from 'vuetify'
+const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const tags = ['electronics', 'smart watches', 'headphones', 'chargers']
 const product = ref({
     name: '',
     price: null,
     description: '',
-    stock: true,
-    image: null
+    stock: null,
+    image: null,
+    selectedTag: [],
 });
 // Add product
 async function handleImageUpload(event) {
@@ -70,6 +74,7 @@ async function InsertProduct() {
                         price: product.value.price,
                         description: product.value.description,
                         image: publicUrl,
+                        tags: product.value.selectedTag,
                         stock: product.value.stock
                     });
 
@@ -98,6 +103,8 @@ async function InsertProduct() {
                     product.value.price = null;
                     product.value.description = '';
                     product.value.image = null;
+                    product.value.selectedTag = [];
+                    product.value.stock = null;
                     document.querySelector("#image").value = ''
                 }
             }
@@ -118,24 +125,41 @@ async function InsertProduct() {
 </script>
 <template>
     <div>
-        <form @submit.prevent="InsertProduct">
+        <form @submit.prevent="InsertProduct" class="w-fit">
             <div class="w-full flex space-x-5">
-                <label for="name" class="text-xl">Name:</label>
-                <input class="bg-zinc-600 px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name"
-                    required>
+                <label for="name" class="text-xl">Name<span class="required text-red-600">*</span>:</label>
+                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name" required>
             </div>
             <div class="w-full flex space-x-7">
-                <label for="price" class="text-xl">Price:</label>
-                <input class="bg-zinc-600 px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="price"
-                    v-model="product.price" required>
+                <label for="price" class="text-xl">Price<span class="required text-red-600">*</span>:</label>
+                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="price" v-model="product.price"
+                    required>
             </div>
-            <div class="w-full py-2">
-                <label for="price" class="text-xl">Description:</label>
-                <textarea rows="3" cols="3" class="bg-zinc-600 p-1 text-md m-2 rounded-sm w-full" type="text" id="price"
-                    v-model="product.description" required></textarea>
+            <div class="w-full flex py-2">
+                <label for="price" class="text-xl">Description<span class="required text-red-600">*</span>:</label>
+                <textarea rows="3" cols="3"
+                    :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                    class="p-1 text-md m-2 rounded-sm w-full" type="text" id="price" v-model="product.description"
+                    required></textarea>
             </div>
-            <div class="w-fit space-x-7 p-2">
-                <input class="text-current  " type="file" id="image" accept="image/*" @change="handleImageUpload" />
+            <div class="w-fit flex space-x-7 p-2">
+                <label for="productImage" class="text-xl">Image<span class="required text-red-600">*</span>:</label>
+                <input class="text-current w-48" type="file" id="image" accept="image/*" @change="handleImageUpload" />
+            </div>
+            <div class="flex w-fit space-x-7 p-2">
+                <label for="category" class="text-xl my-auto">Category<span
+                        class="required text-red-600">*</span>:</label>
+                <v-select v-model="product.selectedTag" :items="tags" hint="Choose product category"
+                    label="Select product tags" multiple persistent-hint :required="true"></v-select>
+            </div>
+            <div class="flex w-fit space-x-7 p-2">
+                <label for="stock" class="text-xl my-auto">Stock<span class="required text-red-600">*</span>:</label>
+                <v-radio-group v-model="product.stock" column>
+                    <v-radio color="red" label="Out of Stock" value="FALSE"></v-radio>
+                    <v-radio color="green" label="In Stock" value="TRUE"></v-radio>
+                </v-radio-group>
             </div>
             <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto" color="black">Add</v-btn>
         </form>

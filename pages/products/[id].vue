@@ -85,12 +85,18 @@ onMounted(async () => {
                         <Colors :options="product.options" @option-selected="handleOptionSelected" />
                         <br />
                         <div class="button flex flex-col md:flex-row">
-                            <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
-                                <v-icon size="30" class="m-1 w-full">mdi-cart</v-icon>Add To Cart</v-btn>
-                            <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45" min-width="120"
-                                class="m-2" color="grey-lighten-1"><v-icon size="30"
-                                    class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
-                                Now</v-btn>
+                            <div v-if="product.stock">
+                                <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
+                                    <v-icon size="30" class="m-1 w-full">mdi-cart</v-icon>Add To Cart</v-btn>
+                                <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45"
+                                    min-width="120" class="m-2" color="grey-lighten-1"><v-icon size="30"
+                                        class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
+                                    Now</v-btn>
+                            </div>
+                            <div v-else>
+                                <v-btn :readonly="true" min-height="45" min-width="150" class="m-2" color="">
+                                    <v-icon size="30" class="m-1 w-full">mdi-cancel</v-icon>Out of stock</v-btn>
+                            </div>
                             <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="150" class="m-2"
                                 color="red-darken-4">Delete
                                 product</v-btn>
@@ -146,7 +152,7 @@ export default {
                     .eq('id', `${productId}`)
 
                 this.product = data[0]
-                // console.log(this.product.name)
+                // console.log(this.product.stock)
 
             } catch (error) {
                 console.error('Error fetching products:', error.message);

@@ -9,21 +9,21 @@ const theme = useTheme();
         <form class="space-y-2" @submit.prevent="submitReview">
 
             <div class="name flex space-x-5 p-2 md:w-1/2 mx-auto">
-                <label for="name">Name:</label>
+                <label for="name">Name<span class="required text-red-600">*</span>:</label>
                 <input type="text" id="name"
                     :class="theme.global.current.value.dark ? 'bg-zinc-950' : 'bg-zinc-200 text-black'"
-                    class="w-full p-2 bg-zinc-700 rounded-sm outline-none" v-model="review.name" readonly required>
+                    class="w-full p-2 bg-zinc-7a00 rounded-sm outline-none" v-model="review.name" readonly required>
             </div>
 
             <div class="review flex space-x-2 p-2 md:w-1/2 mx-auto">
-                <label for="text">Review:</label>
+                <label for="text">Review<span class="required text-red-600">*</span>:</label>
                 <textarea cols="10" rows="5" id="text"
                     :class="theme.global.current.value.dark ? 'bg-zinc-700' : 'bg-zinc-200'"
-                    class="w-full p-2 bg-zinc-700 rounded-sm" v-model="review.text" required></textarea>
+                    class="w-full p-2 bg-zinc-7a00 rounded-sm" v-model="review.text" required></textarea>
             </div>
 
             <div class="rating flex p-2 md:w-1/2 mx-auto">
-                <label for="rating" class="my-auto">Rating:</label>
+                <label for="rating" class="my-auto">Rating<span class="required text-red-600">*</span>:</label>
                 <!-- <input type="number" id="rating"  min="1" max="5" required> -->
                 <v-rating class="mx-auto flex justify-center p-2 rounded-sm bg-zinc-950 w-48" color="yellow"
                     density="compact" v-model="review.rating"></v-rating>
