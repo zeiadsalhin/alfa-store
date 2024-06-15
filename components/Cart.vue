@@ -86,7 +86,13 @@ fetchCartItems()
 // console.log(cartItems.value);
 
 // Calculate the total price of all items in the cart
-const totalPrice = computed(() => mainStore.totalPrice);
+const totalPrice = computed(() => {
+    let total = 0;
+    cartItems.value.forEach(item => {
+        total += item.product_price * item.quantity; // Adjust according to your cart item structure
+    });
+    return total;
+});
 
 const removeFromCart = (index) => {
     mainStore.removeFromCart(index);
