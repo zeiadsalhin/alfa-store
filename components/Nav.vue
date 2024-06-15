@@ -2,7 +2,8 @@
 import { useMainStore } from '@/store';
 import { useTheme } from 'vuetify'
 const mainStore = useMainStore();
-const cartItems = computed(() => mainStore.items);
+const cartItems = ref([]);
+
 const theme = useTheme();
 const Mode = ref(theme.global.name.value);
 
@@ -19,6 +20,55 @@ onNuxtReady(() => {
         theme.global.name.value = Mode.value = val;
     }
 });
+
+// get cart badge
+onMounted(() => {
+    const supabase = useSupabaseClient();
+    fetchCartItems(); // Fetch initial cart items
+
+    // Watch for changes in users_cart table
+    const channels = supabase.channel('custom-all-channel')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'users_cart' },
+            () => {
+                fetchCartItems();
+            }
+        )
+        .subscribe()
+
+    // Clean up subscription when component is unmounted
+    watch(() => cartItems.value, () => {
+        return () => {
+            channels.unsubscribe();
+        };
+    });
+});
+
+async function fetchCartItems() {
+    const supabase = useSupabaseClient();
+    const { data, error } = await supabase.auth.getSession();
+    const id = data.session.user.id
+    if (data) {
+        try {
+            const { data, error } = await supabase
+                .from('users_cart')
+                .select('cart_items')
+                .eq('uid', id);
+
+            if (error) {
+                console.error('Error fetching cart items:', error.message);
+                return;
+            }
+
+            if (data && data.length > 0) {
+                cartItems.value = data[0].cart_items;
+            }
+        } catch (error) {
+            console.error('Error fetching cart items:', error.message);
+        }
+    }
+}
 </script>
 <template>
     <div>
