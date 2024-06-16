@@ -115,6 +115,41 @@ async function signUpNewUser() { // Registration new user
         authenticating.value = false
     }
 }
+// sign in google
+const signInGoogle = async () => {
+    authenticating.value = true
+    const supabase = useSupabaseClient()
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google'
+        })
+
+        if (error) {
+            throw error
+        }
+        // authenticating.value = false
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// sign in github
+const signInGithub = async () => {
+    authenticating.value = true
+    const supabase = useSupabaseClient()
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github'
+        })
+
+        if (error) {
+            throw error
+        }
+        // authenticating.value = false
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 watch(user, () => {
     if (user.value) {
@@ -138,6 +173,20 @@ watch(user, () => {
             <h1 class="text-3xl md:text-5xl text-center font-bold p-2">Sign Up</h1>
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-9010"></div>
 
+            <!--login with google-->
+            <div class="md:flex flex-row justify-center text-center mx-auto mt-5 p-3">
+                <v-btn @click="signInGoogle" min-height="45" min-width="150" class="m-2" color="blue-darken-3">
+                    <v-icon size="30" class="m-1 w-full">mdi-google</v-icon>Login With Google</v-btn>
+                <v-btn @click="signInGithub" min-height="45" min-width="150" class="m-2" color="gry">
+                    <v-icon size="30" class="m-1 w-full">mdi-github</v-icon>Login With Github</v-btn>
+            </div>
+
+            <!--Separator-->
+            <div class="flex justify-center mx-auto w-11/12 md:w-1/3 p-3">
+                <div class="w-1/2 h-1 my-auto rounded-xl mx-auto bg-zinc-900 opacity-80"></div>
+                <p class="text-center my-auto text-xl font-semibold w-16">Or</p>
+                <div class="w-1/2 h-1 my-auto rounded-xl mx-auto bg-zinc-900 opacity-80"></div>
+            </div>
             <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full md:w-2/3"
                 @submit.prevent="signUpNewUser">
                 <div class="userdata fleax flex-arow w-full md:grid grid-cols-2  gap-1">

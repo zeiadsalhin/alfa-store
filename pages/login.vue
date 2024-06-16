@@ -86,7 +86,7 @@ const signInGithub = async () => {
         if (error) {
             throw error
         }
-        authenticating.value = false
+        // authenticating.value = false
     } catch (error) {
         console.log(error);
     }
