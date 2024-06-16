@@ -50,27 +50,36 @@ export const useMainStore = defineStore('main', {
     },
 
     async removeFromCart(index) {
-      if (index >= 0) {
-        // Create a new array to ensure reactivity
+      // Check if the index is within the valid range
+      if (index >= 0 && index < this.items.length) {
+        // Create a copy of the items array to ensure reactivity
         const updatedItems = [...this.items];
+    
+        // Decrement the quantity of the item at the specified index
         updatedItems[index] = {
           ...updatedItems[index],
           quantity: updatedItems[index].quantity - 1,
         };
-
-        if (updatedItems[index].quantity === 0) {
+    
+        // Check if the quantity of the item has reached zero or less
+        if (updatedItems[index].quantity <= 0) {
+          // Remove the item from the array if quantity is zero or less (edge case)
           updatedItems.splice(index, 1);
         }
-
+    
+        // Update the items in the cart
         this.items = updatedItems;
-
-        // Save to Supabase
+    
+        // Save the updated cart to Supabase
         await this.saveCartToSupabase();
+    
       } else {
         console.error('Invalid index or item does not exist:', index);
         // Handle error or edge case as needed
       }
     },
+    
+    
 
     async clearCart() {
       this.items = []; // Clear local cart items
@@ -106,6 +115,7 @@ export const useMainStore = defineStore('main', {
         selectedOption: item.selectedOption,
         discountedPrice: item.discountedPrice, // Include discounted price
       }));
+console.log('CART ITEMS:', cartItems);
 
       try {
         const { data, error } = await supabase
@@ -124,6 +134,41 @@ export const useMainStore = defineStore('main', {
         }
       } catch (error) {
         console.error('Error saving cart items:', error.message);
+        // Handle error as needed
+      }
+    },
+
+    async fetchCartFromSupabase() {
+      const supabase = useSupabaseClient();
+      const user = useSupabaseUser();
+      const { data, error } = await supabase.auth.getSession();
+      const supabaseUserId = data.session.user.id;
+      if (!user) {
+        console.error('User not authenticated.');
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+        .from('users_cart')
+        .select('cart_items')
+        .eq('uid', supabaseUserId);
+
+        if (error) {
+          console.error('Error fetching cart items:', error.message);
+          // Handle error as needed
+          return;
+        }
+
+        if (data && data.length > 0 && data[0].cart_items) {
+          // Update local items with fetched cart items
+          this.items = data[0].cart_items;
+        } else {
+          // No cart items found for the user
+          this.items = [];
+        }
+      } catch (error) {
+        console.error('Error fetching cart items:', error.message);
         // Handle error as needed
       }
     },

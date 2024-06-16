@@ -43,6 +43,7 @@ function toggleVisibility() {
     showPassword.value = !showPassword.value;
 }
 
+// sign in email
 const signIn = async () => {
     authenticating.value = true
     const { error } = await supabase.auth.signInWithPassword({
@@ -54,6 +55,11 @@ const signIn = async () => {
     errMsg.value = error
     authenticating.value = false
 }
+
+// sign in google
+
+
+// sign in github
 
 watch(user, () => {
     if (user.value) {
@@ -80,9 +86,23 @@ watch(user, () => {
                 email:
             <p class="underline inline-block">{{ emailconfirm
                 }}</p>, Please confirm it before signing in.</p>
-            <h1 class="text-3xl md:text-5xl text-center font-bold p-5">Log in</h1>
+            <h1 class="text-3xl mb-5 md:text-5xl text-center font-bold p-5">Log in</h1>
 
-            <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div>
+            <!-- <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div> -->
+            <!--login with google-->
+            <div class="md:flex flex-row justify-center text-center mx-auto p-3">
+                <v-btn @click="" min-height="45" min-width="150" class="m-2" color="blue-darken-3">
+                    <v-icon size="30" class="m-1 w-full">mdi-google</v-icon>Login With Google</v-btn>
+                <v-btn @click="" min-height="45" min-width="150" class="m-2" color="gry">
+                    <v-icon size="30" class="m-1 w-full">mdi-github</v-icon>Login With Github</v-btn>
+            </div>
+
+            <!--Separator-->
+            <div class="flex justify-center mx-auto w-11/12 md:w-1/3 p-3">
+                <div class="w-1/2 h-1 my-auto rounded-xl mx-auto bg-zinc-900 opacity-80"></div>
+                <p class="text-center my-auto text-xl font-semibold w-16">Or</p>
+                <div class="w-1/2 h-1 my-auto rounded-xl mx-auto bg-zinc-900 opacity-80"></div>
+            </div>
             <form id="form" class="space-y-5 p-5 w-11/12 md:w-1/3 h-fit text-center mx-auto justify-center flex-col"
                 @submit.prevent="signIn">
                 <!--input fields-->
@@ -126,6 +146,7 @@ watch(user, () => {
                         class="px-5 m-5 py-2 opacity-70 w-fit hover:cursor-pointer mx-auto block hover:underline">
                         Forget Password?
                     </button></NuxtLink>
+
                 <!--Return to Sign Up page-->
                 <NuxtLink to="/signup"><button
                         class="px-5 m-5 py-2 w-fit hover:cursor-pointer mx-auto block hover:underline">

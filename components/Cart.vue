@@ -3,7 +3,7 @@
         <h1 class="text-center text-3xl font-semibold">Cart</h1>
         <ul class=" space-y-5">
 
-            <li v-for="(item, index) in cartItems" :key="index" class="flex my-auto mx-auto space-x-1">
+            <li v-for="(item, index) in items" :key="index" class="flex my-auto mx-auto space-x-1">
 
                 <div class="image w-44 max-h-36 p-2"><v-img width="100%" class="el rounded-lg" height="100%"
                         :src="item.product_image" cover></v-img>
@@ -21,11 +21,11 @@
                 </div>
             </li>
             <div class="h-1 rounded-md w-full bg-slate-950"></div>
-            <div v-if="cartItems.length != 0" class="total px-4 text-xl">Total Price: ${{
+            <div v-if="items.length != 0" class="total px-4 text-xl">Total Price: ${{
                 totalPrice.toLocaleString('en-US') }}</div>
         </ul>
-        <div v-if="cartItems.length != 0" class="md:1flex mx-auto text-xl text-center md:1space-x-5 "><v-btn
-                variant="tonal" color="red-lighten-1" @click="clearCart"
+        <div v-if="items.length != 0" class="md:1flex mx-auto text-xl text-center md:1space-x-5 "><v-btn variant="tonal"
+                color="red-lighten-1" @click="clearCart"
                 class="w-11/12 text-white my-2 p-2.5 rounded-md"><v-progress-circular v-if="clearing" size="25"
                     class="mx-3" color="dark-blue" indeterminate></v-progress-circular>Clear
                 Cart</v-btn>
@@ -40,7 +40,7 @@
             </v-btn>
         </div>
 
-        <div v-if="cartItems.length != 0" class="payments space-y-5">
+        <div v-if="items.length != 0" class="payments space-y-5">
             <p>We accept:</p>
             <v-img src="/payments.webp"></v-img>
         </div>
@@ -54,7 +54,13 @@ const mainStore = useMainStore();
 const cartItems = ref([]);
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
-
+const items = computed(() => mainStore.items);
+onMounted(async () => {
+    await mainStore.fetchCartFromSupabase();
+});
+// onMounted(() => {
+//     // fetchCartItems();
+// })
 const fetchCartItems = async () => {
     const { data, error } = await supabase.auth.getSession();
     if (user) {
@@ -82,23 +88,25 @@ const fetchCartItems = async () => {
         console.error('User not authenticated.'); // Handle case where user is not authenticated
     }
 };
-fetchCartItems()
-// console.log(cartItems);
+
+console.log('cart page items:', items.value);
 
 // Calculate the total price of all items in the cart
 const totalPrice = computed(() => {
     let total = 0;
-    cartItems.value.forEach(item => {
+    items.value.forEach(item => {
         total += item.product_price * item.quantity; // Adjust according to your cart item structure
     });
     return total;
 });
 
-const removeFromCart = (index) => {
-    mainStore.removeFromCart(index);
-    setTimeout(() => {
-        fetchCartItems()
-    }, 1000);
+const removeFromCart = async (index) => {
+    // console.log(index);
+
+    await mainStore.removeFromCart(index);
+    // setTimeout(() => {
+    //     fetchCartItems()
+    // }, 1000);
 };
 
 const clearing = ref(false)
@@ -107,7 +115,7 @@ const clearCart = () => {
     clearing.value = true
     mainStore.clearCart();
     setTimeout(() => {
-        fetchCartItems()
+        // fetchCartItems()
     }, 1000);
 };
 </script>
