@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const dataview = ref()
+const avatar = ref()
 const displayname = ref()
 const phone = ref()
 const email = ref()
@@ -19,6 +20,7 @@ onMounted(async () => {
             // console.log('this user is admin')
         } else {
             dataview.value = true
+            avatar.value = data.session.user.identities[0].identity_data.avatar
             displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
             phone.value = data.session.user.identities[0].identity_data.phone// Display registered id
             email.value = data.session.user.identities[0].email // Display registered email
@@ -57,7 +59,9 @@ async function LogOut() {
         <div v-if="dataview" class="mt-20 md:w-1/2  p-10 text-center mx-auto"
             :class="theme.global.current.value.dark ? 'text-white bg-zinc-900' : 'text-zinc-800 bg-zinc-100'">
             <p class="font-semibold text-3xl">Welcome, {{ displayname }}</p>
-            <div class="icon p-5"><v-icon size="100">mdi-account</v-icon></div>
+            <div class="icon p-5"><v-img v-if="avatar" :src="avatar" width="150" class="mx-auto"></v-img>
+                <v-icon v-else size="100">mdi-account</v-icon>
+            </div>
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>
             <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
