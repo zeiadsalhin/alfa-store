@@ -95,7 +95,7 @@ const signInGithub = async () => {
 watch(user, () => {
     if (user.value) {
         // Redirect to protected page
-        return navigateTo('/')
+        return navigateTo('/admin')
     } else {
         dataview.value = true
     }
