@@ -57,9 +57,40 @@ const signIn = async () => {
 }
 
 // sign in google
+const signInGoogle = async () => {
+    authenticating.value = true
+    const supabase = useSupabaseClient()
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google'
+        })
 
+        if (error) {
+            throw error
+        }
+        // authenticating.value = false
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 // sign in github
+const signInGithub = async () => {
+    authenticating.value = true
+    const supabase = useSupabaseClient()
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'github'
+        })
+
+        if (error) {
+            throw error
+        }
+        authenticating.value = false
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 watch(user, () => {
     if (user.value) {
@@ -91,9 +122,9 @@ watch(user, () => {
             <!-- <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-gray-600 dark:bg-gray-900"></div> -->
             <!--login with google-->
             <div class="md:flex flex-row justify-center text-center mx-auto p-3">
-                <v-btn @click="" min-height="45" min-width="150" class="m-2" color="blue-darken-3">
+                <v-btn @click="signInGoogle" min-height="45" min-width="150" class="m-2" color="blue-darken-3">
                     <v-icon size="30" class="m-1 w-full">mdi-google</v-icon>Login With Google</v-btn>
-                <v-btn @click="" min-height="45" min-width="150" class="m-2" color="gry">
+                <v-btn @click="signInGithub" min-height="45" min-width="150" class="m-2" color="gry">
                     <v-icon size="30" class="m-1 w-full">mdi-github</v-icon>Login With Github</v-btn>
             </div>
 

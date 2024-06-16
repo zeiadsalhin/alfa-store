@@ -20,7 +20,6 @@ export const useMainStore = defineStore('main', {
       const existingItemIndex = this.items.findIndex(item => item.product.id === product.id && item.selectedOption === selectedOption);
 
       if (existingItemIndex !== -1) {
-        // Create a new array to ensure reactivity
         const updatedItems = [...this.items];
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
@@ -28,10 +27,9 @@ export const useMainStore = defineStore('main', {
         };
         this.items = updatedItems;
       } else {
-        // Create a new array to ensure reactivity
         this.items = [
           ...this.items,
-          { product, selectedOption, quantity: 1, discountedPrice: this.discountedPrice } // Include discounted price
+          { product, selectedOption, quantity: 1, discountedPrice: this.discountedPrice }
         ];
       }
 
@@ -45,46 +43,32 @@ export const useMainStore = defineStore('main', {
         timerProgressBar: true,
       });
 
-      // Save to Supabase
       await this.saveCartToSupabase();
     },
 
     async removeFromCart(index) {
-      // Check if the index is within the valid range
       if (index >= 0 && index < this.items.length) {
-        // Create a copy of the items array to ensure reactivity
         const updatedItems = [...this.items];
-    
-        // Decrement the quantity of the item at the specified index
         updatedItems[index] = {
           ...updatedItems[index],
           quantity: updatedItems[index].quantity - 1,
         };
-    
-        // Check if the quantity of the item has reached zero or less
+
         if (updatedItems[index].quantity <= 0) {
-          // Remove the item from the array if quantity is zero or less (edge case)
           updatedItems.splice(index, 1);
         }
-    
-        // Update the items in the cart
+
         this.items = updatedItems;
-    
-        // Save the updated cart to Supabase
+
         await this.saveCartToSupabase();
-    
       } else {
         console.error('Invalid index or item does not exist:', index);
         // Handle error or edge case as needed
       }
     },
-    
-    
 
     async clearCart() {
-      this.items = []; // Clear local cart items
-
-      // Clear cart items in Supabase
+      this.items = [];
       await this.saveCartToSupabase();
     },
 
@@ -107,15 +91,17 @@ export const useMainStore = defineStore('main', {
       const supabaseUserId = data.session.user.id;
 
       const cartItems = this.items.map(item => ({
-        product_id: item.product.id,
-        product_name: item.product.name,
-        product_image: item.product.image,
-        product_price: item.product.price,
+        product: { // Include the entire product object
+          id: item.product.id,
+          name: item.product.name,
+          image: item.product.image,
+          price: item.product.price,
+        },
         quantity: item.quantity,
         selectedOption: item.selectedOption,
-        discountedPrice: item.discountedPrice, // Include discounted price
+        discountedPrice: item.discountedPrice,
+        
       }));
-console.log('CART ITEMS:', cartItems);
 
       try {
         const { data, error } = await supabase
@@ -127,14 +113,11 @@ console.log('CART ITEMS:', cartItems);
 
         if (error) {
           console.error('Error saving cart items:', error.message);
-          // Handle error as needed
         } else {
-          // console.log('Cart items saved successfully:', data);
           // Optionally handle success message or clear cart locally
         }
       } catch (error) {
         console.error('Error saving cart items:', error.message);
-        // Handle error as needed
       }
     },
 
@@ -147,29 +130,25 @@ console.log('CART ITEMS:', cartItems);
         console.error('User not authenticated.');
         return;
       }
-
       try {
         const { data, error } = await supabase
-        .from('users_cart')
-        .select('cart_items')
-        .eq('uid', supabaseUserId);
+          .from('users_cart')
+          .select('cart_items')
+          .eq('uid', supabaseUserId);
 
         if (error) {
           console.error('Error fetching cart items:', error.message);
-          // Handle error as needed
           return;
         }
 
         if (data && data.length > 0 && data[0].cart_items) {
-          // Update local items with fetched cart items
           this.items = data[0].cart_items;
+          
         } else {
-          // No cart items found for the user
           this.items = [];
         }
       } catch (error) {
         console.error('Error fetching cart items:', error.message);
-        // Handle error as needed
       }
     },
 
