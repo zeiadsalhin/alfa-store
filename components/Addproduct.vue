@@ -8,6 +8,7 @@ const tags = ['electronics', 'smart watches', 'headphones', 'chargers']
 const product = ref({
     name: '',
     price: null,
+    discount_price: null,
     description: '',
     stock: null,
     image: null,
@@ -75,7 +76,8 @@ async function InsertProduct() {
                         description: product.value.description,
                         image: publicUrl,
                         tags: product.value.selectedTag,
-                        stock: product.value.stock
+                        stock: product.value.stock,
+                        discount_price: product.value.discount_price
                     });
 
                 if (insertError) {
@@ -101,6 +103,7 @@ async function InsertProduct() {
                     // Reset the form after successful addition
                     product.value.name = '';
                     product.value.price = null;
+                    product.value.discount_price = null;
                     product.value.description = '';
                     product.value.image = null;
                     product.value.selectedTag = [];
@@ -136,6 +139,12 @@ async function InsertProduct() {
                 <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
                     class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="price" v-model="product.price"
                     required>
+            </div>
+            <div class="w-full flex space-x-7">
+                <label for="price" class="text-xl">Price Discount:</label>
+                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="discount_price"
+                    v-model="product.discount_price">
             </div>
             <div class="w-full flex py-2">
                 <label for="price" class="text-xl">Description<span class="required text-red-600">*</span>:</label>

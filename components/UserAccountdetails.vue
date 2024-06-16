@@ -8,6 +8,7 @@ const dataview = ref()
 const name = ref()
 const phone = ref()
 const email = ref()
+const signin = ref()
 const auth = ref()
 onMounted(async () => {
     try {
@@ -21,6 +22,7 @@ onMounted(async () => {
             name.value = data.session.user.identities[0].identity_data.first_name // Display registered username
             phone.value = data.session.user.identities[0].identity_data.phone// Display registered id
             email.value = data.session.user.identities[0].email // Display registered email
+            signin.value = data.session.user.identities[0].last_sign_in_at // last login
             auth.value = data.session.user.role // Display account status
             // console.log('this user is regular')
         }
@@ -56,6 +58,7 @@ async function LogOut() {
             <p class="font-semibold text-3xl">Welcome, {{ name }}</p>
             <div class="icon p-5"><v-icon size="100">mdi-account</v-icon></div>
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>
+            <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <h1 class="text-2xl p-2">Account Details:</h1>
             <div class="w-full p-2 space-x-10">

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+
 export const useMainStore = defineStore('main', {
   state: () => ({
     items: [],
@@ -17,10 +18,21 @@ export const useMainStore = defineStore('main', {
   actions: {
     async addToCart(product, selectedOption) {
       const existingItemIndex = this.items.findIndex(item => item.product.id === product.id && item.selectedOption === selectedOption);
+
       if (existingItemIndex !== -1) {
-        this.items[existingItemIndex].quantity++;
+        // Create a new array to ensure reactivity
+        const updatedItems = [...this.items];
+        updatedItems[existingItemIndex] = {
+          ...updatedItems[existingItemIndex],
+          quantity: updatedItems[existingItemIndex].quantity + 1,
+        };
+        this.items = updatedItems;
       } else {
-        this.items.push({ product, selectedOption, quantity: 1 });
+        // Create a new array to ensure reactivity
+        this.items = [
+          ...this.items,
+          { product, selectedOption, quantity: 1, discountedPrice: this.discountedPrice } // Include discounted price
+        ];
       }
 
       // Show success message
@@ -38,12 +50,19 @@ export const useMainStore = defineStore('main', {
     },
 
     async removeFromCart(index) {
-      if (index >= 0 && index < this.items.length) {
-        this.items[index].quantity--;
+      if (index >= 0) {
+        // Create a new array to ensure reactivity
+        const updatedItems = [...this.items];
+        updatedItems[index] = {
+          ...updatedItems[index],
+          quantity: updatedItems[index].quantity - 1,
+        };
 
-        if (this.items[index].quantity === 0) {
-          this.items.splice(index, 1);
+        if (updatedItems[index].quantity === 0) {
+          updatedItems.splice(index, 1);
         }
+
+        this.items = updatedItems;
 
         // Save to Supabase
         await this.saveCartToSupabase();
@@ -85,6 +104,7 @@ export const useMainStore = defineStore('main', {
         product_price: item.product.price,
         quantity: item.quantity,
         selectedOption: item.selectedOption,
+        discountedPrice: item.discountedPrice, // Include discounted price
       }));
 
       try {

@@ -83,7 +83,7 @@ const fetchCartItems = async () => {
     }
 };
 fetchCartItems()
-// console.log(cartItems.value);
+// console.log(cartItems);
 
 // Calculate the total price of all items in the cart
 const totalPrice = computed(() => {

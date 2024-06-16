@@ -242,7 +242,6 @@ watch(user, () => {
 .back {
     background-attachment: fixed;
     background-position-x: center;
-    background-image: url('/stripes.svg');
     background-repeat: no-repeat;
     background-size: cover
 }

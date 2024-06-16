@@ -20,7 +20,7 @@ onMounted(async () => {
             signin.value = data.session.user.last_sign_in_at
             console.log('this user is admin')
         } else {
-            navigateTo("/account")
+            navigateTo("/user/account")
             console.log('this user is regular')
         }
     } catch (error) {
@@ -60,29 +60,12 @@ async function LogOut() {
                     <v-list-item link to="/admin/orders">Orders</v-list-item>
                     <v-list-item link to="/admin/products">Products</v-list-item>
                 </v-navigation-drawer>
-                <v-bottom-navigation v-else permanent>
-                    <v-btn to="/">
-                        <v-icon>mdi-home</v-icon>
-                        Home
-                    </v-btn>
-                    <v-btn to="/admin/orders">
-                        <v-icon>mdi-cart</v-icon>
-                        Orders
-                    </v-btn>
-                    <v-btn to="/admin/products">
-                        <v-icon>mdi-truck</v-icon>
-                        Products
-                    </v-btn>
-                    <v-btn to="/admin/products">
-                        <v-icon>mdi-account</v-icon>
-                        Account
-                    </v-btn>
-                </v-bottom-navigation>
+
                 <v-main style="min-height: 300px;">
                     <div class="mt-20 p-5 w-fit m-5      ">
                         <div class="icon flex justify-center p-5"><v-icon size="50">mdi-shield-account</v-icon></div>
                         <p class="font-semibold md:text-3xl text-2xl">Welcome, {{ name }}</p>
-                        <!-- <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p> -->
+                        <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
                         <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5 mx-auto"
                             color="grey-darken-3">Logout</v-btn>
                     </div>

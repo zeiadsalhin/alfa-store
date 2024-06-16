@@ -49,6 +49,7 @@ onMounted(async () => {
     <div>
         <div v-if="product">
             <v-container class="mt-20">
+                <Breadcrumbs />
                 <v-row justify="center">
                     <v-col cols="11" md="7">
                         <h2 class="text-center text-h4 font-weight-bold">

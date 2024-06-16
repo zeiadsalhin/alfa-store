@@ -46,29 +46,47 @@ onMounted(() => {
 });
 
 async function fetchCartItems() {
-    const supabase = useSupabaseClient();
-    const { data, error } = await supabase.auth.getSession();
-    const id = data.session.user.id
-    if (data) {
-        try {
-            const { data, error } = await supabase
-                .from('users_cart')
-                .select('cart_items')
-                .eq('uid', id);
+    try {
+        const supabase = useSupabaseClient()
+        const { data, error } = await supabase.auth.getSession()
 
-            if (error) {
-                console.error('Error fetching cart items:', error.message);
-                return;
-            }
-
-            if (data && data.length > 0) {
-                cartItems.value = data[0].cart_items;
-            }
-        } catch (error) {
-            console.error('Error fetching cart items:', error.message);
+        if (error) {
+            console.error('Error fetching session:', error.message)
+            return
         }
+        if (!data) {
+            cartItems.value = []
+            return
+        }
+        const id = data.session.user.id
+
+        const { data: cartData, error: cartError } = await supabase
+            .from('users_cart')
+            .select('cart_items')
+            .eq('uid', id)
+
+        if (cartError) {
+            console.error('Error fetching cart items:', cartError.message)
+            cartItems.value = []
+            return
+        }
+        // Update cartItems.value with fetched cart items or empty array if no data
+        cartItems.value = cartData && cartData.length > 0 ? cartData[0].cart_items : []
+    } catch (error) {
+        console.error('Error fetching cart items:', error.message)
+        cartItems.value = [] // Clear cart items in case of any error
     }
 }
+
+// handle log in and log out
+const user = useSupabaseUser()
+watch(user, () => {
+    if (user.value) {
+        fetchCartItems();
+    } else {
+        fetchCartItems();
+    }
+}, { immediate: true })
 </script>
 <template>
     <div>
