@@ -20,7 +20,7 @@ onMounted(async () => {
             // console.log('this user is admin')
         } else {
             dataview.value = true
-            avatar.value = data.session.user.identities[0].identity_data.avatar
+            avatar.value = data.session.user.identities[0].identity_data.avatar_url
             displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
             phone.value = data.session.user.identities[0].identity_data.phone// Display registered id
             email.value = data.session.user.identities[0].email // Display registered email
