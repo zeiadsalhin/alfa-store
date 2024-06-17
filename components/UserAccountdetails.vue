@@ -14,7 +14,7 @@ const auth = ref()
 onMounted(async () => {
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
-        console.log(data.session.user);
+        // console.log(data.session.user);
         if (data.session.user.user_metadata.role == 'admin') {  // Only access to regular users
             navigateTo("/admin")
             // console.log('this user is admin')
@@ -80,6 +80,7 @@ async function LogOut() {
             </div>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <ResetPassword />
+            <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <UserAccountAddresses />
         </div>
     </div>
