@@ -59,7 +59,7 @@ async function LogOut() {
         <div v-if="dataview" class="mt-20 md:w-1/2  p-10 text-center mx-auto"
             :class="theme.global.current.value.dark ? 'text-white bg-zinc-900' : 'text-zinc-800 bg-zinc-100'">
             <p class="font-semibold text-3xl">Welcome, {{ displayname }}</p>
-            <div class="icon p-5"><v-img v-if="avatar" :src="avatar" width="120" class="mx-auto"></v-img>
+            <div class="icon p-5"><v-img v-if="avatar" :src="avatar" width="120" class="mx-auto rounded-full"></v-img>
                 <v-icon v-else size="100">mdi-account</v-icon>
             </div>
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>

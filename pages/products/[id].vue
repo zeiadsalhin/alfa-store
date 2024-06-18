@@ -51,7 +51,7 @@ onMounted(async () => {
             <v-container class="mt-20">
                 <Breadcrumbs />
                 <v-row justify="center">
-                    <v-col cols="11" md="7">
+                    <v-col cols="11" md="11">
                         <h2 class="text-center text-h4 font-weight-bold">
                             {{ product.name }}
                         </h2>
@@ -65,10 +65,21 @@ onMounted(async () => {
                             </v-chip>
                         </div>
                         <br />
-                        <!-- <v-carousel-item v-for="(img, i) in product.image" :key="i" :src="img.image"
-                            cover></v-carousel-item> -->
-                        <v-img width="100%" class="el rounded-lg" height="50vh"
-                            :src="JSON.parse(product.image)[0]"></v-img>
+                        <div class="md:w-9/12 mx-auto">
+                            <v-carousel height="60vh" cycle :hide-delimiters="false" delimiter-icon="mdi-square"
+                                hide-delimiter-background show-arrows="hover">
+                                <template v-slot:prev="{ props }">
+                                    <v-btn color="grey-darken-4" variant="elevated"
+                                        @click="props.onClick"><v-icon>mdi-chevron-left</v-icon></v-btn>
+                                </template>
+                                <template v-slot:next="{ props }">
+                                    <v-btn color="grey-darken-4" variant="elevated"
+                                        @click="props.onClick"><v-icon>mdi-chevron-right</v-icon></v-btn>
+                                </template>
+                                <v-carousel-item v-for="(img, i) in JSON.parse(product.image)" :key="i" :src="img"
+                                    cover></v-carousel-item>
+                            </v-carousel>
+                        </div>
                         <p class="mt-5 mb-5">
                             {{ product.description }}
                         </p>
@@ -125,8 +136,14 @@ onMounted(async () => {
                         {{ product.created_at.slice(11, 16) }}
                     </p>
                 </div>
+                <div class="images w-full mx-auto">
+                    <h1 class="p-5 text-2xl font-bold">Images:</h1>
+                    <v-img v-for="(img, i) in JSON.parse(product.image)" :key="i" width="90%" class="el mx-auto m-5"
+                        height="100%" :src="img"></v-img>
+                </div>
+                <div class="h-0.5 w-1/2 mx-auto bg-zinc-600 rounded-full mt-32"></div>
                 <Review />
-                <div class="h-1 w-full bg-zinc-800 rounded-full mt-5"></div>
+                <!-- <div class="h-1 w-full bg-zinc-800 rounded-full mt-5"></div> -->
                 <AllReviews />
             </v-container>
             <br /><br />
@@ -141,6 +158,17 @@ onMounted(async () => {
         </div>
     </div>
 </template>
+<style>
+/* <-- remove scoped here if you have it*/
+/* .v-carousel__controls { */
+/* background: gray; */
+/* opacity: 1; */
+/* } */
+
+.v-carousel__controls__item {
+    color: #09090b
+}
+</style>
 
 <script>
 export default {

@@ -3,7 +3,7 @@ import { useMainStore } from '@/store';
 import { useTheme } from 'vuetify'
 const mainStore = useMainStore();
 const cartItems = ref([]);
-
+const avatar = ref();
 const theme = useTheme();
 const Mode = ref(theme.global.name.value);
 
@@ -25,7 +25,7 @@ onNuxtReady(() => {
 onMounted(() => {
     const supabase = useSupabaseClient();
     fetchCartItems(); // Fetch initial cart items
-
+    getavatar();
     // Watch for changes in users_cart table
     const channels = supabase.channel('custom-all-channel')
         .on(
@@ -78,13 +78,34 @@ async function fetchCartItems() {
     }
 }
 
+// get user avatar
+async function getavatar() {
+    const supabase = useSupabaseClient()
+    try {
+        const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
+        if (data.session.user) {
+            avatar.value = data.session.user.identities[0].identity_data.avatar_url
+            // displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
+
+        } else {
+            avatar.value = null
+            // console.log('this user is regular')
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 // handle log in and log out
 const user = useSupabaseUser()
 watch(user, () => {
     if (user.value) {
         fetchCartItems();
+        getavatar();
     } else {
         fetchCartItems();
+        getavatar();
     }
 }, { immediate: true })
 </script>
@@ -105,7 +126,9 @@ watch(user, () => {
             </nuxt-link> -->
             <nuxt-link to="/admin">
                 <v-btn class="mr-md-2" icon>
-                    <v-icon size="20">mdi-account-outline</v-icon></v-btn>
+                    <v-avatar v-if="avatar" size="25"><v-img :src="avatar"></v-img></v-avatar>
+                    <v-icon v-else size="20">mdi-account-outline</v-icon>
+                </v-btn>
             </nuxt-link>
             <nuxt-link to="/products"><v-btn class="mr-md-2" icon>
                     <v-icon size="20">mdi-store-outline</v-icon>
