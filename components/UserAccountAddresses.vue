@@ -8,36 +8,48 @@ const loading2 = ref(false)
 
 // Define reactive variables
 const userAddress = ref([]);
+const usernewAddress = ref([]);
 const editMode = ref(false);
 const editedAddress = ref({});
-
+const newaddress = ref(false)
 // Fetch user's address on component mount
 onMounted(() => {
     fetchAddresses();
 })
 const fetchAddresses = async () => {
+    const { data, error } = await supabase.auth.getSession()
+    const id = data.session.user.id
     try {
         const { data, error } = await supabase
             .from('user_address')
             .select('*')
-            .single();
+            .eq('uid', id)
 
         if (error) {
             throw error;
         }
-
         if (data) {
             userAddress.value = [data]; // Store fetched address in an array
-            editedAddress.value = { ...userAddress.value[0] }; // Initialize editedAddress with user's address
+            editedAddress.value = { ...userAddress.value }; // Initialize editedAddress with user's address
         }
     } catch (error) {
         console.error('Error fetching user address:', error.message);
     }
 }
-// Function to enter edit mode and populate editedAddress with selected address
-const editAddress = () => {
+// Function to enter edit mode andadd new address, populate editedAddress with selected address
+const newaddresstrigger = () => {
+    newaddress.value = true
+    editAddress()
+}
+const editAddress = (address) => {
     editMode.value = true;
-    editedAddress.value = { ...userAddress.value[0] }; // Copy the address to editedAddress
+
+    if (newaddress.value == false) {
+        editedAddress.value = { ...address }; // Copy the address to editedAddress
+        console.log(editedAddress.value);
+    } else {
+        editedAddress.value = { ...usernewAddress.value[0] };
+    }
 };
 
 // Function to cancel edit mode and reset editedAddress
@@ -46,30 +58,60 @@ const cancelEdit = () => {
     editedAddress.value = {}; // Reset editedAddress
 };
 
-// Function to save the edited address
+// Function to save the edited, new addresses
 const saveAddress = async () => {
-    loading1.value = true
+    if (newaddress.value == false) {
+        // console.log('uploading edited address');
+        loading1.value = true
 
-    const { data, error } = await supabase.auth.getSession();
-    const userId = data.session.user.id;
+        const { data, error } = await supabase.auth.getSession();
+        const userId = data.session.user.id;
 
-    // Update user's address with editedAddress
-    userAddress.address = { ...editedAddress.value };
+        // Update user's address with editedAddress
+        userAddress.address = { ...editedAddress.value };
 
-    try {
-        // Save the edited address to Supabase
-        const { data2, error } = await supabase
-            .from('user_address')
-            .upsert([{ uid: userId, ...editedAddress.value }], { onConflict: ['uid'] });
-
-        if (error) {
-            throw error;
+        try {
+            // Save the edited address to Supabase
+            const { data2, error } = await supabase
+                .from('user_address')
+                .upsert([{ uid: userId, ...editedAddress.value }]);
+            // , { onConflict: ['uid'] }
+            if (error) {
+                throw error;
+            }
+            fetchAddresses()
+            // console.log('Address saved:', data2);
+        } catch (error) {
+            console.error('Error saving address:', error.message);
         }
-        fetchAddresses()
-        // console.log('Address saved:', data2);
-    } catch (error) {
-        console.error('Error saving address:', error.message);
+
+    } else {
+        newaddress.value = false
+        // console.log('uploading new address');
+        loading1.value = true
+
+        const { data, error } = await supabase.auth.getSession();
+        const userId = data.session.user.id;
+
+        // Add user's address with editedAddress
+        usernewAddress.address = { ...editedAddress.value };
+
+        try {
+            // Save the new address to Supabase
+            const { data2, error } = await supabase
+                .from('user_address')
+                .upsert([{ uid: userId, ...editedAddress.value }]);
+            // , { onConflict: ['uid'] }
+            if (error) {
+                throw error;
+            }
+            fetchAddresses()
+            // console.log('Address saved:', data2);
+        } catch (error) {
+            console.error('Error saving address:', error.message);
+        }
     }
+
     // Exit edit mode
     loading1.value = false
     editMode.value = false;
@@ -79,7 +121,7 @@ const saveAddress = async () => {
     <div class="mb-20">
         <h2 class="text-2xl font-semibold mb-10">Manage Addresses</h2>
 
-        <div v-if="editMode">
+        <div v-if="editMode && editedAddress">
             <form id="form" class="space-y-5 p-5 w-11/12 md:w-11/12 h-fit text-center mx-auto justify-center flex-col"
                 @submit.prevent="saveAddress">
                 <!--input fields-->
@@ -178,9 +220,9 @@ const saveAddress = async () => {
             </form>
         </div>
 
-        <div v-else class="flex justify-center space-x-4 text-left text-lg shadow-md w-full p-5 mx-auto">
-            <div v-if="userAddress" v-for="(address, index) in userAddress" :key="index"
-                class="space-y-5 w-fit p-5 outline outline-zinc-700 shadow-md">
+        <div v-else class="md:flex justify-center md:space-x-4 text-left text-lg shadow-md w-full p-5 mx-auto">
+            <div v-if="userAddress" v-for="(address, index) in userAddress[0]" :key="index"
+                class="space-y-5 my-5 w-fit p-5 outline outline-zinc-700 shadow-md">
                 <strong>Street:</strong> {{ address.street }} <br>
                 <strong>Building:</strong> {{ address.building }} <br>
                 <strong>Apartment:</strong> {{ address.apartment }} <br>
@@ -196,7 +238,8 @@ const saveAddress = async () => {
         </div>
 
         <div v-if="!editMode" class="add p-5">
-            <v-btn><v-icon>mdi-plus</v-icon>Add New address</v-btn>
+            <v-btn @click="newaddresstrigger"><v-icon>mdi-plus</v-icon>Add New
+                address</v-btn>
         </div>
     </div>
 </template>

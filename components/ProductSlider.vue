@@ -12,7 +12,7 @@
                 <v-card-title class="text-md-body-1 font-weight-bold">{{
                     p.name
                     }}</v-card-title>
-                <v-card-subtitle class="primary--text p-3 text-lg-body-1">
+                <v-card-subtitle class="primary--text p-3 text-h6">
                     ${{ p.discount_price ? p.discount_price : p.price }}
                 </v-card-subtitle>
                 <v-card-text>

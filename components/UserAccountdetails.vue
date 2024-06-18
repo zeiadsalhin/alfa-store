@@ -65,18 +65,20 @@ async function LogOut() {
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>
             <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
-            <h1 class="text-2xl p-2">Account Details:</h1>
-            <div class="w-full p-2 space-x-10">
-                <label for="id" class="text-xl">Phone:</label>
-                <label class="text-lg">{{ phone }}</label>
-            </div>
-            <div class="w-full py-2 flexs space-x-10">
-                <label for="email" class="text-xl">Email:</label>
-                <label class="text-lg">{{ email }}</label>
-            </div>
-            <div class="w-full py-2 space-x-10">
-                <label for="auth" class="text-xl">Account:</label>
-                <label class="text-lg">{{ auth }}</label>
+            <div class="details text-left">
+                <h1 class="text-2xl p-2">Account Details:</h1>
+                <div class="w-full py-2 space-x-10">
+                    <label for="id" class="text-xl">Phone:</label>
+                    <label class="text-lg">{{ phone }}</label>
+                </div>
+                <div class="w-full py-2 flexs space-x-10">
+                    <label for="email" class="text-xl">Email:</label>
+                    <label class="text-lg">{{ email }}</label>
+                </div>
+                <div class="w-full py-2 space-x-10">
+                    <label for="auth" class="text-xl">Account:</label>
+                    <label class="text-lg">{{ auth }}</label>
+                </div>
             </div>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <ResetPassword />
