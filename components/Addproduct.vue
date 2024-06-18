@@ -11,17 +11,34 @@ const product = ref({
     discount_price: null,
     description: '',
     stock: null,
-    image: null,
+    images: [],
     selectedTag: [],
 });
 // Add product
-async function handleImageUpload(event) {
-    const file = event.target.files[0];
-    product.value.image = file;
-}
+const handleImageUpload = async (event) => {
+    const files = event.target.files;
+    const uploadedFiles = [];
 
-async function InsertProduct() {
+    for (let i = 0; i < files.length; i++) {
+        uploadedFiles.push(files[i]);
+    }
+
+    product.value.images = uploadedFiles;
+};
+
+const InsertProduct = async () => {
     try {
+        if (product.value.images.length === 0) {
+            return Swal.fire({
+                title: 'Error',
+                icon: 'error',
+                text: 'Please upload at least one image',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false,
+            });
+        }
+
         Swal.fire({
             title: 'Uploading',
             icon: 'info',
@@ -29,101 +46,87 @@ async function InsertProduct() {
             toast: true,
             timer: 10000,
             showConfirmButton: false,
-        })
-        const file = product.value.image;
-        const { data: uploadData, error: uploadError } = await supabase
-            .storage
-            .from('products_images')
-            .upload(`${product.value.name}/${file.name}`, file, {
-                cacheControl: '3600',
-                upsert: true
-            });
+        });
 
-        if (uploadError) {
-            Swal.fire({
-                title: 'Error',
-                icon: 'error',
-                text: 'Error uploading the image',
-                toast: true,
-                timer: 2000,
-                showConfirmButton: false,
-            })
-            console.error('Error uploading image:', uploadError.message);
-        } else {
-            const { data: publicUrlData, error: publicUrlError } = await supabase
-                .storage
+        const uploadPromises = product.value.images.map(async (file) => {
+            const { data: uploadData, error: uploadError } = await supabase.storage
+                .from('products_images')
+                .upload(`${product.value.name}/${file.name}`, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (uploadError) {
+                throw uploadError;
+            }
+
+            // Get public URL for each uploaded image
+            const { data: publicUrlData, error: publicUrlError } = await supabase.storage
                 .from('products_images')
                 .getPublicUrl(`${product.value.name}/${file.name}`);
 
             if (publicUrlError) {
-                Swal.fire({
-                    title: 'Error',
-                    icon: 'error',
-                    text: 'Error getting image url',
-                    toast: true,
-                    timer: 2000,
-                    showConfirmButton: false,
-                })
-                console.error('Error obtaining public URL:', publicUrlError.message);
-            } else {
-                const publicUrl = publicUrlData.publicUrl;
-
-                const { error: insertError } = await supabase
-                    .from('Products')
-                    .insert({
-                        name: product.value.name,
-                        price: product.value.price,
-                        description: product.value.description,
-                        image: publicUrl,
-                        tags: product.value.selectedTag,
-                        stock: product.value.stock,
-                        discount_price: product.value.discount_price
-                    });
-
-                if (insertError) {
-                    Swal.fire({
-                        title: 'Error',
-                        icon: 'error',
-                        text: 'Error uploading product',
-                        toast: true,
-                        timer: 2000,
-                        showConfirmButton: false,
-                    })
-                    console.error('Error inserting product:', insertError.message);
-                } else {
-                    Swal.fire({
-                        title: 'Success',
-                        icon: 'success',
-                        text: 'Product added successfully!',
-                        toast: true,
-                        timer: 3000,
-                        showConfirmButton: false,
-                    })
-                    console.log('Product added successfully');
-                    // Reset the form after successful addition
-                    product.value.name = '';
-                    product.value.price = null;
-                    product.value.discount_price = null;
-                    product.value.description = '';
-                    product.value.image = null;
-                    product.value.selectedTag = [];
-                    product.value.stock = null;
-                    document.querySelector("#image").value = ''
-                }
+                throw publicUrlError;
             }
+
+            return publicUrlData.publicUrl;
+        });
+
+        // Wait for all uploads to complete
+        const imageUrls = await Promise.all(uploadPromises);
+
+        // Insert product details into database
+        const { error: insertError } = await supabase.from('Products').insert({
+            name: product.value.name,
+            price: product.value.price,
+            description: product.value.description,
+            image: imageUrls, // Store array of image URLs in the database
+            tags: product.value.selectedTag,
+            stock: product.value.stock,
+            discount_price: product.value.discount_price
+        });
+
+        if (insertError) {
+            throw insertError;
         }
+
+        // Reset form and show success message
+        Swal.fire({
+            title: 'Success',
+            icon: 'success',
+            text: 'Product added successfully!',
+            toast: true,
+            timer: 3000,
+            showConfirmButton: false,
+        });
+
+        console.log('Product added successfully');
+        resetForm(); // Function to reset form fields
     } catch (error) {
+        console.error('Error inserting product:', error.message);
+
         Swal.fire({
             title: 'Error',
             icon: 'error',
             text: 'Error uploading the product',
             toast: true,
-            timer: 1000,
+            timer: 2000,
             showConfirmButton: false,
-        })
-        console.error('Error adding product:', error.message);
+        });
     }
-}
+};
+
+const resetForm = () => {
+    product.value.name = '';
+    product.value.price = null;
+    product.value.discount_price = null;
+    product.value.description = '';
+    product.value.images = [];
+    product.value.selectedTag = [];
+    product.value.stock = null;
+    document.querySelector("#image").value = '';
+};
+
 
 </script>
 <template>
@@ -141,7 +144,7 @@ async function InsertProduct() {
                     required>
             </div>
             <div class="w-full flex space-x-7">
-                <label for="price" class="text-xl">Price Discount:</label>
+                <label for="price" class="text-xl">Discounted Price:</label>
                 <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
                     class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="discount_price"
                     v-model="product.discount_price">
@@ -155,7 +158,8 @@ async function InsertProduct() {
             </div>
             <div class="w-fit flex space-x-7 p-2">
                 <label for="productImage" class="text-xl">Image<span class="required text-red-600">*</span>:</label>
-                <input class="text-current w-48" type="file" id="image" accept="image/*" @change="handleImageUpload" />
+                <input class="text-current w-48" type="file" id="image" accept="image/*" multiple
+                    @change="handleImageUpload" />
             </div>
             <div class="flex w-fit space-x-7 p-2">
                 <label for="category" class="text-xl my-auto">Category<span

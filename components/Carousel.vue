@@ -1,12 +1,12 @@
 <template>
     <h1 class="text-2xl font-bold p-10 mx-auto text-center">Discover Latest offers</h1>
     <v-carousel height="65vh" :hide-delimiters="true" class="p-1">
-        <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="item.image" cover>
+        <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="JSON.parse(item.image)[0]" cover>
             <v-img height="100vh">
                 <v-container class="fill-height mt-32 ">
                     <v-row dense>
                         <v-col md="7">
-                            <div class="pa-md-10 pa-3 rounded-lg black--text text-white text-center text-md-left"
+                            <div class="pa-md-5 pa-3 rounded-lg black--text text-white text-center text-md-left"
                                 style="background-color: rgba(0, 0, 0, 0.8)">
                                 <h2 class="text-md-h4 text-h5">
                                     {{ item.name }}
@@ -17,14 +17,20 @@
                                         {{ ((item.price)).toFixed() + ' $'
                                         }}
                                     </p>
-                                    <p class="mr-4 mt-2 inline-block">-% {{ ((item.discount_price / item.price) *
+                                    <p class="mr-4 mt-2 inline-block">-% {{ (((item.price - item.discount_price) /
+                                        item.price) *
                                         100).toFixed() }}
                                         off
                                     </p>
+                                    <p class="text-h4 primary--text mt-3 font-weight-bold">
+                                        {{ (item.discount_price) + ' $' }}
+                                    </p>
                                 </div>
-                                <p class="text-h5 primary--text mt-3">
-                                    {{ (item.price - item.discount_price) + ' $' }}
-                                </p>
+                                <div v-else>
+                                    <p class="text-h4 primary--text mt-3 font-weight-bold">
+                                        {{ (item.price) + ' $' }}
+                                    </p>
+                                </div>
                                 <p class="text-md-body-2 md:mb-5 mb-2"></p>
                                 <v-btn depressed :to="`/products/${item.id}`" color="primary" class="text-capitalize"
                                     min-height="40">Check It Out</v-btn>

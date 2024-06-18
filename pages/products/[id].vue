@@ -11,7 +11,7 @@ const mainStore = useMainStore();
 
 const addToCart = (product) => {
     if (selectedoption.value) {
-        mainStore.addToCart(product, selectedoption.value);
+        mainStore.addToCart(product, selectedoption.value, product.discount_price);
     } else {
         Swal.fire({
             title: 'Warning!',
@@ -65,25 +65,37 @@ onMounted(async () => {
                             </v-chip>
                         </div>
                         <br />
-                        <v-img width="100%" class="el rounded-lg" height="50vh" :src="product.image"></v-img>
+                        <!-- <v-carousel-item v-for="(img, i) in product.image" :key="i" :src="img.image"
+                            cover></v-carousel-item> -->
+                        <v-img width="100%" class="el rounded-lg" height="50vh"
+                            :src="JSON.parse(product.image)[0]"></v-img>
                         <p class="mt-5 mb-5">
                             {{ product.description }}
                         </p>
-                        <div v-if="product.discount_price" class="discounted price flex space-x-1 py-1 opacity-80 ">
-                            <p class="mt-2 font-semibold">Original Price:</p>
-                            <p
-                                class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
-                                {{ ((product.price)).toFixed() + ' $'
-                                }}
-                            </p>
-                            <p class="mr-4 mt-2">-% {{ ((product.discount_price / product.price) * 100).toFixed() }}
-                                off
+                        <div v-if="product.discount_price">
+                            <div class="discounted price flex space-x-1 py-1 opacity-80 ">
+                                <p class="mt-2 font-semibold">Original Price:</p>
+                                <p
+                                    class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
+                                    {{ ((product.price)).toFixed() + ' $'
+                                    }}
+                                </p>
+                                <p class="mr-4 mt-2">-% {{ (((product.price - product.discount_price) / product.price) *
+                                    100).toFixed() }}
+                                    off
+                                </p>
+                            </div>
+                            <p class="text-h5 mb-7">
+                                Price:
+                                {{ (product.discount_price) + ' $' }}
                             </p>
                         </div>
-                        <p class="text-h5 mb-7">
-                            Price:
-                            {{ (product.price - product.discount_price) + ' $' }}
-                        </p>
+                        <div v-else>
+                            <p class="text-h5 mb-7">
+                                Price:
+                                {{ (product.price) + ' $' }}
+                            </p>
+                        </div>
                         <Colors :options="product.options" @option-selected="handleOptionSelected" />
                         <br />
                         <div class="button flex flex-col md:flex-row">
@@ -177,7 +189,8 @@ export default {
                     .eq('id', `${productId}`)
 
                 this.product = data[0]
-                // console.log(this.product.stock)
+                // console.log(this.product)
+                // console.log('images are: ', JSON.parse(this.product.image));
 
             } catch (error) {
                 console.error('Error fetching products:', error.message);

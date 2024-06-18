@@ -29,7 +29,7 @@ export const useMainStore = defineStore('main', {
       } else {
         this.items = [
           ...this.items,
-          { product, selectedOption, quantity: 1, discountedPrice: this.discountedPrice }
+          { product, selectedOption, quantity: 1, discountedPrice: product.discount_price }
         ];
       }
 

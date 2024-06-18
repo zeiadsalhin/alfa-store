@@ -10,7 +10,7 @@
                 <div v-for="(p, i) in filteredProducts" :key="`product${p.id}-${i}`" class="w-fit">
                     <v-fade-transition>
                         <v-card :to="'/products/' + p.id" color="surface" class="mb-5 mx-auto ml-6">
-                            <v-img :src="p.image" width="300" height="200" cover>
+                            <v-img :src="JSON.parse(p.image)[0]" width="300" height="200" cover>
                                 <template #placeholder>
                                     <v-row class="fill-height" justify="center" align="center">
                                         <v-progress-circular width="2" size="100" color="gray"
@@ -47,7 +47,7 @@
                     <div v-for="(p, i) in products" :key="`product${p.id}-${i}`" class="w-fit">
                         <v-fade-transition>
                             <v-card :to="'/products/' + p.id" color="surface" class="mb-5 mx-auto ml-6">
-                                <v-img :src="p.image" width="300" height="200" cover>
+                                <v-img :src="JSON.parse(p.image)[0]" width="300" height="200" cover>
                                     <template #placeholder>
                                         <v-row class="fill-height" justify="center" align="center">
                                             <v-progress-circular width="2" size="100" color="gray"
@@ -114,9 +114,9 @@ export default {
             try {
                 const { data, error } = await supabase.from('Products').select();
 
-                // console.log('Products:', data);
+                // console.log('Products:', JSON.parse(data[2].image)[0]);
                 this.products = data
-
+                // console.log(JSON.parse(this.products[2].image.replace(/[\[\]']/g, '')));
             } catch (error) {
                 console.error('Error fetching products:', error.message);
             }
