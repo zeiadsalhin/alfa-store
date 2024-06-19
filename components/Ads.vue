@@ -2,7 +2,8 @@
     <div class="mt-5 mb-5">
         <h1 class="p-5 opacity-80">Ads</h1>
         <v-carousel height="" :hide-delimiters="true" :show-arrows="false" :cycle="true" :interval="4000">
-            <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="item.image" height="40vh">
+            <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="JSON.parse(item.image)[0]"
+                height="40vh">
             </v-carousel-item>
             <v-carousel-item v-else>
                 <div class="h-full flex justify-center p-10">
