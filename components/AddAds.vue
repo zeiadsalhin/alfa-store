@@ -4,6 +4,7 @@ import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const expanded = ref(false)
 const product = ref({
     name: '',
     // stock: null,
@@ -119,32 +120,43 @@ const resetForm = () => {
 <template>
     <div>
         <div class="Title flex-col">
+            <v-icon size="30">mdi-advertisements</v-icon>
             <h1 class="text-3xl p-3">Manage Ads Banner</h1>
             <div class="h-1 w-1/3 mx-auto bg-zinc-950 mb-5 mt-5"></div>
         </div>
-        <p class="p-5 text-2xl">Add Ad Banner</p>
-        <form @submit.prevent="InsertProduct" class="w-full">
-            <div class="w-full flex space-x-5">
-                <label for="name" class="text-xl my-auto">Name<span class="required text-red-600">*</span>:</label>
-                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name" required>
-            </div>
+        <v-btn @click="expanded = !expanded" variant="outlined" class="text-h6 ma-5">
+            <v-icon>{{ expanded ? 'mdi-minus' : 'mdi-plus' }}</v-icon>Add Ad Banner
+        </v-btn>
+        <v-expand-transition>
+            <form @submit.prevent="InsertProduct" class="w-full" v-if="expanded">
+                <div class="w-full flex space-x-5">
+                    <label for="name" class="text-xl my-auto flex">
+                        <p class="px-2 mr-2 rounded-full bg-zinc-800 text-white">1</p>Name<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <input
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                        class="px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name" required>
+                </div>
 
-            <div class="w-full flex space-x-5 mt-5">
-                <label for="productImage" class="text-xl my-auto">Image<span
-                        class="required text-red-600">*</span>:</label>
-                <input class="text-current w-full" type="file" id="image" accept="image/*" multiple
-                    @change="handleImageUpload" />
-            </div>
-            <!--Activate Ad-->
-            <!-- <div class="flex w-fit space-x-7 p-2">
+                <div class="w-full flex space-x-5 mt-5">
+                    <label for="productImage" class="text-xl my-auto flex">
+                        <p class="px-2 mr-2 rounded-full bg-zinc-800 text-white">2</p>Image<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <input class="text-current w-full" type="file" id="image" accept="image/*" multiple
+                        @change="handleImageUpload" />
+                </div>
+                <!--Activate Ad-->
+                <!-- <div class="flex w-fit space-x-7 p-2">
                 <label for="stock" class="text-xl my-auto">Stock<span class="required text-red-600">*</span>:</label>
                 <v-radio-group v-model="product.stock" column>
                     <v-radio color="red" label="Out of Stock" value="FALSE"></v-radio>
                     <v-radio color="green" label="In Stock" value="TRUE"></v-radio>
                 </v-radio-group>
             </div> -->
-            <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto" color="black">Add</v-btn>
-        </form>
+                <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto" color="black">Add</v-btn>
+            </form>
+        </v-expand-transition>
     </div>
 </template>

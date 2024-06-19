@@ -73,16 +73,25 @@ async function LogOut() {
                         </div>
                         <StoreStatics />
                     </div>
-                    <div class="w-fit dark: md:p-10 p-5 text-center mx-auto "
-                        :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-black'">
+                    <div class="w-11/12 rounded-lg md:p-10 p-2 text-center mx-auto "
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'">
 
-                        <div class="h-1 w-full bg-zinc-950 mb-5 mt-5"></div>
-                        <div class="products space-y-5 md:p-5">
-                            <h1 class="text-3xl">Start managing products</h1>
-                            <p class="p-5 text-2xl">Add product</p>
-                            <Addproduct />
-                            <AddAds />
-                            <FetchAds />
+
+
+                        <div class="Management md:flex">
+                            <div class="products md:w-full p-5 rounded-lg"
+                                :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-50 text-black'">
+                                <v-icon size="30">mdi-cart</v-icon>
+                                <h1 class="text-3xl p-3">Start managing products</h1>
+                                <div class="h-1 w-full bg-zinc-950 mb-5 mt-5"></div>
+                                <Addproduct />
+                            </div>
+                            <div class="w-2 rounded-full bg-zinc-950 m-10"></div>
+                            <div class="Ads md:w-full md:p-5 p-1 rounded-lg"
+                                :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-50 text-black'">
+                                <AddAds />
+                                <FetchAds />
+                            </div>
                         </div>
                     </div>
                     <NuxtPage />

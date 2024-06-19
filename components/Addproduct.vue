@@ -4,6 +4,7 @@ import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
+const expanded = ref(false)
 const tags = ['electronics', 'smart watches', 'headphones', 'chargers']
 const product = ref({
     name: '',
@@ -131,50 +132,78 @@ const resetForm = () => {
 </script>
 <template>
     <div>
-        <form @submit.prevent="InsertProduct" class="w-full">
-            <div class="w-full flex space-x-5">
-                <label for="name" class="text-xl">Name<span class="required text-red-600">*</span>:</label>
-                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name" required>
-            </div>
-            <div class="w-full flex space-x-7">
-                <label for="price" class="text-xl">Price<span class="required text-red-600">*</span>:</label>
-                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="price" v-model="product.price"
-                    required>
-            </div>
-            <div class="w-full flex space-x-5">
-                <label for="price" class="text-xl">Discounted Price:</label>
-                <input :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                    class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="discount_price"
-                    v-model="product.discount_price">
-            </div>
-            <div class="w-full flex mt-2 space-x-5">
-                <label for="price" class="text-xl">Description<span class="required text-red-600">*</span>:</label>
-                <textarea rows="3" cols="3"
-                    :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                    class="p-1 text-md m-2 rounded-sm w-full" type="text" id="price" v-model="product.description"
-                    required></textarea>
-            </div>
-            <div class="w-fit flex space-x-14 mt-2 mb-2">
-                <label for="productImage" class="text-xl">Image<span class="required text-red-600">*</span>:</label>
-                <input class="text-current w-48" type="file" id="image" accept="image/*" multiple
-                    @change="handleImageUpload" />
-            </div>
-            <div class="flex w-fit space-x-7 mt-5 mb-2">
-                <label for="category" class="text-xl my-auto">Category<span
-                        class="required text-red-600">*</span>:</label>
-                <v-select v-model="product.selectedTag" :items="tags" hint="Choose product category"
-                    label="Select product tags" multiple persistent-hint :required="true"></v-select>
-            </div>
-            <div class="flex w-fit space-x-12 mt-5 mb-2">
-                <label for="stock" class="text-xl my-auto">Stock<span class="required text-red-600">*</span>:</label>
-                <v-radio-group v-model="product.stock" column>
-                    <v-radio color="red" label="Out of Stock" value="FALSE"></v-radio>
-                    <v-radio color="green" label="In Stock" value="TRUE"></v-radio>
-                </v-radio-group>
-            </div>
-            <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto" color="black">Add</v-btn>
-        </form>
+        <v-btn @click="expanded = !expanded" variant="outlined" class="text-h6 ma-5">
+            <v-icon>{{ expanded ? 'mdi-minus' : 'mdi-plus' }}</v-icon>Add product
+        </v-btn>
+        <v-expand-transition>
+            <form @submit.prevent="InsertProduct" class="w-full space-y-3" v-if="expanded">
+                <div class="w-full flex space-x-5">
+                    <label for="name" class="text-xl my-auto flex">
+                        <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">1</p>Name<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <input
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                        class="px-2 py-1 m-2 rounded-sm w-11/12" type="text" id="name" v-model="product.name" required>
+                </div>
+                <div class="w-full flex space-x-7">
+                    <label for="price" class="text-xl my-auto flex">
+                        <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">2</p>Price<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <input
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                        class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="price"
+                        v-model="product.price" required>
+                </div>
+                <div class="w-full flex space-x-5">
+                    <label for="price" class="text-xl my-auto flex">
+                        <p class="px-2 my-auto mr-3 rounded-full bg-zinc-800 text-white">3</p>Discounted
+                        Price:
+                    </label>
+                    <input
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                        class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="discount_price"
+                        v-model="product.discount_price">
+                </div>
+                <div class="w-full flex mt-2s space-x-5">
+                    <label for="price" class="text-xl my-auto flex">
+                        <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">4</p>Description<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <textarea rows="3" cols="3"
+                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
+                        class="p-1 text-md m-2 rounded-sm w-full" type="text" id="price" v-model="product.description"
+                        required></textarea>
+                </div>
+                <div class="w-fit flex md:space-x-14 space-x-5 mt-5">
+                    <label for="productImage" class="text-xl my-auto flex">
+                        <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">5</p>Image<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <input class="text-current w-full" type="file" id="image" accept="image/*" multiple
+                        @change="handleImageUpload" />
+                </div>
+                <div class="flex w-fit space-x-7 mt-5">
+                    <label for="category" class="text-xl my-auto flex">
+                        <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">6</p>Category<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <v-select v-model="product.selectedTag" :items="tags" hint="Choose product category"
+                        label="Select product tags" multiple persistent-hint :required="true"></v-select>
+                </div>
+                <div class="flex w-fit space-x-12 mt-5">
+                    <label for="stock" class="text-xl my-auto flex">
+                        <p class="px-2 mr-2 rounded-full bg-zinc-800 text-white">7</p>Stock<span
+                            class="required text-red-600">*</span>:
+                    </label>
+                    <v-radio-group v-model="product.stock" column>
+                        <v-radio color="red" label="Out of Stock" value="FALSE"></v-radio>
+                        <v-radio color="green" label="In Stock" value="TRUE"></v-radio>
+                    </v-radio-group>
+                </div>
+                <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto" color="black">Add</v-btn>
+            </form>
+        </v-expand-transition>
     </div>
 </template>
