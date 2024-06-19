@@ -22,7 +22,15 @@ const getcontacts = async () => {
         console.error('Error fetching products:', error.message);
     }
 }
-
+//seo
+useSeoMeta({
+    title: 'Alfa Store - ContactUs',
+    ogTitle: 'Alfa Store -  ContactUs',
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
 </script>
 <template>
     <div class="my-auto">

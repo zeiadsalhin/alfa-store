@@ -22,7 +22,7 @@
                                 </v-img>
                                 <v-card-title class="text-md-body-1 font-weight-bold">{{
                                     p.name
-                                    }}</v-card-title>
+                                }}</v-card-title>
                                 <v-card-subtitle class="primary--text pb-3">
                                     ${{ p.price }}
                                 </v-card-subtitle>
@@ -59,7 +59,7 @@
                                     </v-img>
                                     <v-card-title class="text-md-body-1 font-weight-bold">{{
                                         p.name
-                                        }}</v-card-title>
+                                    }}</v-card-title>
                                     <v-card-subtitle v-if="p.discount_price" class="primary--text pb-1 text-lg-body-1">
                                         ${{ p.price - p.discount_price }}
                                     </v-card-subtitle>
@@ -96,6 +96,16 @@
         </div>
     </div>
 </template>
+<script setup>
+useSeoMeta({
+    title: 'Alfa Store - All Products',
+    ogTitle: 'Alfa Store -  All products',
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
+</script>
 <script>
 
 

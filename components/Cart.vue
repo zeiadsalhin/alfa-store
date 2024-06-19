@@ -68,6 +68,15 @@ onMounted(async () => {
     await mainStore.fetchCartFromSupabase();
 });
 
+//seo 
+useSeoMeta({
+    title: computed(() => `Alfa Store - Cart (${items.value ? items.value.length : 'Empty Cart'})`),
+    ogTitle: computed(() => `Alfa Store - Cart (${items.value ? items.value.length : 'Empty Cart'})`),
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
 // console.log('cart page items:', items.value);
 
 // Calculate the total price of all items in the cart

@@ -16,6 +16,14 @@
 //         console.log('User is already logged in:');
 //     }
 // }
+useSeoMeta({
+    title: 'Alfa Store - Home',
+    ogTitle: 'Alfa Store - Home',
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
 </script>
 <template>
     <div>

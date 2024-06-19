@@ -1,4 +1,13 @@
 <script setup>
+useSeoMeta({
+    title: 'Alfa Store - Account Recovery',
+    ogTitle: 'Alfa Store -  Account Recovery',
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
+
 import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
 const theme = useTheme();

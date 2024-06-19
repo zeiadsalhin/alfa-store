@@ -9,6 +9,16 @@ const name = ref()
 const email = ref()
 const signin = ref()
 
+//seo 
+useSeoMeta({
+    title: `Alfa Store - Admin Panel`,
+    ogTitle: `Alfa Store - Admin Panel`,
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
+
 onMounted(async () => {
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
@@ -50,7 +60,7 @@ async function LogOut() {
 </script>
 <template>
     <div>
-        <div v-if="dataview" class="mt-16">
+        <div v-if="dataview" class="md:mt-16">
             <v-layout>
                 <v-navigation-drawer :permanent="true" v-if="$vuetify.display.mdAndUp">
                     <v-list-item :title="name" :subtitle="email"></v-list-item>
@@ -63,7 +73,7 @@ async function LogOut() {
 
                 <v-main style="min-height: 300px;">
                     <div class="Information md:flex mt-20">
-                        <div class="mt-0 p-5 w-fit m-5      ">
+                        <div class="mt-0 mx-auto p-5 w-fit m-5      ">
                             <div class="icon flex justify-center p-5"><v-icon size="50">mdi-shield-account</v-icon>
                             </div>
                             <p class="font-semibold md:text-3xl text-2xl">Welcome, {{ name }}</p>

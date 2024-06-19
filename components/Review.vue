@@ -67,7 +67,7 @@ export default {
                 const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
                 if (data.session) {
                     this.loggedIn = true
-                    this.username = data.session.user.identities[0].identity_data.first_name
+                    this.username = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name
                     this.review.name = this.username
                 } else {
                     // admin.value = false

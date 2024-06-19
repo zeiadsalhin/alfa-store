@@ -1,4 +1,13 @@
 <script setup>
+useSeoMeta({
+    title: 'Alfa Store - Reset password',
+    ogTitle: 'Alfa Store -  Reset password',
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
+
 import { useTheme } from 'vuetify'
 const theme = useTheme();
 const email = ref()

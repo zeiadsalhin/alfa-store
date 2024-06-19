@@ -2,11 +2,39 @@
 import Swal from 'sweetalert2'
 import { useMainStore } from '@/store';
 const selectedoption = ref('');
+const props = defineProps({
+    product: Object,
+    reviews: Array
+});
+const product = ref(props.product);
+const reviews = ref(props.reviews);
+const route = useRoute()
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
+const admin = ref(false)
+
+// START
+onMounted(() => {
+    ddb();
+    fetchProducts();
+    getreviews();
+})
+
+//seo 
+useSeoMeta({
+    title: computed(() => `Alfa Store - ${product.value ? product.value.name : 'Loading Product..'}`),
+    ogTitle: computed(() => `Alfa Store - ${product.value ? product.value.name : 'Loading Product..'}`),
+    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+    twitterCard: 'summary_large_image',
+})
+
 const handleOptionSelected = (option) => {
     selectedoption.value = option;
     console.log('Selected option:', option);
 };
-
+// add to cart
 const mainStore = useMainStore();
 
 const addToCart = (product) => {
@@ -25,12 +53,10 @@ const addToCart = (product) => {
     // console.log(selectedoption.value); // Log the value of selectedoption
 };
 
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
-const admin = ref(false)
+
 
 // Display delete button for admin only 
-onMounted(async () => {
+const ddb = async () => {
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
 
@@ -43,7 +69,113 @@ onMounted(async () => {
         console.log(error);
     }
 
-});
+}
+
+// get reviews
+const getreviews = async () => {
+    const supabase = useSupabaseClient()
+    const productId = parseInt(route.params.id);
+    try {
+        const { data, error } = await supabase
+            .from('Reviews')
+            .select('rating')
+            .eq('post_id', `${productId}`)
+
+        // get average reviews
+        const sum = data.reduce((acc, review) => acc + review.rating, 0);
+        const average = sum / data.length;
+        reviews.value = average;
+        // console.log('Average Rating:', reviews.value);
+        if (error) {
+            console.log(error.message);
+        }
+
+    } catch (error) {
+        console.error('Error fetching rating:', error.message);
+    }
+}
+
+// get product data
+const fetchProducts = async () => {
+    const supabase = useSupabaseClient()
+    const user = useSupabaseUser()
+    const productId = parseInt(route.params.id);
+    try {
+
+        const { data, error } = await supabase
+            .from('Products')
+            .select('*')
+            .eq('id', `${productId}`)
+
+        product.value = data[0]
+        // console.log(product.value.name)
+        // console.log('images are: ', JSON.parse(this.product.image));
+
+    } catch (error) {
+        console.error('Error fetching products:', error.message);
+    }
+
+};
+
+// delete product confirm
+const DeleteProductBegin = () => {
+    Swal.fire({
+        title: 'Warning!',
+        icon: 'warning',
+        text: 'This product will be deleted!',
+        // toast: true,
+        // timer: 2000,
+        showConfirmButton: true,
+        showCancelButton: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // console.log("deleted");
+            DeleteProducts();
+        } else {
+            // console.log('no');
+        }
+    });
+}
+
+// Delete product by admin
+const DeleteProducts = async () => {
+    const supabase = useSupabaseClient()
+    try {
+        const productId = parseInt(route.params.id);
+        const { error } = await supabase
+            .from('Products')
+            .delete()
+            .eq('id', productId)
+
+        console.log(productId)
+        if (error) {
+            console.log(error)
+        } else {
+
+            const { error } = await supabase
+                .storage
+                .from('products_images')
+                .remove([`${product.value.name}`]);
+            if (error) {
+                console.log(error)
+            } else {
+                // console.log('Deleted image');
+                Swal.fire({
+                    title: 'Success',
+                    icon: 'success',
+                    text: 'Product deleted successfully!',
+                    toast: true,
+                    timer: 2000,
+                    showConfirmButton: false,
+                }).then(() => { navigateTo('/') })
+            }
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+};
+
 </script>
 <template>
     <div>
@@ -171,119 +303,7 @@ onMounted(async () => {
 </style>
 
 <script>
-export default {
-    data() {
-        return {
-            product: null,
-            reviews: null,
-        };
-    },
-    mounted() {
-        this.fetchProducts();
-        this.getreviews();
-    },
-    methods: {
-        async getreviews() {
-            const supabase = useSupabaseClient()
-            const productId = parseInt(this.$route.params.id);
-            try {
-                const { data, error } = await supabase
-                    .from('Reviews')
-                    .select('rating')
-                    .eq('post_id', `${productId}`)
 
-                // get average reviews
-                const sum = data.reduce((acc, review) => acc + review.rating, 0);
-                const average = sum / data.length;
-                this.reviews = average;
-                // console.log('Average Rating:', average);
-                if (error) {
-                    console.log(error.message);
-                }
-
-            } catch (error) {
-                console.error('Error fetching rating:', error.message);
-            }
-        },
-        async fetchProducts() {
-            const supabase = useSupabaseClient()
-            const user = useSupabaseUser()
-            const productId = parseInt(this.$route.params.id);
-            try {
-
-                const { data, error } = await supabase
-                    .from('Products')
-                    .select('*')
-                    .eq('id', `${productId}`)
-
-                this.product = data[0]
-                // console.log(this.product)
-                // console.log('images are: ', JSON.parse(this.product.image));
-
-            } catch (error) {
-                console.error('Error fetching products:', error.message);
-            }
-
-        },
-        DeleteProductBegin() {
-            Swal.fire({
-                title: 'Warning!',
-                icon: 'warning',
-                text: 'This product will be deleted!',
-                // toast: true,
-                // timer: 2000,
-                showConfirmButton: true,
-                showCancelButton: true,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // console.log("deleted");
-                    this.DeleteProducts();
-                } else {
-                    // console.log('no');
-                }
-            });
-        },
-        // Delete product by admin
-        async DeleteProducts() {
-            const supabase = useSupabaseClient()
-            try {
-                const route = useRoute()
-                const productId = parseInt(route.params.id);
-                const { error } = await supabase
-                    .from('Products')
-                    .delete()
-                    .eq('id', productId)
-
-                console.log(productId)
-                if (error) {
-                    console.log(error)
-                } else {
-
-                    const { error } = await supabase
-                        .storage
-                        .from('products_images')
-                        .remove([`${this.product.name}`]);
-                    if (error) {
-                        console.log(error)
-                    } else {
-                        // console.log('Deleted image');
-                        Swal.fire({
-                            title: 'Success',
-                            icon: 'success',
-                            text: 'Product deleted successfully!',
-                            toast: true,
-                            timer: 2000,
-                            showConfirmButton: false,
-                        }).then(() => { navigateTo('/') })
-                    }
-                }
-
-            } catch (error) {
-                console.log(error)
-            }
-        },
-    },
-};
 </script>
 
 <style></style>
