@@ -74,6 +74,10 @@ const UpdateProduct = async () => {
     loading.value = false
 }
 
+// cancel edit 
+const cancelEdit = () => {
+    expanded.value = false;
+}
 </script>
 <template>
     <div>
@@ -192,9 +196,11 @@ const UpdateProduct = async () => {
                             </v-radio-group>
 
                         </div>
-                        <p>Selected Stock Status: {{ productUpdate.stock }}</p>
-                        <v-btn type="submit" min-height="40" min-width="120" class="m-5 mx-auto"
-                            color="black">Update</v-btn>
+                        <div class="buttons flex justify-center space-x-3">
+                            <v-btn type="submit" min-height="40" min-width="120" class="" color="black">Update</v-btn>
+                            <v-btn @click="cancelEdit" type="button" min-height="40" min-width="120" class=""
+                                variant="tonal">Cancel</v-btn>
+                        </div>
                     </form>
                 </div>
             </v-expand-transition>
