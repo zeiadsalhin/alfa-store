@@ -137,7 +137,7 @@ export const useMainStore = defineStore('main', {
           .eq('uid', supabaseUserId);
 
         if (error) {
-          console.error('Error fetching cart items:', error.message);
+          // console.error('Error fetching cart items:', error.message);
           return;
         }
 
@@ -148,7 +148,7 @@ export const useMainStore = defineStore('main', {
           this.items = [];
         }
       } catch (error) {
-        console.error('Error fetching cart items:', error.message);
+        // console.error('Error fetching cart items:', error.message);
       }
     },
 

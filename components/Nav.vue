@@ -73,7 +73,7 @@ async function fetchCartItems() {
         // Update cartItems.value with fetched cart items or empty array if no data
         cartItems.value = cartData && cartData.length > 0 ? cartData[0].cart_items : []
     } catch (error) {
-        console.error('Error fetching cart items:', error.message)
+        // console.error('Error fetching cart items:', error.message)
         cartItems.value = [] // Clear cart items in case of any error
     }
 }
@@ -93,7 +93,7 @@ async function getavatar() {
 
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 }
 

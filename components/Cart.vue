@@ -65,7 +65,12 @@ const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const items = computed(() => mainStore.items);
 onMounted(async () => {
-    await mainStore.fetchCartFromSupabase();
+    try {
+        await mainStore.fetchCartFromSupabase();
+    } catch {
+        console.log('error fetching cart from database');
+
+    }
 });
 
 //seo 

@@ -198,7 +198,7 @@ const DeleteProducts = async () => {
                         </div>
                         <br />
                         <div class="md:w-9/12 mx-auto">
-                            <v-carousel height="60vh" cycle :hide-delimiters="false" delimiter-icon="mdi-square"
+                            <v-carousel height="50vh" cycle :hide-delimiters="false" delimiter-icon="mdi-square"
                                 hide-delimiter-background show-arrows="hover">
                                 <template v-slot:prev="{ props }">
                                     <v-btn color="grey-darken-4" variant="elevated"
@@ -212,7 +212,7 @@ const DeleteProducts = async () => {
                                     cover></v-carousel-item>
                             </v-carousel>
                         </div>
-                        <p class="mt-5 mb-5">
+                        <p class="mt-20 mb-5">
                             {{ product.description }}
                         </p>
                         <div v-if="product.discount_price">
@@ -241,13 +241,14 @@ const DeleteProducts = async () => {
                         </div>
                         <Colors :options="product.options" @option-selected="handleOptionSelected" />
                         <br />
-                        <div class="button flex flex-col md:flex-row">
-                            <div v-if="product.stock">
-                                <v-btn @click="addToCart(product)" min-height="45" min-width="150" class="m-2" color="">
-                                    <v-icon size="30" class="m-1 w-full">mdi-cart</v-icon>Add To Cart</v-btn>
+                        <div class="button flex flex-col md:flex-row my-5">
+                            <div v-if="product.stock" class="md:flex">
+                                <v-btn @click="addToCart(product)" min-height="45" min-width="150"
+                                    class="md:m-2 my-2 w-full md:w-1/2" color="">
+                                    <v-icon size="30" class="mx-2">mdi-cart</v-icon>Add To Cart</v-btn>
                                 <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45"
-                                    min-width="120" class="m-2" color="grey-lighten-1"><v-icon size="30"
-                                        class="m-1">mdi-credit-card-fast-outline</v-icon>Buy
+                                    min-width="120" class="md:m-2 my-2 w-full md:w-1/2" color="grey-lighten-1"><v-icon
+                                        size="30" class="mx-2">mdi-credit-card-fast-outline</v-icon>Buy
                                     Now</v-btn>
                             </div>
                             <div v-else>
