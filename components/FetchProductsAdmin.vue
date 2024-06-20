@@ -4,13 +4,17 @@ const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const loading = ref(false);
+const tabledata = ref(false);
 const updateSuccess = ref(false);
 const productItems = ref({});
 const productUpdate = ref({});
 const tags = ['electronics', 'smart watches', 'headphones', 'chargers']
 const expanded = ref(false)
 // Fetch Products 
-onMounted(async () => {
+onMounted(() => {
+    Fetchproductdata();
+});
+const Fetchproductdata = async () => {
 
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
@@ -20,12 +24,13 @@ onMounted(async () => {
         // console.log('Products:', data);
         productItems.value = data
         // console.log(data);
+        tabledata.value = true
 
     } catch (error) {
         console.error('Error fetching Ads:', error.message);
     }
+}
 
-});
 // Function to open image input
 const openFileInput = () => {
     const fileInput = document.getElementById('image');
@@ -33,17 +38,31 @@ const openFileInput = () => {
         fileInput.click();
     }
 };
+//handle multiple images
+// const handleImageUpload = async (event) => {
+//     const files = event.target.files;
+//     const uploadedFiles = [];
+
+//     for (let i = 0; i < files.length; i++) {
+//         uploadedFiles.push(files[i]);
+//     }
+
+//     productUpdate.value.image = uploadedFiles;
+//     console.log('image:', productUpdate.value.image);
+// };
 // trigger edit product
 const trigger = async (idvalue) => {
     try {
         productUpdate.value = { ...productItems.value[idvalue] }
         if (productUpdate.value) {
             expanded.value = true;
+            const view = document.getElementById('editview');
+            view.scrollIntoView({ behavior: 'smooth' });
         } else {
             expanded.value = false;
         }
         // console.log('triggered');
-        // console.log('product to edit: ', productUpdate.selectedTag);
+        // console.log('product to edit: ', productUpdate.value.image);
     } catch { }
 }
 
@@ -53,16 +72,52 @@ const UpdateProduct = async () => {
     const { data, error } = await supabase.auth.getSession()
     const userId = data.session.user.id
     try {
-        // Save the edited address to Supabase
+        // Save the edited product to Supabase
+
+        // 1 edit the image 
+        // if (productUpdate.value.image.length != 0) {
+        //     console.log('uploaded files found');
+        //     const uploadPromises = productUpdate.value.image.map(async (file) => {
+        //         const { data: uploadData, error: uploadError } = await supabase.storage
+        //             .from('products_images')
+        //             .upload(`${productUpdate.value.name}/${file.name}`, file, {
+        //                 cacheControl: '3600',
+        //                 upsert: true
+        //             });
+
+        //         if (uploadError) {
+        //             throw uploadError;
+        //         }
+
+        //         // Get public URL for each uploaded image
+        //         const { data: publicUrlData, error: publicUrlError } = await supabase.storage
+        //             .from('products_images')
+        //             .getPublicUrl(`${productUpdate.value.name}/${file.name}`);
+
+        //         if (publicUrlError) {
+        //             throw publicUrlError;
+        //         }
+
+        //         return publicUrlData.publicUrl;
+        //     });
+
+        //     // Wait for all uploads to complete
+        //     const imageUrls = await Promise.all(uploadPromises);
+        // }
         const { data2, error } = await supabase
             .from('Products')
             .upsert([{ ...productUpdate.value }]
+                // image: imageUrls,
                 , { onConflict: ['id'] })
         if (error) {
             throw error;
         } else {
             expanded.value = false;
             updateSuccess.value = true;
+            Fetchproductdata();
+            //scroll to div
+            const view = document.getElementById('main');
+            view.scrollIntoView({ behavior: 'smooth' });
             setTimeout(() => {
                 updateSuccess.value = false;
             }, 3000);
@@ -74,16 +129,24 @@ const UpdateProduct = async () => {
     loading.value = false
 }
 
+// delete product
+
+
 // cancel edit 
 const cancelEdit = () => {
     expanded.value = false;
+    //scroll back to main
+    const view = document.getElementById('main');
+    view.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
 <template>
     <div>
-        <div class="h-1 w-1/6 mx-auto bg-zinc-800 mb-5 mt-5"></div>
+        <!--div to scroll to-->
+        <div id="main"></div>
+        <div class="h-1 w-1/6 mx-auto bg-zinc-800 mb-5 mt-10"></div>
         <p class="p-5 text-2xl">All Products ({{ productItems.length }})</p>
-        <div class="flex md:table w-full mx-auto">
+        <div v-if="tabledata" class="flex md:table w-full mx-auto">
             <v-table height="400px" fixed-header density="default"
                 :theme="theme.global.current.value.dark ? 'dark' : 'light'">
                 <thead>
@@ -109,7 +172,12 @@ const cancelEdit = () => {
                 </tbody>
             </v-table>
         </div>
-
+        <div v-else class="p-10">
+            <p class="text-xl p-2"></p>
+            <v-progress-circular color="dark-blue" indeterminate></v-progress-circular>
+        </div>
+        <!--scroll to this div-->
+        <div id="editview"></div>
         <!--editing product-->
         <div v-if="!loading" class="editP mt-10 p-2">
             <!--success message-->
