@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const phoneNumber = ref('NO DATA')
 const email = ref('NO DATA')
 const address = ref('NO DATA')
@@ -23,14 +23,14 @@ const getcontacts = async () => {
     }
 }
 //seo
-useSeoMeta({
-    title: 'Alfa Store - ContactUs',
-    ogTitle: 'Alfa Store -  ContactUs',
-    description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
-    ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
-    ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
-    twitterCard: 'summary_large_image',
-})
+// useSeoMeta({
+//     title: 'Alfa Store - Contact Us',
+//     ogTitle: 'Alfa Store -  Contact Us',
+//     description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+//     ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
+//     ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
+//     twitterCard: 'summary_large_image',
+// });
 </script>
 <template>
     <div class="my-auto">
