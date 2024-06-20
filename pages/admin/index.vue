@@ -89,12 +89,13 @@ async function LogOut() {
 
 
                         <div class="Management md:flex">
-                            <div class="products md:w-full p-5 rounded-lg"
+                            <div class="products md:w-full p-1 rounded-lg"
                                 :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-50 text-black'">
                                 <v-icon size="30">mdi-cart</v-icon>
                                 <h1 class="text-3xl p-3">Start managing products</h1>
                                 <div class="h-1 w-full bg-zinc-950 mb-5 mt-5"></div>
                                 <Addproduct />
+                                <FetchProductsAdmin />
                             </div>
                             <div class="w-2 rounded-full bg-zinc-950 m-10"></div>
                             <div class="Ads md:w-full md:p-5 p-1 rounded-lg"
