@@ -3,7 +3,7 @@ import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
-const loading = ref(false);
+const loadingOrders = ref(true);
 const tabledata = ref(false);
 const updateSuccess = ref(false);
 const OrderItems = ref({});
@@ -18,13 +18,13 @@ const FetchOrdersData = async () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
     try {
-        const { data, error } = await supabase.from('Ads').select('*');
+        const { data, error } = await supabase.from('user_orders').select('*');
 
         // console.log('Products:', data);
         OrderItems.value = data
         // console.log(data);
         tabledata.value = true
-
+        loadingOrders.value = false
     } catch (error) {
         console.error('Error fetching Ads:', error.message);
     }
@@ -99,31 +99,36 @@ const cancelEdit = () => {
         <div id="main"></div>
         <div class="h-1 w-1/6 mx-auto bg-zinc-800 mb-5 mt-5"></div>
         <p class="p-5 text-2xl">All Orders ({{ OrderItems.length }})</p>
-        <div v-if="tabledata" class="flex md:table w-full mx-auto">
-            <v-table height="400px" fixed-header density="default"
-                :theme="theme.global.current.value.dark ? 'dark' : 'light'">
-                <thead>
-                    <tr>
-                        <th class="text-left">
-                            Name
-                        </th>
-                        <th class="text-center">
-                            Ad image
-                        </th>
-                        <th>Manage</th>
-                    </tr>
-                </thead>
-                <tbody class="text-left">
-                    <tr v-for="(item, index) in OrderItems" :key="index">
-                        <td class="">{{ item.name }}</td>
-                        <td><v-img :src="JSON.parse(item.image)[0]" class="m-5" max-width="300" min-width="100"></v-img>
-                        </td>
-                        <td><v-btn @click="triggerAd(index)" variant="outlined" elevation="3" max-width="10"
-                                max-height="30">Edit</v-btn>
-                        </td>
-                    </tr>
-                </tbody>
-            </v-table>
+        <div v-if="!loadingOrders" class="  text-left text-lg shadow-md w-full md:p-5 mx-auto">
+            <div v-if="OrderItems.length != 0" class="flex md:table w-full mx-auto">
+                <v-table height="fit" fixed-header density="default"
+                    :theme="theme.global.current.value.dark ? 'dark' : 'light'">
+                    <thead>
+                        <tr>
+                            <th class="text-left">
+                                Order no.
+                            </th>
+                            <th class="text-left">
+                                Details
+                            </th>
+                            <th>Manage</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-left">
+                        <tr v-for="(order, index) in OrderItems" :key="index">
+                            <td class="">{{ order.order_no }}</td>
+                            <!-- <td><v-img :src="JSON.parse(order.image)[0]" class="m-5" max-width="300"
+                                    min-width="100"></v-img>
+                            </td> -->
+                            <td class="">{{ order.order_details[0].status }}</td>
+                            <td><v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
+                                    max-height="30">view</v-btn>
+                            </td>
+                        </tr>
+                    </tbody>
+                </v-table>
+            </div>
+            <div v-else>No Orders yet</div>
         </div>
         <div v-else class="p-10">
             <p class="text-xl p-2"></p>
