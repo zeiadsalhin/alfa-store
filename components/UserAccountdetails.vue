@@ -23,8 +23,9 @@ onMounted(async () => {
             avatar.value = data.session.user.identities[0].identity_data.avatar_url
             displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
             phone.value = data.session.user.identities[0].identity_data.phone// Display registered id
-            email.value = data.session.user.identities[0].email // Display registered email
-            signin.value = data.session.user.identities[0].last_sign_in_at // last login
+            email.value = data.session.user.identities[0].email // Display registered email 
+            const date = new Date(data.session.user.last_sign_in_at).toLocaleString('en-us')// last login
+            signin.value = date
             auth.value = data.session.user.role // Display account status
             // console.log('this user is regular')
 
@@ -83,6 +84,7 @@ async function LogOut() {
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <ResetPassword />
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
+            <UserAccountOrders />
             <UserAccountAddresses />
         </div>
     </div>

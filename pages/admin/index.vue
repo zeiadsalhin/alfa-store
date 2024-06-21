@@ -71,6 +71,7 @@ onMounted(async () => {
                                 :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-50 text-black'">
                                 <AddAds />
                                 <FetchAds />
+                                <FetchOrders />
                             </div>
                         </div>
                     </div>

@@ -16,7 +16,8 @@ onMounted(async () => {
         if (data.session.user.user_metadata.role == 'admin') {  // access only for admins
             name.value = data.session.user.identities[0].identity_data.first_name // Display registered username
             email.value = data.session.user.identities[0].identity_data.email
-            signin.value = (data.session.user.last_sign_in_at).slice(0, 19).replace('T', ' ')
+            const date = new Date(data.session.user.last_sign_in_at).toLocaleString('en-us')
+            signin.value = date
             // console.log('component:', data);
         }
     } catch (error) {
