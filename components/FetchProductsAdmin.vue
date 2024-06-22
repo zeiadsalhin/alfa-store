@@ -217,14 +217,14 @@ const cancelEdit = () => {
                                 class="px-2 py-1 m-2 rounded-sm w-11/12" type="number" step="any" id="discount_price"
                                 v-model="productUpdate.discount_price">
                         </div>
-                        <div class="w-full flex mt-2s space-x-5">
+                        <div class="w-full mt-5">
                             <label for="price" class="text-xl my-auto flex">
                                 <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">4</p>Description<span
                                     class="required text-red-600">*</span>:
                             </label>
-                            <textarea rows="3" cols="3"
+                            <textarea rows="10" cols="3"
                                 :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-300 text-zinc-950'"
-                                class="p-1 text-md m-2 rounded-sm w-full" type="text" id="price"
+                                class="p-1 text-md my-3 rounded-sm w-full" type="text" id="price"
                                 v-model="productUpdate.description" required></textarea>
                         </div>
                         <div class="w-fit flex md:space-x-14 space-x-5 mt-5">

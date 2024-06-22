@@ -1,6 +1,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
+import axios from 'axios';
 import Swal from 'sweetalert2'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -11,10 +12,13 @@ const phone = ref()
 const isDisabledp = ref(true);
 const email = ref()
 const isDisablede = ref(true);
+const countries = ref(null);
+const country = ref(null);
 const signin = ref()
 const auth = ref()
 onMounted(() => {
     FetchUserData()
+    fetchCountryData()
 })
 //fetch user data
 async function FetchUserData() {
@@ -40,6 +44,22 @@ async function FetchUserData() {
     }
 }
 
+// fetch countries data
+async function fetchCountryData() {
+    try {
+        const response = await axios.get(`https://restcountries.com/v3.1/all`);
+        if (response.status === 200) {
+            countries.value = response.data;
+            // console.log(countries.value[0].idd.suffixes[0]);
+            // console.log('tel code: ', country.value.idd.root);
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    } catch (err) {
+        console.log(err);
+        country.value = null;
+    }
+}
 async function LogOut() {
     try {
         const { error } = await supabase.auth.signOut()
@@ -139,20 +159,40 @@ async function UpdateEmail() {
     <div>
         <div v-if="dataview" class="mt-16 md:w-1/2  p-10 text-center mx-auto"
             :class="theme.global.current.value.dark ? 'text-white bg-zinc-900' : 'text-zinc-800 bg-zinc-100'">
-            <p class="font-semibold text-3xl">Welcome, {{ displayname }}</p>
+            <div class="welcome flex space-x-3">
+                <div class="w-1.5 h-10 bg-zinc-950 rounded-sm"></div>
+                <p class="font-semibold text-3xl text-left my-auto">Welcome, {{ displayname }}</p>
+            </div>
             <div class="icon p-5"><v-img v-if="avatar" :src="avatar" width="120" class="mx-auto rounded-full"></v-img>
                 <v-icon v-else size="100">mdi-account</v-icon>
             </div>
-            <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3">Logout</v-btn>
+            <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3"><v-icon
+                    class="mx-1">mdi-exit-to-app</v-icon>Logout</v-btn>
             <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <div class="details text-left">
-                <h1 class="text-2xl p-2">Account Details:</h1>
+                <div class="Accountdetails flex space-x-3 py-2 mb-3">
+                    <div class="w-1 h-10 bg-zinc-950 rounded-sm"></div>
+                    <h1 class="text-2xl font-semibold my-auto">Account Details:</h1>
+                </div>
+                <!--phone input and suffix-->
                 <div class="phone">
-                    <form @submit.prevent="UpdatePhone" class="w-full flex py-2 space-x-3">
+                    <form @submit.prevent="UpdatePhone" class="w-full flex py-2 space-x-4">
                         <label for="id" class="text-xl my-auto">Phone:</label>
-                        <input :disabled="isDisabledp" :value="phone" v-model="phone" class="text-lg p-0.5 my-auto w-32"
-                            :class="isDisabledp ? '' : 'outline outline-1'" required></input>
+                        <div class="phoneinput flex">
+                            <select v-if="!isDisabledp" @change=""
+                                class="bg-zinc-950a w-12 p-0.5 bg-zinc-600 outline outline-1 outline-zinc-500 h-fit my-auto text-lg text-white rounded-l-lg">
+                                <option value="">+</option>
+                                <option v-for="country in countries" :key="country.name.common"
+                                    :value="country.idd?.root" class="bg-zinc-950 ">
+                                    {{ country.idd?.root }}{{ country.idd?.suffixes ? country.idd.suffixes[0] : '' }}
+                                    ({{ country.name.official }})
+                                </option>
+                            </select>
+                            <input :disabled="isDisabledp" :value="phone" v-model="phone"
+                                class="text-lg bg-zinc-950a p-0.5 my-auto w-32"
+                                :class="isDisabledp ? '' : 'outline outline-1 outline-zinc-500'" required></input>
+                        </div>
                         <v-btn v-if="isDisabledp" @click="isDisabledp = false" max-height="30" max-width="10"
                             variant="tonal"><v-icon>{{
                                 isDisabledp ?
@@ -175,8 +215,8 @@ async function UpdateEmail() {
                     <form @submit.prevent="UpdateEmail" class="w-full flex py-2 space-x-4">
                         <label for="id" class="text-xl my-auto">Email:</label>
                         <input :disabled="isDisablede" :value="email" v-model="email"
-                            class="text-lg p-0.5 my-auto w-fit" :class="isDisablede ? '' : 'outline outline-1'"
-                            required></input>
+                            class="text-lg p-0.5 my-auto w-fit"
+                            :class="isDisablede ? '' : 'outline outline-1 outline-zinc-500'" required></input>
                         <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-10"
                             variant="tonal"><v-icon>{{
                                 isDisablede ?

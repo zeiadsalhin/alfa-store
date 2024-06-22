@@ -14,7 +14,7 @@ import type vuetify from '~/plugins/vuetify';
             Products
         </v-btn>
         <v-btn to="/admin/">
-            <v-icon>mdi-account</v-icon>
+            <v-icon>mdi-shield-account</v-icon>
             Account
         </v-btn>
     </v-bottom-navigation>
