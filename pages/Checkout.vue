@@ -6,12 +6,7 @@ const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
 
 //data
-const email = ref(null);
-const name = ref(null);
-const phone = ref(null);
-const address = ref(null);
-const city = ref(null);
-const country = ref(null);
+const expanded = ref(false);
 const cc = ref("4333-3387-8788-6620");
 const expdate = ref("06/15");
 const cvv = ref("123");
@@ -47,7 +42,7 @@ const formatcvv = () => {
 //total price 
 const totalPrice = computed(() => {
     return cartItems.value.reduce((total, item) => {
-        return total + (item.product.price * item.quantity);
+        return total + (item.discountedPrice || item.product.price * item.quantity);
     }, 0);
 });
 
@@ -83,10 +78,10 @@ onBeforeMount(() => {
 
 // process
 async function proccess() {
-    if (!name.value || !email.value || !phone.value || !address.value || !city.value || !country.value || !cc.value || !expdate.value || !cvv.value) {
-        errorMessage.value = 'Please fill out all fields.'
-        return;
-    }
+    // if (!name.value || !email.value || !phone.value || !address.value || !city.value || !country.value || !cc.value || !expdate.value || !cvv.value) {
+    //     errorMessage.value = 'Please fill out all fields.'
+    //     return;
+    // }
 
     errorMessage.value = ''
     await Swal.fire({
@@ -130,39 +125,18 @@ useSeoMeta({
             <p>No Items Just Yet</p>
         </div>
         <v-container v-else>
-            <div class="mb-3" v-if="cartItems.length > 0">
-                <div class="h1 text-3xl p-5">
-                    <h1>Shipping Address</h1>
-                </div>
+            <ShippingCheckout />
+            <div class="h1 text-xl mt-10">
+                <h1>Payment Method:</h1>
             </div>
-            <v-form lazy-validation ref="form" class="mt-10" @submit.prevent="proccess">
-
-                <p v-if="errorMessage" class="error bg-red-700 text-white p-1">{{ errorMessage }}</p>
-                <p class="font-weight-bold p-2">Personal & Delivery</p>
-                <v-row>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="email" :rules="rules" outlined label="Email" type="email"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="name" :rules="rules" outlined label="Full Name"
-                            type="text"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="phone" :rules="rules" outlined label="Phone" type="tel"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="address" :rules="rules" outlined label="Address"
-                            type="text"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="city" :rules="rules" outlined label="City" type="text"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="country" :rules="rules" outlined label="Country"
-                            type="text"></v-text-field>
-                    </v-col>
-                </v-row>
-                <p class="font-weight-bold p-2">Credit card</p>
+            <p class="p-1 mt-5">
+                <v-radio-group>
+                    <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
+                    <v-radio value="VC" label="Pay with Vodafone Cash (VCN)"></v-radio>
+                    <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
+                </v-radio-group>
+            </p>
+            <div class="creditCard" v-if="expanded">
                 <v-row>
                     <v-col cols="12" md="12">
                         <v-text-field v-model="cc" @input="formatcard" :rules="rules" outlined
@@ -177,35 +151,37 @@ useSeoMeta({
                             label="Security code/CVV"></v-text-field>
                     </v-col>
                 </v-row>
-                <div class="total flex space-x-5 mb-5 mt-5 text-2xl">
-                    <p>Total Sub:</p>
-                    <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
-                            }} + VAT%</p>
-                            <p v-if="FinalPrice" class="text-red-700 text-md">- 100%</p>
-                </div>
+            </div>
+            <div class="total flex space-x-5 mb-5 mt-5 text-2xl">
+                <p>Total Sub:</p>
+                <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US') }}
+                        + VAT%</p>
+                        <p v-if="FinalPrice" class="text-red-700 text-md">- 100%</p>
+            </div>
 
-                <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
-                <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
-                <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
-                    <p class="text-lg">Have coupon? :</p>
-                    <v-text-field v-model="coupon" variant="outlined" density="compact"
-                        :disabled="isDisabled"></v-text-field>
-                    <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
-                    <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
-                    <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span>
-                </div>
-                <div class="pay mt-5 flex-col text-center">
-                    <Paypal />
-                    <p>Or</p>
-                </div>
-                <div class="buttons flex justify-center w-f space-x-3 py-2">
-                    <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
-                    <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">Complete &
-                        Pay
-                        (${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice :
-                            totalPrice).toLocaleString('en-US') }})</v-btn>
-                </div>
-            </v-form>
+            <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
+            <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
+            <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
+                <p class="text-lg">Have coupon? :</p>
+                <v-text-field v-model="coupon" variant="outlined" density="compact"
+                    :disabled="isDisabled"></v-text-field>
+                <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
+                <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
+                <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span>
+            </div>
+            <div class="pay mt-5 flex-col text-center">
+                <!-- <Paypal /> -->
+                <!-- <p>Or</p> -->
+            </div>
+            <div class="buttons flex justify-center w-f space-x-3 py-2">
+                <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
+                <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">Complete Order
+                    <!-- &
+                    Pay
+                    (${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
+                        }}) -->
+                </v-btn>
+            </div>
             <div class="payments space-y-5 p-5">
                 <p>We accept:</p>
                 <v-img src="/payments.webp" width="300"></v-img>
