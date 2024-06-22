@@ -136,7 +136,7 @@ const cancelEdit = () => {
         </div>
 
         <!--editing Ad-->
-        <div v-if="!loading" class="editP mt-10 p-2" id="editview">
+        <div v-if="!loadingOrders" class="editP mt-10 p-2" id="editview">
             <!--success message-->
             <p v-if="updateSuccess" class="text-lg"><v-icon class="mx-1" color="green">mdi-check</v-icon>Ad details
                 updated
