@@ -38,19 +38,25 @@ const handleOptionSelected = (option) => {
 const mainStore = useMainStore();
 
 const addToCart = (product) => {
-    if (selectedoption.value) {
-        mainStore.addToCart(product, selectedoption.value, product.discount_price);
+    if (product.options) {
+        if (selectedoption.value) {
+            mainStore.addToCart(product, selectedoption.value, product.discount_price);
+        } else {
+            Swal.fire({
+                title: 'Warning!',
+                icon: 'warning',
+                text: 'You must select an option',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false,
+            })
+        }
+        // console.log(selectedoption.value); // Log the value of selectedoption
     } else {
-        Swal.fire({
-            title: 'Warning!',
-            icon: 'warning',
-            text: 'You must select an option',
-            toast: true,
-            timer: 2000,
-            showConfirmButton: false,
-        })
+        mainStore.addToCart(product, selectedoption.value, product.discount_price);
+        console.log('no options', selectedoption.value);
     }
-    // console.log(selectedoption.value); // Log the value of selectedoption
+
 };
 
 
@@ -234,14 +240,15 @@ const DeleteProducts = async () => {
                             </p>
                         </div>
                         <div v-else>
-                            <p class="text-h5 mb-7">
+                            <p class="text-h5 mb-4">
                                 Price:
                                 {{ (product.price) + ' $' }}
                             </p>
                         </div>
-                        <Colors :options="product.options" @option-selected="handleOptionSelected" />
+                        <Colors v-if="product.options" :options="product.options"
+                            @option-selected="handleOptionSelected" />
                         <br />
-                        <div class="button flex flex-col md:flex-row my-5">
+                        <div class="button flex flex-col md:flex-row mb-5">
                             <div v-if="product.stock" class="md:flex">
                                 <v-btn @click="addToCart(product)" min-height="45" min-width="150"
                                     class="md:m-2 my-2 w-full md:w-1/2" color="">
@@ -252,8 +259,8 @@ const DeleteProducts = async () => {
                                     Now</v-btn>
                             </div>
                             <div v-else>
-                                <v-btn :readonly="true" min-height="45" min-width="150" class="m-2" color="">
-                                    <v-icon size="30" class="m-1 w-full">mdi-cancel</v-icon>Out of stock</v-btn>
+                                <v-btn :readonly="true" min-height="45" class="m-1 mb-10  w-full">
+                                    <v-icon size="30" class="m-1">mdi-cancel</v-icon>Out of stock</v-btn>
                             </div>
                             <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="150" class="m-2"
                                 color="red-darken-4">Delete

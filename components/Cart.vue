@@ -12,7 +12,7 @@
                     <div class="info my-auto p-2 w-fit">
                         <div class="name">{{ item.product.name }}</div>
                         <div class="price">Price: ${{ item.discountedPrice || item.product.price }}</div>
-                        <div class="price">Option: {{ item.selectedOption }}</div>
+                        <div class="price" v-if="item.selectedOption">Option: {{ item.selectedOption }}</div>
                         <div class="price">X {{ item.quantity }}</div>
                         <div class="remove flex my-auto space-x-2 p-2 mt-2"><button @click="removeFromCart(index)"
                                 class="bg-red-700 text-white my-auto px-2 py-1 rounded-md">Remove</button>
@@ -22,16 +22,17 @@
                     </div>
                 </li>
                 <div class="h-1 rounded-md w-full bg-slate-950"></div>
-                <div v-if="items.length != 0" class="total px-4 text-xl">Total Price: ${{
+                <div v-if="items.length != 0" class="total px-4 mb-5 text-xl">Subtotal: ${{
                     totalPrice.toLocaleString('en-US') }}</div>
             </ul>
-            <div v-if="items.length != 0" class="md:1flex mx-auto text-xl text-center md:1space-x-5 "><v-btn
-                    variant="tonal" color="red-lighten-1" @click="clearCart"
-                    class="w-11/12 text-white my-2 p-2.5 rounded-md"><v-progress-circular v-if="clearing" size="25"
-                        class="mx-3" color="dark-blue" indeterminate></v-progress-circular>Clear
+            <div v-if="items.length != 0" class="text-xl text-center mb-10"><v-btn variant="tonal" color="red-lighten-1"
+                    @click="clearCart" class="w-11/12 text-white my-2a p-2.5a rounded-md" min-height="40"><v-icon
+                        size="25">mdi-delete-outline</v-icon><v-progress-circular v-if="clearing" size="20" class="mx-3"
+                        color="dark-blue" indeterminate></v-progress-circular>Clear
                     Cart</v-btn>
                 <v-btn to="Checkout" color="grey-darken-3
-" class="w-11/12 bg-gray-600 my-2 p-2.5 text-lg rounded-md">
+" class="w-11/12 bg-gray-600 my-2 p-2.5 text-lg rounded-md" min-height="40"><v-icon size="20"
+                        class="mx-1">mdi-lock-outline</v-icon>
                     Checkout(${{ totalPrice.toLocaleString('en-US') }})
                 </v-btn>
             </div>

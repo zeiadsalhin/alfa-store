@@ -1,4 +1,5 @@
 <script setup>
+import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
@@ -129,6 +130,62 @@ const saveAddress = async () => {
     loading1.value = false
     editMode.value = false;
 };
+
+// delete address
+// delete confirm
+const DeleteAddressBegin = (addressId) => {
+    id.value = addressId;
+    Swal.fire({
+        title: 'Warning!',
+        icon: 'warning',
+        text: 'This Address will be deleted!',
+        showConfirmButton: true,
+        showCancelButton: true,
+    }).then((result) => {
+        if (result.isConfirmed) {
+            DeleteAddress();
+        } else {
+        }
+    });
+}
+
+// Delete Address from database
+const DeleteAddress = async () => {
+    const supabase = useSupabaseClient()
+    try {
+        const { error } = await supabase
+            .from('user_address')
+            .delete()
+            .eq('id', id.value)
+
+        // console.log(userAddress.value)
+        if (error) {
+            console.log(error)
+        } else {
+
+            // const { error } = await supabase
+            //     .storage
+            //     .from('products_images')
+            //     .remove([`${product.value.name}`]);
+            // if (error) {
+            //     console.log(error)
+            // } else {
+            // console.log('Deleted image');
+            Swal.fire({
+                title: 'Success',
+                icon: 'success',
+                text: 'Address deleted successfully!',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false,
+            }).then(() => { fetchAddresses() })
+            // }
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+};
 </script>
 <template>
     <div class="mb-20">
@@ -250,7 +307,8 @@ const saveAddress = async () => {
                     <div class="grid grid-cols-2 grid-rows-2 w-11/12 mx-auto text-center justify-center space-x- mt-4">
                         <v-btn @click="updateValue(index)" class="m-1" min-height="40" max-width="100"
                             color="grey-lighten-2">Edit</v-btn>
-                        <v-btn @click="" class="m-1" min-height="40" max-width="100" color="red-darken-2">Delete</v-btn>
+                        <v-btn @click="DeleteAddressBegin(address.id)" class="m-1" min-height="40" max-width="100"
+                            color="red-darken-2">Delete</v-btn>
                         <v-btn @click="" class="m-2 col-span-2 w-fuasll flaex justify-center" min-height="40"
                             max-width="200" variant="outlined">Set as
                             default</v-btn>
