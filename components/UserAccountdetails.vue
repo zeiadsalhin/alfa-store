@@ -8,10 +8,16 @@ const dataview = ref()
 const avatar = ref()
 const displayname = ref()
 const phone = ref()
+const isDisabledp = ref(true);
 const email = ref()
+const isDisablede = ref(true);
 const signin = ref()
 const auth = ref()
-onMounted(async () => {
+onMounted(() => {
+    FetchUserData()
+})
+//fetch user data
+async function FetchUserData() {
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
         // console.log(data.session.user);
@@ -22,20 +28,17 @@ onMounted(async () => {
             dataview.value = true
             avatar.value = data.session.user.identities[0].identity_data.avatar_url
             displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
-            phone.value = data.session.user.identities[0].identity_data.phone// Display registered id
+            phone.value = data.session.user.phone// Display registered id
             email.value = data.session.user.identities[0].email // Display registered email 
             const date = new Date(data.session.user.last_sign_in_at).toLocaleString('en-us')// last login
             signin.value = date
             auth.value = data.session.user.role // Display account status
-            // console.log('this user is regular')
-
+            // console.log('user phone: ', data.session.user.phone)
         }
     } catch (error) {
         console.log(error);
     }
-
-});
-
+}
 
 async function LogOut() {
     try {
@@ -54,6 +57,83 @@ async function LogOut() {
         console.log(error)
     }
 }
+
+async function UpdatePhone() {
+    try {
+        // // verify otp
+        // const { error: otpRequestError } = await supabase.auth.api.sendOtp('sms', newPhoneNumber.value);
+        // if (otpRequestError) {
+        //     throw new Error('Failed to send OTP. Please try again later.');
+        // }
+
+        // // Step 2: Prompt user for OTP and verify
+        // const token = prompt('Please enter the OTP sent to your new number:');
+        // if (!token) return; // Handle cancellation or empty input
+
+        // const { error: verifyError } = await supabase.auth.verifyOtp({
+        //     phone: newPhoneNumber.value,
+        //     token,
+        //     type: 'phone_change'
+        // });
+        // if (verifyError) {
+        //     console.error('Error verifying OTP:', verifyError.message);
+        //     alert(`Error verifying OTP: ${verifyError.message}`);
+        //     return;
+        // }
+
+        const { data, error: updateError } = await supabase.auth.updateUser({
+            phone: phone.value
+        })
+        if (updateError) {
+            throw updateError
+        } else {
+            isDisabledp.value = true
+            FetchUserData();
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+// update email
+async function UpdateEmail() {
+    try {
+        // // verify otp
+        // const { error: otpRequestError } = await supabase.auth.api.sendOtp('sms', newPhoneNumber.value);
+        // if (otpRequestError) {
+        //     throw new Error('Failed to send OTP. Please try again later.');
+        // }
+
+        // // Step 2: Prompt user for OTP and verify
+        // const token = prompt('Please enter the OTP sent to your new number:');
+        // if (!token) return; // Handle cancellation or empty input
+
+        // const { error: verifyError } = await supabase.auth.verifyOtp({
+        //     phone: newPhoneNumber.value,
+        //     token,
+        //     type: 'phone_change'
+        // });
+        // if (verifyError) {
+        //     console.error('Error verifying OTP:', verifyError.message);
+        //     alert(`Error verifying OTP: ${verifyError.message}`);
+        //     return;
+        // }
+
+        const { data, error: updateError } = await supabase.auth.updateUser({
+            email: email.value
+        })
+        if (updateError) {
+            throw updateError
+        } else {
+            isDisabledp.value = true
+            FetchUserData();
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 </script>
 <template>
     <div>
@@ -68,17 +148,59 @@ async function LogOut() {
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <div class="details text-left">
                 <h1 class="text-2xl p-2">Account Details:</h1>
-                <div class="w-full py-2 space-x-10">
-                    <label for="id" class="text-xl">Phone:</label>
-                    <label class="text-lg">{{ phone }}</label>
+                <div class="phone">
+                    <form @submit.prevent="UpdatePhone" class="w-full flex py-2 space-x-3">
+                        <label for="id" class="text-xl my-auto">Phone:</label>
+                        <input :disabled="isDisabledp" :value="phone" v-model="phone" class="text-lg p-0.5 my-auto w-32"
+                            :class="isDisabledp ? '' : 'outline outline-1'" required></input>
+                        <v-btn v-if="isDisabledp" @click="isDisabledp = false" max-height="30" max-width="10"
+                            variant="tonal"><v-icon>{{
+                                isDisabledp ?
+                                    'mdi-pencil' : '' }}</v-icon></v-btn>
+                        <div v-else class="cancelandupdatebutton">
+                            <v-btn @click="UpdatePhone" max-height="30" max-width="10" variant="tonal"
+                                class="m-1"><v-icon>{{
+                                    isDisabledp ?
+                                        '' : 'mdi-content-save' }}</v-icon>
+                            </v-btn>
+                            <v-btn @click="isDisabledp = true" max-height="30" max-width="10" variant="tonal"
+                                class="mx-1"><v-icon>{{
+                                    isDisabledp ?
+                                        '' : 'mdi-close' }}</v-icon>
+                            </v-btn>
+                        </div>
+                    </form>
                 </div>
-                <div class="w-full py-2 flexs space-x-10">
-                    <label for="email" class="text-xl">Email:</label>
-                    <label class="text-lg">{{ email }}</label>
+                <div class="email">
+                    <form @submit.prevent="UpdateEmail" class="w-full flex py-2 space-x-4">
+                        <label for="id" class="text-xl my-auto">Email:</label>
+                        <input :disabled="isDisablede" :value="email" v-model="email"
+                            class="text-lg p-0.5 my-auto w-fit" :class="isDisablede ? '' : 'outline outline-1'"
+                            required></input>
+                        <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-10"
+                            variant="tonal"><v-icon>{{
+                                isDisablede ?
+                                    'mdi-pencil' : '' }}</v-icon></v-btn>
+                        <div v-else class="cancelandupdatebutton">
+                            <v-btn @click="UpdatePhone" max-height="30" max-width="10" variant="tonal"
+                                class="m-1"><v-icon>{{
+                                    isDisablede ?
+                                        '' : 'mdi-content-save' }}</v-icon>
+                            </v-btn>
+                            <v-btn @click="isDisablede = true" max-height="30" max-width="10" variant="tonal"
+                                class="mx-1"><v-icon>{{
+                                    isDisablede ?
+                                        '' : 'mdi-close' }}</v-icon>
+                            </v-btn>
+                        </div>
+                    </form>
                 </div>
-                <div class="w-full py-2 space-x-10">
-                    <label for="auth" class="text-xl">Account:</label>
-                    <label class="text-lg">{{ auth }}</label>
+                <div class="authenticationstate w-full py-2 space-x-5">
+                    <label class="text-xl">Account:</label>
+                    <label for="auth" class="text-lg my-auto">{{ auth }}</label>
+                    <template v-if="auth == 'authenticated'">
+                        <v-icon class="mb-1" size="25">mdi-check-decagram</v-icon>
+                    </template>
                 </div>
             </div>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
