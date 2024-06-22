@@ -117,7 +117,10 @@ const UpdateProduct = async () => {
             Fetchproductdata();
             //scroll to div
             const view = document.getElementById('main');
-            view.scrollIntoView({ behavior: 'smooth' });
+            var headerOffset = 80;
+            var elementPosition = view.getBoundingClientRect().top;
+            var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             setTimeout(() => {
                 updateSuccess.value = false;
             }, 3000);
@@ -137,7 +140,10 @@ const cancelEdit = () => {
     expanded.value = false;
     //scroll back to main
     const view = document.getElementById('main');
-    view.scrollIntoView({ behavior: 'smooth' });
+    var headerOffset = 80;
+    var elementPosition = view.getBoundingClientRect().top;
+    var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 }
 </script>
 <template>
@@ -155,18 +161,24 @@ const cancelEdit = () => {
                             Name
                         </th>
                         <th class="text-center">
-                            Ad image
+                            Stock
                         </th>
                         <th>Manage</th>
                     </tr>
                 </thead>
                 <tbody class="text-left">
-                    <tr v-for="(item, index) in productItems" :key="index">
-                        <td class="">{{ item.name }}</td>
-                        <td><v-img :src="JSON.parse(item.image)[0]" class="m-5" max-width="200" min-width="70"></v-img>
+                    <tr v-for="(item, index) in productItems" :key="index" class="">
+                        <td class="flex w-full"><v-img :src="JSON.parse(item.image)[0]" class="m-1" max-width="55"
+                                min-width="55" cover></v-img>
+                            <p class="ml-2 my-auto underline w-32">{{ item.name }} (#{{ item.id }})</p>
+                        </td>
+                        <td class="text-center">
+                            <v-icon :color="item.stock ? 'green' : 'red'">{{ item.stock ? 'mdi-check' : 'mdi-close'
+                                }}</v-icon>
+                            {{ item.stock ? 'instock' : 'outofstock' }}
                         </td>
                         <td><v-btn @click="trigger(index)" variant="outlined" elevation="3" max-width="10"
-                                max-height="30">Edit</v-btn>
+                                max-height="30">View</v-btn>
                         </td>
                     </tr>
                 </tbody>

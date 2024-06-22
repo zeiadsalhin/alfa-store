@@ -43,7 +43,10 @@ const triggerAd = async (index) => {
         if (adUpdate.value) {
             expanded.value = true;
             const view = document.getElementById('editview');
-            // view.scrollIntoView({ behavior: 'smooth' });
+            var headerOffset = 80;
+            var elementPosition = view.getBoundingClientRect().top;
+            var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         } else {
             expanded.value = false;
         }
@@ -73,7 +76,10 @@ const UpdateAd = async () => {
             FetchAdsdata();
             //scroll to div
             const view = document.getElementById('main');
-            view.scrollIntoView({ behavior: 'smooth' });
+            var headerOffset = 80;
+            var elementPosition = view.getBoundingClientRect().top;
+            var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
             setTimeout(() => {
                 updateSuccess.value = false;
             }, 3000);
@@ -89,14 +95,17 @@ const UpdateAd = async () => {
 const cancelEdit = () => {
     expanded.value = false;
     //scroll back to main
-    const view = document.getElementById('main');
-    view.scrollIntoView({ behavior: 'smooth' });
+    const view = document.getElementById('mainAds');
+    var headerOffset = 80;
+    var elementPosition = view.getBoundingClientRect().top;
+    var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
 }
 </script>
 <template>
     <div>
         <!--div to scroll to-->
-        <div id="main"></div>
+        <div id="mainAds"></div>
         <div class="h-1 w-1/6 mx-auto bg-zinc-800 mb-5 mt-5"></div>
         <p class="p-5 text-2xl">All Ad Banners ({{ Adsitems.length }})</p>
         <div v-if="tabledata" class="flex md:table w-full mx-auto">

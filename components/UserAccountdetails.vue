@@ -191,7 +191,7 @@ async function UpdateEmail() {
                             </select>
                             <input :disabled="isDisabledp" v-model="phone"
                                 class="text-lg bg-zinc-950a p-0.5 my-auto w-32"
-                                :class="isDisabledp ? '' : 'outline outline-1 outline-zinc-500'" required></input>
+                                :class="isDisabledp ? '' : 'outline outline-1 outline-zinc-500'" required>
                         </div>
                         <v-btn v-if="isDisabledp" @click="isDisabledp = false" max-height="30" max-width="10"
                             variant="tonal"><v-icon>{{

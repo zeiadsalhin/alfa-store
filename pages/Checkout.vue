@@ -11,6 +11,7 @@ const cc = ref("4333-3387-8788-6620");
 const expdate = ref("06/15");
 const cvv = ref("123");
 const errorMessage = ref('')
+const paymenterrorMessage = ref('')
 const isDisabled = ref(false);
 const notapplied = ref(true)
 const rules = [
@@ -20,7 +21,9 @@ const rules = [
     },
 ];
 const coupon = ref(null)
+const paymentMethod = ref(null);
 const FinalPrice = ref(null)
+const ShippingFee = ref(1.00);
 const FPMsg = ref(null)
 const FPErMsg = ref(null)
 
@@ -82,6 +85,16 @@ async function proccess() {
     //     errorMessage.value = 'Please fill out all fields.'
     //     return;
     // }
+    if (!paymentMethod.value) {
+        paymenterrorMessage.value = 'Please Select '
+        // scroll to error
+        const viewp = document.getElementById('paymethoderror')
+        var headerOffset = 120;
+        var elementPosition = viewp.getBoundingClientRect().top;
+        var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        return;
+    }
 
     errorMessage.value = ''
     await Swal.fire({
@@ -95,7 +108,7 @@ async function proccess() {
         showConfirmButton: false,
     });
     await Swal.fire({
-        title: "Order Complete",
+        title: "Order Complete (Experimental, thank you for testing)",
         icon: "success",
         allowEscapeKey: false,
         allowOutsideClick: false,
@@ -105,7 +118,7 @@ async function proccess() {
         showConfirmButton: false,
     });
     //Remove items from cart
-    mainStore.clearCart();
+    // mainStore.clearCart();
     router.push("/");
 }
 //seo
@@ -129,13 +142,17 @@ useSeoMeta({
             <div class="h1 text-xl mt-10">
                 <h1>Payment Method:</h1>
             </div>
-            <p class="p-1 mt-5">
-                <v-radio-group>
+            <div class="p-1 mt-5">
+                <p id="paymethoderror" v-if="paymentMethod == null"
+                    class="bg-red-700 text-white text-md mb-3 rounded-sm">
+                    {{ paymenterrorMessage }}
+                </p>
+                <v-radio-group v-model="paymentMethod">
                     <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
                     <v-radio value="VC" label="Pay with Vodafone Cash (VCN)"></v-radio>
                     <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
                 </v-radio-group>
-            </p>
+            </div>
             <div class="creditCard" v-if="expanded">
                 <v-row>
                     <v-col cols="12" md="12">
@@ -152,13 +169,6 @@ useSeoMeta({
                     </v-col>
                 </v-row>
             </div>
-            <div class="total flex space-x-5 mb-5 mt-5 text-2xl">
-                <p>Total Sub:</p>
-                <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US') }}
-                        + VAT%</p>
-                        <p v-if="FinalPrice" class="text-red-700 text-md">- 100%</p>
-            </div>
-
             <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
             <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
             <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
@@ -167,7 +177,33 @@ useSeoMeta({
                     :disabled="isDisabled"></v-text-field>
                 <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
                 <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
-                <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span>
+                <!-- <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span> -->
+            </div>
+            <!--price calculations-->
+            <div class="price calculations md:w-9/12">
+                <div class="subtotal flex justify-between mb-2 mt-5 text-lg">
+                    <p>Total Sub:</p>
+                    <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
+                            }} (Including VAT%)</p>
+                            <p v-if="FinalPrice" class="text-red-700 text-md">- 100%</p>
+                </div>
+                <div v-if="paymentMethod == 'COD'" class="shippingfee flex justify-between mb-5 mt-2 text-lg">
+                    <p class="flex">Shipping
+                        <ShippingDialog />
+                    </p>
+                    <p>${{ (ShippingFee).toLocaleString('en-US') }}</p>
+                </div>
+                <div class="total flex justify-between mb-5 mt-2 font-semibold text-2xl">
+                    <p>Total:</p>
+                    <p class="font-bold">${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice +
+                        (paymentMethod == 'COD' ? ShippingFee : '') : totalPrice + (paymentMethod == 'COD' ?
+                            ShippingFee : '')).toLocaleString('en-US') }}</p>
+                </div>
+                <div class="w-11/12 mx-auto h-1 bg-zinc-800 rounded-xl"></div>
+                <div class="SecuredCheckout mb-5 mt-5">
+                    <p class="flex opacity-60"><v-icon class="mx-3">mdi-shield-check</v-icon>Secure Checkout Guarantee
+                    </p>
+                </div>
             </div>
             <div class="pay mt-5 flex-col text-center">
                 <!-- <Paypal /> -->
