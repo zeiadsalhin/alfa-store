@@ -185,7 +185,7 @@ async function UpdateEmail() {
                                     ({{ country.name.official }})
                                 </option>
                             </select>
-                            <input :disabled="isDisabledp" :value="phone" v-model="phone"
+                            <input :disabled="isDisabledp" v-model="phone"
                                 class="text-lg bg-zinc-950a p-0.5 my-auto w-32"
                                 :class="isDisabledp ? '' : 'outline outline-1 outline-zinc-500'" required></input>
                         </div>
@@ -210,8 +210,7 @@ async function UpdateEmail() {
                 <div class="email">
                     <form @submit.prevent="UpdateEmail" class="w-full flex py-2 space-x-4">
                         <label for="id" class="text-xl my-auto">Email:</label>
-                        <input :disabled="isDisablede" :value="email" v-model="email"
-                            class="text-lg p-0.5 my-auto w-fit"
+                        <input :disabled="isDisablede" v-model="email" class="text-lg p-0.5 my-auto w-fit"
                             :class="isDisablede ? '' : 'outline outline-1 outline-zinc-500'" required></input>
                         <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-10"
                             variant="tonal"><v-icon>{{
