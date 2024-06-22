@@ -23,7 +23,7 @@ useSeoMeta({
 </script>
 <template>
     <div>
-        <!-- <UserAccountdetails /> -->
+        <UserAccountdetails />
         <BottomNav />
     </div>
 </template>

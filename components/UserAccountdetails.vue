@@ -1,7 +1,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
-import axios from 'axios';
+// import axios from 'axios';
 import Swal from 'sweetalert2'
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -12,7 +12,7 @@ const phone = ref()
 const isDisabledp = ref(true);
 const email = ref()
 const isDisablede = ref(true);
-const countries = ref(null);
+const countries = ref([]);
 const country = ref(null);
 const signin = ref()
 const auth = ref()
@@ -47,14 +47,10 @@ async function FetchUserData() {
 // fetch countries data
 async function fetchCountryData() {
     try {
-        const response = await axios.get(`https://restcountries.com/v3.1/all`);
-        if (response.status === 200) {
-            countries.value = response.data;
-            // console.log(countries.value[0].idd.suffixes[0]);
-            // console.log('tel code: ', country.value.idd.root);
-        } else {
-            throw new Error('Failed to fetch data');
-        }
+        const response = await $fetch(`https://restcountries.com/v3.1/all`);
+        countries.value = response;
+        // console.log(countries.value[0]);
+
     } catch (err) {
         console.log(err);
         country.value = null;
@@ -183,8 +179,8 @@ async function UpdateEmail() {
                             <select v-if="!isDisabledp" @change=""
                                 class="bg-zinc-950a w-12 p-0.5 bg-zinc-600 outline outline-1 outline-zinc-500 h-fit my-auto text-lg text-white rounded-l-lg">
                                 <option value="">+</option>
-                                <option v-for="country in countries" :key="country.name.common"
-                                    :value="country.idd?.root" class="bg-zinc-950 ">
+                                <option v-for="country in countries" :key="country.name" :value="country.idd?.root"
+                                    class="bg-zinc-950 ">
                                     {{ country.idd?.root }}{{ country.idd?.suffixes ? country.idd.suffixes[0] : '' }}
                                     ({{ country.name.official }})
                                 </option>
