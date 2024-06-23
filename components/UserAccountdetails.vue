@@ -3,6 +3,8 @@ import { useTheme } from 'vuetify'
 const theme = useTheme();
 import axios from 'axios';
 import Swal from 'sweetalert2'
+import { useMainStore } from '@/store';
+const mainStore = useMainStore();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const dataview = ref()
@@ -73,7 +75,7 @@ async function LogOut() {
         }).then(() => {
             navigateTo("/login")
             // clear cart
-
+            mainStore.clearCart();
         })
     } catch (error) {
         console.log(error)
@@ -247,7 +249,7 @@ async function UpdateEmail() {
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <ResetPassword />
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
-            <UserAccountOrders />
+            <!-- <UserAccountOrders /> -->
             <UserAccountAddresses />
         </div>
     </div>

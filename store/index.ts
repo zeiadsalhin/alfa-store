@@ -5,6 +5,7 @@ export const useMainStore = defineStore('main', {
   state: () => ({
     items: [],
     discountedPrice: null,
+    checkoutPrice:null,
     orders: [],
   }),
   getters: {
@@ -154,6 +155,9 @@ export const useMainStore = defineStore('main', {
 
     setDiscountedPrice(discountedPrice) {
       this.discountedPrice = discountedPrice;
+    },
+    setCheckoutPrice(checkoutPrice) {
+      this.checkoutPrice = checkoutPrice;
     },
   },
 });

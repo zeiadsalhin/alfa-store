@@ -1,6 +1,9 @@
 <script setup>
 import Swal from 'sweetalert2'
 import { useMainStore } from '~/store';
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
+const UID = ref(null);
 const router = useRouter()
 const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
@@ -22,8 +25,10 @@ const rules = [
 ];
 const coupon = ref(null)
 const paymentMethod = ref(null);
+const isPaymentD = ref(true);
 const FinalPrice = ref(null)
 const ShippingFee = ref(1.00);
+const CheckoutPrice = ref(null);
 const FPMsg = ref(null)
 const FPErMsg = ref(null)
 
@@ -51,13 +56,22 @@ const totalPrice = computed(() => {
 
 // Apply Coupon
 const couponapply = () => {
+    isPaymentD.value = !isPaymentD.value;
     if (coupon.value == 'FREE') {
         console.log("coupon applied")
         const originalvalue = totalPrice.value;
-        FinalPrice.value = (originalvalue * 0.001).toFixed(2)
+        FinalPrice.value = Number((originalvalue * 0.001).toFixed(3))
         FPMsg.value = 'Congratulations! you got 99% discount'
         isDisabled.value = true;
-        mainStore.setDiscountedPrice(FinalPrice);
+        if (paymentMethod.value == 'COD') {
+            CheckoutPrice.value = FinalPrice.value + ShippingFee.value
+            // console.log(CheckoutPrice.value);
+            mainStore.setCheckoutPrice(CheckoutPrice.value);
+            // console.log('shipping fee added', FinalPrice.value + ShippingFee.value);
+        } else {
+            mainStore.setCheckoutPrice(FinalPrice.value);
+            // console.log(FinalPrice.value); 
+        }
         notapplied.value = false
     } else {
         FPErMsg.value = 'Please try another coupon'
@@ -66,8 +80,9 @@ const couponapply = () => {
 
 // remove coupon
 const removecoupon = () => {
-    mainStore.setDiscountedPrice(0);
+    mainStore.setCheckoutPrice(paymentMethod.value == 'COD' ? CheckoutPrice.value = totalPrice.value + ShippingFee.value : totalPrice.value);
     notapplied.value = true
+    isPaymentD.value = !isPaymentD.value;
     isDisabled.value = false
     coupon.value = ''
     FPMsg.value = ''
@@ -78,6 +93,12 @@ onBeforeMount(() => {
     removecoupon();
     // console.log("Coupon removed");
 });
+
+// Set invoice
+const SetInvoice = () => {
+    mainStore.setCheckoutPrice(paymentMethod.value == 'COD' ? CheckoutPrice.value = totalPrice.value + ShippingFee.value : totalPrice.value);
+    // console.log(mainStore.checkoutPrice);
+}
 
 // process
 async function proccess() {
@@ -97,30 +118,54 @@ async function proccess() {
     }
 
     errorMessage.value = ''
-    await Swal.fire({
-        title: "Proceessing your order",
-        icon: "info",
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-        timer: 3000,
-        timerProgressBar: true,
-        text: "Please Wait",
-        showConfirmButton: false,
-    });
-    await Swal.fire({
-        title: "Order Complete (Experimental, thank you for testing)",
-        icon: "success",
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-        timer: 3000,
-        timerProgressBar: true,
-        text: "Thank you, your order will be shipped",
-        showConfirmButton: false,
-    });
-    //Remove items from cart
-    // mainStore.clearCart();
-    router.push("/");
-}
+    // Generating Order 
+    try {
+        //get userID
+        const { data, error } = await supabase.auth.getSession()
+        if (data.session) {
+            UID.value = data.session.user.id
+        }
+        // 
+        const { error: insertError } = await supabase.from('user_orders').insert({
+            uid: UID.value ? UID.value : 'Guest',
+            order_details: { items: mainStore.items, invoice: mainStore.checkoutPrice },
+            order_status: { status: 'Received' },
+        });
+        if (insertError) {
+            console.log(insertError);
+            return;
+        }
+
+        // Show user dialog
+        await Swal.fire({
+            title: "Proceessing your order",
+            icon: "info",
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            timer: 3000,
+            timerProgressBar: true,
+            text: "Please Wait",
+            showConfirmButton: false,
+        }).then(() => {
+            Swal.fire({
+                title: "Order Complete (Experimental, thank you for testing)",
+                icon: "success",
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                timer: 3000,
+                timerProgressBar: true,
+                text: "Thank you, your order will be shipped",
+                showConfirmButton: false,
+            });
+            //Remove items from cart
+            mainStore.clearCart();
+            router.push("/");
+        })
+    } catch (error) {
+        console.error('Error generating order:', error.message);
+    }
+};
+
 //seo
 useSeoMeta({
     title: 'Alfa Store - SecureCheckout',
@@ -144,10 +189,10 @@ useSeoMeta({
             </div>
             <div class="p-1 mt-5">
                 <p id="paymethoderror" v-if="paymentMethod == null"
-                    class="bg-red-700 text-white text-md mb-3 rounded-sm">
+                    class="bg-red-700 text-white text-md mb-3a rounded-sm">
                     {{ paymenterrorMessage }}
                 </p>
-                <v-radio-group v-model="paymentMethod">
+                <v-radio-group v-model="paymentMethod" @change="SetInvoice" :disabled="isPaymentD">
                     <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
                     <v-radio value="VC" label="Pay with Vodafone Cash (VCN)"></v-radio>
                     <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
@@ -177,7 +222,7 @@ useSeoMeta({
                     :disabled="isDisabled"></v-text-field>
                 <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
                 <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
-                <!-- <span class="p-2 opacity-50 ">Hint: use Code FREE to get 99%</span> -->
+                <span class="p-2 opacity-50 text-sm">Hint: remove to edit payment method</span>
             </div>
             <!--price calculations-->
             <div class="price calculations md:w-9/12">
@@ -195,9 +240,9 @@ useSeoMeta({
                 </div>
                 <div class="total flex justify-between mb-5 mt-2 font-semibold text-2xl">
                     <p>Total:</p>
-                    <p class="font-bold">${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice +
-                        (paymentMethod == 'COD' ? ShippingFee : '') : totalPrice + (paymentMethod == 'COD' ?
-                            ShippingFee : '')).toLocaleString('en-US') }}</p>
+                    <p class="font-bold">${{ (FinalPrice > 0 && FinalPrice < totalPrice ? (paymentMethod == 'COD' ?
+                        FinalPrice + ShippingFee : FinalPrice) : (paymentMethod == 'COD' ? totalPrice + ShippingFee :
+                            totalPrice)).toLocaleString('en-US') }}</p>
                 </div>
                 <div class="w-11/12 mx-auto h-1 bg-zinc-800 rounded-xl"></div>
                 <div class="SecuredCheckout mb-5 mt-5">
@@ -212,6 +257,8 @@ useSeoMeta({
             <div class="buttons flex justify-center w-f space-x-3 py-2">
                 <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
                 <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">Complete Order
+                    {{ (FinalPrice || totalPrice) + (paymentMethod == 'COD' ? ShippingFee : 0) }}
+
                     <!-- &
                     Pay
                     (${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')

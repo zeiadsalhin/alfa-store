@@ -77,7 +77,7 @@ const saveNewAddress = async () => {
 <template>
     <div>
         <div class="mb-3">
-            <div class="h1 text-3xl p-5">
+            <div class="h1 text-3xl py-5">
                 <h1>Shipping Address</h1>
             </div>
         </div>
