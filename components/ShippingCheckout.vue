@@ -16,25 +16,30 @@ const rules = [
 onMounted(() => {
     fetchAddresses();
 })
+const notguest = ref(false);
 const fetchAddresses = async () => {
     const { data, error } = await supabase.auth.getSession()
-    const id = data.session.user.id
-    try {
-        const { data, error } = await supabase
-            .from('user_address')
-            .select('*')
-            .eq('uid', id)
+    if (data.session.user) {
+        const id = data.session.user.id
+        notguest.value = true
+        try {
+            const { data, error } = await supabase
+                .from('user_address')
+                .select('*')
+                .eq('uid', id)
 
-        if (error) {
-            throw error;
+            if (error) {
+                throw error;
+            }
+            if (data) {
+                userAddress.value = [data]; // Store fetched address in an array
+                // console.log(userAddress.value);
+                // loadingAddresses.value = false
+            }
+
+        } catch (error) {
+            console.error('Error fetching user address:', error.message);
         }
-        if (data) {
-            userAddress.value = [data]; // Store fetched address in an array
-            // console.log(userAddress.value);
-            // loadingAddresses.value = false
-        }
-    } catch (error) {
-        console.error('Error fetching user address:', error.message);
     }
 }
 
@@ -129,7 +134,7 @@ const saveNewAddress = async () => {
         </div>
         <div v-if="!expanded" class="Use existing Address p-1 mt-2    ">
             <div>
-                <p v-if="userAddress[0]?.length != 0" class="h1 text-lg py-1">Or Select an address:</p>
+                <p v-if="userAddress[0]?.length != 0 && notguest" class="h1 text-lg py-1">Or Select an address:</p>
                 <div v-for="address in userAddress[0]" :key="address.id"
                     class="font-semibold text-lg outline outline-1 outline-zinc-500  p-3 my-4 rounded-md "
                     :class="{ 'outline-4': selectedAddress === address }">

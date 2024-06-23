@@ -72,6 +72,8 @@ async function LogOut() {
             showConfirmButton: false,
         }).then(() => {
             navigateTo("/login")
+            // clear cart
+
         })
     } catch (error) {
         console.log(error)
