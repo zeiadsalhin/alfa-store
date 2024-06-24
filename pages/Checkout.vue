@@ -9,10 +9,7 @@ const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
 
 //data
-const expanded = ref(false);
-const cc = ref("4333-3387-8788-6620");
-const expdate = ref("06/15");
-const cvv = ref("123");
+
 const errorMessage = ref('')
 const paymenterrorMessage = ref('')
 const isDisabled = ref(false);
@@ -31,21 +28,6 @@ const ShippingFee = ref(1.00);
 const CheckoutPrice = ref(null);
 const FPMsg = ref(null)
 const FPErMsg = ref(null)
-
-
-// Card format
-const formatcard = () => {
-    cc.value = cc.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1-').slice(0, 19)
-}
-//expiration date Format 
-const formatexp = () => {
-    expdate.value = expdate.value.replace(/\D/g, '').replace(/^(.{2})(.{1,})$/, '$1/$2').slice(0, 5);
-};
-
-// CVV Format
-const formatcvv = () => {
-    cvv.value = cvv.value.replace(/\D/g, '').slice(0, 3);;
-};
 
 //total price 
 const totalPrice = computed(() => {
@@ -202,22 +184,8 @@ useSeoMeta({
                     <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
                 </v-radio-group>
             </div>
-            <div class="creditCard" v-if="expanded">
-                <v-row>
-                    <v-col cols="12" md="12">
-                        <v-text-field v-model="cc" @input="formatcard" :rules="rules" outlined
-                            label="Credit Card Number"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                        <v-text-field v-model="expdate" @input="formatexp" :rules="rules" outlined
-                            label="Exp date"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6">
-                        <v-text-field v-model="cvv" @input="formatcvv" :rules="rules" outlined
-                            label="Security code/CVV"></v-text-field>
-                    </v-col>
-                </v-row>
-            </div>
+            <EPayments />
+
             <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
             <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
             <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">

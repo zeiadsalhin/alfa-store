@@ -43,6 +43,11 @@ const fetchAddresses = async () => {
     }
 }
 
+// Post code Format
+const formatpostcode = () => {
+    userNewAddress.value.postalCode = userNewAddress.value.postalCode.replace(/\D/g, '').slice(0, 8);;
+};
+
 // save the new address
 const saveNewAddress = async () => {
     if (!userNewAddress.value.apartment || !userNewAddress.value.building || !userNewAddress.value.neighborhood || !userNewAddress.value.street || !userNewAddress.value.city || !userNewAddress.value.state || !userNewAddress.value.postalCode || !userNewAddress.value.country) {
@@ -116,7 +121,7 @@ const saveNewAddress = async () => {
                         </v-col>
                         <v-col cols="12" md="4">
                             <v-text-field v-model="userNewAddress.postalCode" :rules="rules" outlined
-                                label="Postal code" type="tel"></v-text-field>
+                                @input="formatpostcode" label="Postal code" type="tel"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
                             <v-text-field v-model="userNewAddress.country" :rules="rules" outlined label="Country"
