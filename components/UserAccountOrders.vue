@@ -28,7 +28,7 @@ const fetchUserOrders = async () => {
         if (data) {
             userOrders.value = [data]; // Store fetched orders in an array
             // editedAddress.value = userOrders.value; // Initialize editedAddress with user's address
-            // console.log(userOrders.value[0][0].order_no);
+            // console.log(userOrders.value[0][3].order_details[0].items);
             loadingOrders.value = false
         }
     } catch (error) {
@@ -37,7 +37,7 @@ const fetchUserOrders = async () => {
 }
 // Function to view selected order
 const viewOrder = (orderId) => {
-    navigateTo('/user/orders/' + userOrders.value[0][orderId].order_no)
+    navigateTo('/user/orders/' + userOrders.value[0][orderId].order_ref)
 
 }
 </script>
@@ -47,29 +47,45 @@ const viewOrder = (orderId) => {
         <h2 class="text-2xl font-bold mb-2">Manage Orders</h2>
         <v-btn to="orders" variant="tonal" elevation="1" max-height="30"
             class="mb-5 mt-2"><v-icon>mdi-chevron-right</v-icon>view all orders</v-btn>
-        <div v-if="!loadingOrders" class="  text-left text-lg shadow-md w-full md:p-5 mx-auto">
-            <div v-if="userOrders[0].length != 0" class="flex md:table w-full mx-auto">
+        <div v-if="!loadingOrders" class="  text-left text-lg shadow-md w-full md:p-2 mx-auto">
+            <div v-if="userOrders[0].length != 0" class="flex md:table mx-auto">
                 <v-table height="fit" fixed-header density="default"
                     :theme="theme.global.current.value.dark ? 'dark' : 'light'">
                     <thead>
                         <tr>
                             <th class="text-left">
-                                Order no.
+                                Order ID
+                            </th>
+                            <th class="text-left">
+                                Order Details.
                             </th>
                             <th class="text-left">
                                 Details
                             </th>
-                            <th>Manage</th>
+                            <th class="text-left">
+                                Status
+                            </th>
+                            <th>Track</th>
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        <tr v-for="(order, index) in userOrders[0]" :key="index">
-                            <td class="">{{ order.order_no }}</td>
-                            <!-- <td><v-img :src="JSON.parse(order.image)[0]" class="m-5" max-width="300"
-                                    min-width="100"></v-img>
-                            </td> -->
-                            <td class="">{{ order.order_details[0].status }}</td>
-                            <td><v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
+                        <tr v-for="(order, index) in userOrders[0]" :key="index" class="h-28">
+                            <td class="max-w-44 text-sm">{{ order.order_ref }}</td>
+                            <!-- <td class="max-w-44 text-sm">{{ order.order_no }}</td> -->
+                            <td class="max-w-40 text-sm"><p v-for="(p, index) in order.order_details[0].items" :key="index" class="w-1 flex flex-col">{{p.selectedOption?p.selectedOption:'no specific details'}}</p></td>
+                            <td class="w-full">
+                                <div class="flex min-w-60">
+                                    <v-img :src="JSON.parse(order.order_details[0].items[0].product.image)[0]"
+                                        class="my-auto" max-width="65" min-width="65" max-height="50" cover></v-img>
+                                    <p class="ml-2 my-auto underline">{{ order.order_details[0].items[0].product.name
+                                        }}
+                                        (#{{ order.order_details[0].items[0].product.id }})
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="">{{ order.order_status[0].status }}</td>
+                            <td>
+                                <v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
                                     max-height="30">view</v-btn>
                             </td>
                         </tr>

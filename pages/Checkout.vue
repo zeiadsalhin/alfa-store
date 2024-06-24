@@ -97,7 +97,8 @@ onBeforeMount(() => {
 // Set invoice
 const SetInvoice = () => {
     mainStore.setCheckoutPrice(paymentMethod.value == 'COD' ? CheckoutPrice.value = totalPrice.value + ShippingFee.value : totalPrice.value);
-    // console.log(mainStore.checkoutPrice);
+    // console.log(paymentMethod.value);
+    // console.log('#' + mainStore.items[0].product.id + '-' + mainStore.items[0].product.name + '-' + mainStore.items[0].selectedOption + ' X' + mainStore.items[0].quantity);
 }
 
 // process
@@ -128,8 +129,11 @@ async function proccess() {
         // 
         const { error: insertError } = await supabase.from('user_orders').insert({
             uid: UID.value ? UID.value : 'Guest',
-            order_details: { items: mainStore.items, invoice: mainStore.checkoutPrice },
-            order_status: { status: 'Received' },
+            order_no: '#' + mainStore.items[0].product.id + '-' + mainStore.items[0].product.name + ' x' + mainStore.items[0].quantity,
+            order_details: [{ items: mainStore.items, invoice: mainStore.checkoutPrice }],
+            order_status: [{ status: `${paymentMethod.value == 'VC' ? 'Received,Payment Pending' : 'Received'}` }],
+            order_invoice: [{ invoice_value: mainStore.checkoutPrice }],
+            payment_method: [{ option: paymentMethod.value }],
         });
         if (insertError) {
             console.log(insertError);

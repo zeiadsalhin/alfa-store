@@ -161,9 +161,9 @@ async function UpdateEmail() {
 </script>
 <template>
     <div>
-        <div v-if="dataview" class="mt-16 md:w-1/2  p-10 text-center mx-auto"
+        <div v-if="dataview" class="mt-16 md:w-1/2  px-4 py-10 md:p-5 text-center mx-auto"
             :class="theme.global.current.value.dark ? 'text-white bg-zinc-900' : 'text-zinc-800 bg-zinc-100'">
-            <div class="welcome flex space-x-3">
+            <div class="welcome flex space-x-3 md:p-2">
                 <div class="w-1.5 h-10 bg-zinc-950 rounded-sm"></div>
                 <p class="font-semibold text-3xl text-left my-auto">Welcome, {{ displayname }}</p>
             </div>
@@ -174,7 +174,7 @@ async function UpdateEmail() {
                     class="mx-1">mdi-exit-to-app</v-icon>Logout</v-btn>
             <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
-            <div class="details text-left">
+            <div class="details text-left md:px-10 px-5">
                 <div class="Accountdetails flex space-x-3 py-2 mb-3">
                     <div class="w-1 h-10 bg-zinc-950 rounded-sm"></div>
                     <h1 class="text-2xl font-semibold my-auto">Account Details:</h1>
@@ -249,7 +249,7 @@ async function UpdateEmail() {
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <ResetPassword />
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
-            <!-- <UserAccountOrders /> -->
+            <UserAccountOrders />
             <UserAccountAddresses />
         </div>
     </div>

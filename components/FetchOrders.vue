@@ -111,16 +111,30 @@ const cancelEdit = () => {
                             <th class="text-left">
                                 Details
                             </th>
-                            <th>Manage</th>
+                            <th class="text-left">
+                                Status
+                            </th>
+                            <th class="text-left">
+                                At
+                            </th>
+                            <th>Track</th>
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        <tr v-for="(order, index) in OrderItems" :key="index">
-                            <td class="">{{ order.order_no }}</td>
-                            <!-- <td><v-img :src="JSON.parse(order.image)[0]" class="m-5" max-width="300"
-                                    min-width="100"></v-img>
-                            </td> -->
-                            <td class="">{{ order.order_details[0].status }}</td>
+                        <tr v-for="(order, index) in OrderItems" :key="index" class="h-20">
+                            <td class="max-w-44 text-sm">{{ order.order_no }}</td>
+                            <td class="min-w-72">
+                                <div class="flex w-full">
+                                    <v-img :src="JSON.parse(order.order_details[0].items[0].product.image)[0]"
+                                        class="my-auto" max-width="65" min-width="65" max-height="50" cover></v-img>
+                                    <p class="ml-2 my-auto underline">{{ order.order_details[0].items[0].product.name
+                                        }}
+                                        (#{{ order.order_details[0].items[0].product.id }})
+                                    </p>
+                                </div>
+                            </td>
+                            <td class="min-w-40">{{ order.order_status[0].status }}</td>
+                            <td class="min-w-32">{{ new Date(order.created_at).toLocaleString('en-US') }}</td>
                             <td><v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
                                     max-height="30">view</v-btn>
                             </td>
