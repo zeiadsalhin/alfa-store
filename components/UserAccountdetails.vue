@@ -35,11 +35,11 @@ async function FetchUserData() {
             avatar.value = data.session.user.identities[0].identity_data.avatar_url
             displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
             phone.value = data.session.user.phone// Display registered id
-            email.value = data.session.user.identities[0].email // Display registered email 
+            email.value = data.session.user.email // Display registered email 
             const date = new Date(data.session.user.last_sign_in_at).toLocaleString('en-us')// last login
             signin.value = date
             auth.value = data.session.user.role // Display account status
-            // console.log('user phone: ', data.session.user.phone)
+            // console.log('user phone: ', data.session.user)
         }
     } catch (error) {
         console.log(error);
@@ -216,11 +216,11 @@ async function UpdateEmail() {
                     </form>
                 </div>
                 <div class="email">
-                    <form @submit.prevent="UpdateEmail" class="w-fit flex py-2 space-x-2">
+                    <form @submit.prevent="UpdateEmail" class="w-full flex py-2 space-x-2">
                         <label for="id" class="text-xl my-auto">Email:</label>
-                        <input :disabled="isDisablede" v-model="email" class="text-lg p-0.5 my-auto w-fit"
+                        <input :disabled="isDisablede" v-model="email" class="text-lg p-0.5 my-auto w-full"
                             :class="isDisablede ? '' : 'outline outline-1 outline-zinc-500'" required></input>
-                        <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-4"
+                        <!-- <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-4"
                             variant="tonal"><v-icon>{{
                                 isDisablede ?
                                     'mdi-pencil' : '' }}</v-icon></v-btn>
@@ -235,7 +235,7 @@ async function UpdateEmail() {
                                     isDisablede ?
                                         '' : 'mdi-close' }}</v-icon>
                             </v-btn>
-                        </div>
+                        </div> -->
                     </form>
                 </div>
                 <div class="authenticationstate w-full py-2 space-x-5">

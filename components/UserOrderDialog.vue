@@ -30,6 +30,11 @@ const handleUpdateClick = () => {
     // console.log(JSON.parse(SelectedOrderData.value.order_details[0].items[0].product.image)[0]);
 };
 
+// Copy
+const copyToClipboard = () => {
+    const textToCopy = SelectedOrderData.value.order_ref;
+    navigator.clipboard.writeText(textToCopy)
+}
 const dialog = ref(false)
 </script>
 <template>
@@ -37,8 +42,8 @@ const dialog = ref(false)
         <v-dialog v-model="dialog" :theme="theme.global.current.value.dark ? 'dark' : 'light'" close-delay="0"
             :opacity="0" class="bg-zinc-950 bg-opacity-80 backdrop-blur-sm" max-width="600">
             <template v-slot:activator="{ props: activatorProps }">
-                <v-btn @click="handleUpdateClick" variant="outlined" elevation="1" prepend-icon="mdi-account"
-                    text="View" v-bind="activatorProps" max-height="40"></v-btn>
+                <v-btn @click="handleUpdateClick" variant="outlined" elevation="1" prepend-icon="mdi-truck"
+                    text="Details" v-bind="activatorProps" max-height="40"></v-btn>
             </template>
             <v-card prepend-icon="mdi-truck" title="Order Details">
                 <v-card-text>
@@ -76,8 +81,11 @@ const dialog = ref(false)
                         </div>
                         <div class="reference flex space-x-4">
                             <p class="font-bold">Order_ref:</p>
-                            <p class="text-md">{{ SelectedOrderData.order_ref }}</p>
+                            <p class="text-md">{{ SelectedOrderData.order_ref }} <v-icon @click="copyToClipboard"
+                                    size="15" class="hover:cursor-pointer">mdi-content-copy</v-icon></p>
                         </div>
+                        <v-btn @click="" variant="flat" color="red" elevation="1" prepend-icon="mdi-cancel"
+                            text="Cancel order" v-bind="activatorProps" max-height="40"></v-btn>
                     </div>
                     <small class="text-caption text-medium-emphasis">*indicates required field</small>
                 </v-card-text>
