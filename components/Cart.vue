@@ -2,29 +2,35 @@
     <div class="p-5 space-y-7">
         <h1 class="text-center text-3xl font-semibold">Cart</h1>
         <div v-if="items">
-            <ul class=" space-y-5">
+            <div class=" space-y-5">
 
-                <li v-for="(item, index) in items" :key="index" class="flex my-auto mx-auto space-x-1">
-
-                    <div class="image w-44 max-h-36 p-2"><v-img min-width="160" class="el rounded-lg" height="100%"
-                            :src="JSON.parse(item.product.image)[0]" cover></v-img>
-                    </div>
-                    <div class="info my-auto p-2 w-fit">
-                        <div class="name">{{ item.product.name }}</div>
-                        <div class="price">Price: ${{ item.discountedPrice || item.product.price }}</div>
-                        <div class="price" v-if="item.selectedOption">Option: {{ item.selectedOption }}</div>
-                        <div class="price">X {{ item.quantity }}</div>
-                        <div class="remove flex my-auto space-x-2 p-2 mt-2"><button @click="removeFromCart(index)"
-                                class="bg-red-700 text-white my-auto px-2 py-1 rounded-md">Remove</button>
-                            <nuxt-link :to="`/products/${item.product.id}`"
-                                class="bg-green-700 text-white my-auto px-2 py-1 rounded-md">View</nuxt-link>
+                <div v-for="(item, index) in items" :key="index" class="my-auto">
+                    <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-800"></div>
+                    <div class="item flex my-auto max-auto y-2">
+                        <div class="image w-fit max-h-36 my-auto p-2"><v-img min-width="100" max-width="100"
+                                min-height="100" max-height="100" class="el rounded-sm" height="100%"
+                                :src="JSON.parse(item.product.image)[0]" cover></v-img>
+                        </div>
+                        <div class="info my-auto p-2 w-fit">
+                            <div class="name font-extrabold ">{{ item.product.name }}</div>
+                            <div class="price font-light">Price: ${{ item.discountedPrice || item.product.price
+                                }}
+                            </div>
+                            <div class="option font-thin" v-if="item.selectedOption">Option: {{ item.selectedOption }}
+                            </div>
+                            <div class="price font-mono">Quantity: x{{ item.quantity }}</div>
+                            <div class="remove flex my-auto space-x-2 p-2 mt-2"><button @click="removeFromCart(index)"
+                                    class="bg-red-700 text-white my-auto px-2 py-1 rounded-md">Remove</button>
+                                <nuxt-link :to="`/products/${item.product.id}`"
+                                    class="bg-green-700 text-white my-auto px-2 py-1 rounded-md">View</nuxt-link>
+                            </div>
                         </div>
                     </div>
-                </li>
-                <div class="h-1 rounded-md w-full bg-slate-950"></div>
+                </div>
+                <div class="h-0.5 rounded-md w-full bg-slate-800"></div>
                 <div v-if="items.length != 0" class="total px-4 mb-5 text-xl">Subtotal: ${{
                     totalPrice.toLocaleString('en-US') }}</div>
-            </ul>
+            </div>
             <div v-if="items.length != 0" class="text-xl text-center mb-10"><v-btn variant="tonal" color="red-lighten-1"
                     @click="clearCart" class="w-11/12 text-white my-2a p-2.5a rounded-md" min-height="40"><v-icon
                         size="25">mdi-delete-outline</v-icon><v-progress-circular v-if="clearing" size="20" class="mx-3"

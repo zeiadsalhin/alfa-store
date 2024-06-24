@@ -8,7 +8,7 @@ const tabledata = ref(false);
 const updateSuccess = ref(false);
 const OrderItems = ref({});
 const OrderUpdate = ref({});
-const expanded = ref(false);
+// const expanded = ref(false);
 // Fetch Ads 
 onMounted(() => {
     FetchOrdersData();
@@ -30,22 +30,22 @@ const FetchOrdersData = async () => {
     }
 }
 // Function to open image input
-const openFileInput = () => {
-    const fileInput = document.getElementById('image');
-    if (fileInput) {
-        fileInput.click();
-    }
-};
+// const openFileInput = () => {
+//     const fileInput = document.getElementById('image');
+//     if (fileInput) {
+//         fileInput.click();
+//     }
+// };
 // trigger edit Add
 const triggerAd = async (index) => {
     try {
         OrderUpdate.value = { ...OrderItems.value[index] }
         if (OrderUpdate.value) {
-            expanded.value = true;
+            // expanded.value = true;
             const view = document.getElementById('editview');
             // view.scrollIntoView({ behavior: 'smooth' });
         } else {
-            expanded.value = false;
+            // expanded.value = false;
         }
         // console.log('triggered');
         // console.log('product to edit: ', OrderUpdate.value);
@@ -87,7 +87,7 @@ const UpdateAd = async () => {
 
 // cancel edit 
 const cancelEdit = () => {
-    expanded.value = false;
+    // expanded.value = false;
     //scroll back to main
     const view = document.getElementById('main');
     view.scrollIntoView({ behavior: 'smooth' });
@@ -109,6 +109,9 @@ const cancelEdit = () => {
                                 Order no.
                             </th>
                             <th class="text-left">
+                                Order Details.
+                            </th>
+                            <th class="text-left">
                                 Details
                             </th>
                             <th class="text-left">
@@ -123,6 +126,11 @@ const cancelEdit = () => {
                     <tbody class="text-left">
                         <tr v-for="(order, index) in OrderItems" :key="index" class="h-20">
                             <td class="max-w-44 text-sm">{{ order.order_no }}</td>
+                            <td class="max-w-40 text-sm">
+                                <p v-for="(p, index) in order.order_details[0].items" :key="index"
+                                    class="w-1 flex flex-col">
+                                    {{ p.selectedOption ? p.selectedOption : 'no specific details' }}</p>
+                            </td>
                             <td class="min-w-72">
                                 <div class="flex w-full">
                                     <v-img :src="JSON.parse(order.order_details[0].items[0].product.image)[0]"
@@ -135,8 +143,8 @@ const cancelEdit = () => {
                             </td>
                             <td class="min-w-40">{{ order.order_status[0].status }}</td>
                             <td class="min-w-32">{{ new Date(order.created_at).toLocaleString('en-US') }}</td>
-                            <td><v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
-                                    max-height="30">view</v-btn>
+                            <td>
+                                <AdminOrderDialog />
                             </td>
                         </tr>
                     </tbody>
@@ -156,7 +164,7 @@ const cancelEdit = () => {
                 updated
                 Successfully </p>
             <v-expand-transition>
-                <div v-if="expanded">
+                <div>
                     <p class="p-5 text-2xl">Edit Ad: {{ OrderUpdate.name }}</p>
                     <form @submit.prevent="UpdateAd" class="w-full space-y-3">
                         <div class="w-full flex space-x-5">
@@ -174,7 +182,7 @@ const cancelEdit = () => {
                                 <p class="px-2 mr-3 rounded-full bg-zinc-800 text-white">5</p>Image<span
                                     class="required text-red-600">*</span>:
                             </label>
-                            <div class="image update">
+                            <!-- <div class="image update">
                                 <v-img v-if="OrderUpdate.image" v-for="(img, i) in JSON.parse(OrderUpdate.image)"
                                     :key="i" :src="img" class="m-5" max-width="200" min-width="70"></v-img>
                                 <div v-else class="p-5">
@@ -185,7 +193,7 @@ const cancelEdit = () => {
                                 <v-btn @click="openFileInput"><v-icon size="20"
                                         class="mx-1">mdi-tray-arrow-up</v-icon>Upload
                                     Image</v-btn>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="buttons flex justify-center space-x-3">
                             <v-btn type="submit" min-height="40" min-width="120" class="" color="black">Update</v-btn>
