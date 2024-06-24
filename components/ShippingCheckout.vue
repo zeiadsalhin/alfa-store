@@ -12,6 +12,15 @@ const rules = [
     },
 ];
 
+// pass address to checkout
+// Define emits to emit events to parent
+const emits = defineEmits(['selected-address']); // Define the events emitted by the child component
+// Function to emit user addresses to the parent
+function emitUserAddresses(input) {
+    emits('selected-address', input);
+    // console.log(selectedAddress.value);
+};
+
 // fetch user addresses
 onMounted(() => {
     fetchAddresses();
@@ -47,6 +56,10 @@ const fetchAddresses = async () => {
 const formatpostcode = () => {
     userNewAddress.value.postalCode = userNewAddress.value.postalCode.replace(/\D/g, '').slice(0, 8);;
 };
+// country Format
+const formatcountry = () => {
+    userNewAddress.value.country = userNewAddress.value.country.replace(/[^A-Za-z]/g, '').slice(0, 8);;
+};
 
 // save the new address
 const saveNewAddress = async () => {
@@ -66,7 +79,7 @@ const saveNewAddress = async () => {
             throw insertError;
         }
         console.log('Address added successfully');
-        console.log(userNewAddress.value);
+        // console.log(userNewAddress.value);
         document.getElementById('form').reset() // Function to reset form fields
         expanded.value = false
         fetchAddresses();
@@ -125,7 +138,7 @@ const saveNewAddress = async () => {
                         </v-col>
                         <v-col cols="12" md="4">
                             <v-text-field v-model="userNewAddress.country" :rules="rules" outlined label="Country"
-                                type="text"></v-text-field>
+                                @input="formatcountry" type="text"></v-text-field>
                         </v-col>
                     </v-row>
                     <div class="buttons flex justify-start ">
@@ -143,7 +156,7 @@ const saveNewAddress = async () => {
                 <div v-for="address in userAddress[0]" :key="address.id"
                     class="font-semibold text-lg outline outline-1 outline-zinc-500  p-3 my-4 rounded-md "
                     :class="{ 'outline-4': selectedAddress === address }">
-                    <v-radio-group v-model="selectedAddress">
+                    <v-radio-group v-model="selectedAddress" @change="emitUserAddresses(selectedAddress)">
                         <v-radio :id="'address_' + address.id" :value="address"
                             :label="address.apartment + ' ' + 'bldg.' + ' ' + address.building + ' ' + 'neighborhood.' + ' ' + address.neighborhood + ' ' + address.street + ' ' + address.city + ' ' + address.country + ' ' + address.postalCode">
                         </v-radio>

@@ -12,6 +12,7 @@ const cartItems = computed(() => mainStore.items);
 
 const errorMessage = ref('')
 const paymenterrorMessage = ref('')
+const addresserrorMessage = ref('')
 const isDisabled = ref(false);
 const notapplied = ref(true)
 const rules = [
@@ -20,19 +21,31 @@ const rules = [
         return 'required';
     },
 ];
+
+// Define a ref to store the received user addresses from child
+const receivedAddresses = ref([]);
+
+// Handler function to receive the emitted user addresses from child
+const handleUserAddresses = (input) => {
+    receivedAddresses.value = input;
+    addresserrorMessage.value = ''
+    // console.log(receivedAddresses.value);
+};
+
 const coupon = ref(null)
 const paymentMethod = ref(null);
 const isPaymentD = ref(true);
 const FinalPrice = ref(null)
 const ShippingFee = ref(1.00);
 const CheckoutPrice = ref(null);
+const confirmorderloader = ref(false);
 const FPMsg = ref(null)
 const FPErMsg = ref(null)
 
 //total price 
 const totalPrice = computed(() => {
     return cartItems.value.reduce((total, item) => {
-        return total + (item.discountedPrice || item.product.price * item.quantity);
+        return total + (item.discountedPrice ? item.discountedPrice * item.quantity : item.product.price * item.quantity);
     }, 0);
 });
 
@@ -63,6 +76,7 @@ const couponapply = () => {
 // remove coupon
 const removecoupon = () => {
     mainStore.setCheckoutPrice(paymentMethod.value == 'COD' ? CheckoutPrice.value = totalPrice.value + ShippingFee.value : totalPrice.value);
+    FinalPrice.value = totalPrice
     notapplied.value = true
     isPaymentD.value = !isPaymentD.value;
     isDisabled.value = false
@@ -85,10 +99,19 @@ const SetInvoice = () => {
 
 // process
 async function proccess() {
-    // if (!name.value || !email.value || !phone.value || !address.value || !city.value || !country.value || !cc.value || !expdate.value || !cvv.value) {
-    //     errorMessage.value = 'Please fill out all fields.'
-    //     return;
-    // }
+    // Require Address
+    if (receivedAddresses.value == 0) {
+        addresserrorMessage.value = 'Please Select Address'
+        // scroll to error
+        const viewp = document.getElementById('addresserror')
+        var headerOffset = 120;
+        var elementPosition = viewp.getBoundingClientRect().top;
+        var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+        // console.log(receivedAddresses.value);
+        return;
+    }
+    // Require payment Method
     if (!paymentMethod.value) {
         paymenterrorMessage.value = 'Please Select '
         // scroll to error
@@ -103,6 +126,7 @@ async function proccess() {
     errorMessage.value = ''
     // Generating Order 
     try {
+        confirmorderloader.value = true
         //get userID
         const { data, error } = await supabase.auth.getSession()
         if (data.session) {
@@ -112,7 +136,7 @@ async function proccess() {
         const { error: insertError } = await supabase.from('user_orders').insert({
             uid: UID.value ? UID.value : 'Guest',
             order_no: '#' + mainStore.items[0].product.id + '-' + mainStore.items[0].product.name + ' x' + mainStore.items[0].quantity,
-            order_details: [{ items: mainStore.items, invoice: mainStore.checkoutPrice }],
+            order_details: [{ items: mainStore.items, shippingAddress: receivedAddresses.value, invoice: mainStore.checkoutPrice }],
             order_status: [{ status: `${paymentMethod.value == 'VC' ? 'Received,Payment Pending' : 'Received'}` }],
             order_invoice: [{ invoice_value: mainStore.checkoutPrice }],
             payment_method: [{ option: paymentMethod.value }],
@@ -123,16 +147,17 @@ async function proccess() {
         }
 
         // Show user dialog
-        await Swal.fire({
-            title: "Proceessing your order",
-            icon: "info",
-            allowEscapeKey: false,
-            allowOutsideClick: false,
-            timer: 3000,
-            timerProgressBar: true,
-            text: "Please Wait",
-            showConfirmButton: false,
-        }).then(() => {
+        // await Swal.fire({
+        //     title: "Proceessing your order",
+        //     icon: "info",
+        //     allowEscapeKey: false,
+        //     allowOutsideClick: false,
+        //     timer: 3000,
+        //     timerProgressBar: true,
+        //     text: "Please Wait",
+        //     showConfirmButton: false,
+        // }).then(() => {
+        setTimeout(() => {
             Swal.fire({
                 title: "Order Complete (Experimental, thank you for testing)",
                 icon: "success",
@@ -145,8 +170,10 @@ async function proccess() {
             });
             //Remove items from cart
             mainStore.clearCart();
-            router.push("/");
-        })
+            //  router.push("/user");
+        }, 4000);
+        // })
+        confirmorderloader.value = true
     } catch (error) {
         console.error('Error generating order:', error.message);
     }
@@ -169,7 +196,12 @@ useSeoMeta({
             <p>No Items Just Yet</p>
         </div>
         <v-container v-else>
-            <ShippingCheckout />
+            <p id="addresserror" v-if="addresserrorMessage != null"
+                class="bg-red-700 text-white text-md mb-3a rounded-sm">
+                {{ addresserrorMessage }}
+            </p>
+            <ShippingCheckout @selected-address="handleUserAddresses" />
+
             <div class="h1 text-xl mt-10">
                 <h1>Payment Method:</h1>
             </div>
@@ -202,7 +234,7 @@ useSeoMeta({
                     <p>Total Sub:</p>
                     <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
                             }} (Including VAT%)</p>
-                            <p v-if="FinalPrice" class="text-red-700 text-md">- 100%</p>
+                            <p v-if="FinalPrice < totalPrice" class="text-red-700 text-md">- 100%</p>
                 </div>
                 <div v-if="paymentMethod == 'COD'" class="shippingfee flex justify-between mb-5 mt-2 text-lg">
                     <p class="flex">Shipping
@@ -228,15 +260,15 @@ useSeoMeta({
             </div>
             <div class="buttons flex justify-center w-f space-x-3 py-2">
                 <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
-                <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">Complete Order
-                    {{ (FinalPrice || totalPrice) + (paymentMethod == 'COD' ? ShippingFee : 0) }}
-
-                    <!-- &
-                    Pay
-                    (${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
-                        }}) -->
+                <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">
+                    <v-progress-circular v-if="confirmorderloader" width="2" size="20" color="zinc"
+                        class="text-zinc-300 mr-1" indeterminate></v-progress-circular>Complete Order ($
+                    {{ (FinalPrice < totalPrice ? FinalPrice : totalPrice) + (paymentMethod == 'COD' ? ShippingFee : 0)
+                        }}) <!-- & Pay (${{ (FinalPrice> 0 && FinalPrice < totalPrice ? FinalPrice :
+                            totalPrice).toLocaleString('en-US') }}) -->
                 </v-btn>
             </div>
+            <OrderConfirmation />
             <div class="payments space-y-5 p-5">
                 <p>We accept:</p>
                 <v-img src="/payments.webp" width="300"></v-img>

@@ -89,7 +89,7 @@ useSeoMeta({
 const totalPrice = computed(() => {
     let total = 0;
     items.value.forEach(item => {
-        total += item.discountedPrice || item.product.price * item.quantity; // Adjust according to your cart item structure
+        total += item.discountedPrice ? item.discountedPrice * item.quantity : item.product.price * item.quantity; // Adjust according to your cart item structure
     });
     return total;
 });
