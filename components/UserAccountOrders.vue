@@ -49,7 +49,8 @@ const triggerOrderUpdate = () => {
 <template>
     <div class="mb-20">
         <v-icon class="m-2" size="30">mdi-truck</v-icon>
-        <h2 class="text-2xl font-bold mb-2">Manage Orders</h2>
+        <h2 class="text-2xl font-bold mb-2">Manage Orders {{ userOrders[0] ? '(' + userOrders[0].length + ')' : '' }}
+        </h2>
         <v-btn to="orders" variant="tonal" elevation="1" max-height="30"
             class="mb-5 mt-2"><v-icon>mdi-chevron-right</v-icon>view all orders</v-btn>
         <div v-if="!loadingOrders" class="  text-left text-lg shadow-md w-full md:p-2 mx-auto">
@@ -67,14 +68,14 @@ const triggerOrderUpdate = () => {
                             <th class="text-left">
                                 Details
                             </th>
-                            <th class="text-left">
+                            <!-- <th class="text-left">
                                 Status
-                            </th>
+                            </th> -->
                             <th>Options</th>
                         </tr>
                     </thead>
                     <tbody class="text-left">
-                        <tr v-for="(order, index) in userOrders[0]" :key="index" class="h-28">
+                        <tr v-for="(order, index) in userOrders[0]" :key="index" class="h-24">
                             <!-- <td class="max-w-44 text-sm">{{ order.order_ref }}</td> -->
                             <!-- <td class="max-w-44 text-sm">{{ order.order_no }}</td> -->
                             <!-- <td class="min-w-36 text-sm">
@@ -83,22 +84,24 @@ const triggerOrderUpdate = () => {
                                     {{ p.selectedOption ? p.selectedOption : 'no specificdetails' }}</p>
                             </td> -->
                             <td class="w-full">
-                                <div class="flex min-w-60 text-md">
+                                <div class="flex min-w-52 text-md">
                                     <v-img :src="JSON.parse(order.order_details[0].items[0].product.image)[0]"
                                         class="my-auto" max-width="65" min-width="65" max-height="50" cover></v-img>
                                     <div class="flex-col ml-4 my-auto">
                                         <p class=" underline">{{
                                             order.order_details[0].items[0].product.name
-                                        }}
+                                            }}
                                             (#{{ order.order_details[0].items[0].product.id }})
                                         </p>
                                         <p v-for="(p, index) in order.order_details[0].items" :key="index"
-                                            class="flex flex-col">
+                                            class="flex flex-col opacity-80 mt-1">
                                             {{ p.selectedOption ? p.selectedOption : '' }}</p>
+                                        <p class="opacity-90"> {{ order.order_status[0].status }} </p>
                                     </div>
+
                                 </div>
                             </td>
-                            <td class="">{{ order.order_status[0].status }}</td>
+                            <!-- <td class="">{{ order.order_status[0].status }}</td> -->
                             <td>
                                 <UserOrderDialog :userOrders="order" @trigger-update="triggerOrderUpdate" />
                             </td>

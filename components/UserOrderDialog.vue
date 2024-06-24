@@ -1,7 +1,8 @@
 <script setup>
 import { useTheme } from 'vuetify'
 const theme = useTheme();
-
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
 // const updatedOrder = ref('Updated Order Info');
 // // pass address to checkout
@@ -35,15 +36,36 @@ const copyToClipboard = () => {
     const textToCopy = SelectedOrderData.value.order_ref;
     navigator.clipboard.writeText(textToCopy)
 }
+
+const overlay = ref(true)
+// Cancel Order
+const CancelOrder = async () => {
+    const { data, error } = await supabase.auth.getSession()
+    // UID.value = data.session.user.id
+    try {
+        // Save the edited address to Supabase
+        const { data, error } = await supabase
+            .from('user_orders')
+            .update({ order_status: [{ status: 'Canceled' }] })
+            .eq('order_ref', SelectedOrderData.value.order_ref)
+        if (error) {
+            throw error;
+        } else {
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 const dialog = ref(false)
 </script>
 <template>
     <div class="pa-4 text-center">
         <v-dialog v-model="dialog" :theme="theme.global.current.value.dark ? 'dark' : 'light'" close-delay="0"
-            :opacity="0" class="bg-zinc-950 bg-opacity-80 backdrop-blur-sm" max-width="600">
+            :opacity="0" class="bg-zinc-950 bg-opacity-80 backdrop-blur-sm" max-width="800">
             <template v-slot:activator="{ props: activatorProps }">
-                <v-btn @click="handleUpdateClick" variant="outlined" elevation="1" prepend-icon="mdi-truck"
-                    text="Details" v-bind="activatorProps" max-height="40"></v-btn>
+                <v-btn @click="handleUpdateClick" variant="tonal" elevation="1" v-bind="activatorProps" max-height="40"
+                    max-width="40" min-width="30" class="text-h7"><v-icon size="20">mdi-chevron-right</v-icon></v-btn>
             </template>
             <v-card prepend-icon="mdi-truck" title="Order Details">
                 <v-card-text>
@@ -84,8 +106,22 @@ const dialog = ref(false)
                             <p class="text-md">{{ SelectedOrderData.order_ref }} <v-icon @click="copyToClipboard"
                                     size="15" class="hover:cursor-pointer">mdi-content-copy</v-icon></p>
                         </div>
-                        <v-btn @click="" variant="flat" color="red" elevation="1" prepend-icon="mdi-cancel"
-                            text="Cancel order" v-bind="activatorProps" max-height="40"></v-btn>
+                        <v-btn @click="CancelOrder" v-if="SelectedOrderData.order_status[0].status != 'Canceled'"
+                            variant="flat" color="red" elevation="1" prepend-icon="mdi-cancel" text="Cancel order"
+                            max-height="40"></v-btn>
+
+                        <v-alert v-if="SelectedOrderData.order_status[0].status == 'Canceled'"
+                            text="Request In progress" title="Order Canceled" type="error" color="red"></v-alert>
+
+                        <!--Overlay-->
+                        <v-overlay :model-value="overlay" theme="light"
+                            class="align-center justify-center bg-zinc-950 bg-opacity-50 backdrop-blur-sm">
+                            <div class="flex flex-col justify-center">
+                                <v-progress-circular class="mx-auto" color="primary" size="34"
+                                    indeterminate></v-progress-circular>
+                                <p class="m-4">Cancelling Order...</p>
+                            </div>
+                        </v-overlay>
                     </div>
                     <small class="text-caption text-medium-emphasis">*indicates required field</small>
                 </v-card-text>
