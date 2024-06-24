@@ -3,22 +3,21 @@
         <h1 class="text-center text-3xl font-semibold">Cart</h1>
         <div v-if="items">
             <div class=" space-y-5">
-
                 <div v-for="(item, index) in items" :key="index" class="my-auto">
                     <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-800"></div>
                     <div class="item flex my-auto max-auto y-2">
-                        <div class="image w-fit max-h-36 my-auto p-2"><v-img min-width="100" max-width="100"
-                                min-height="100" max-height="100" class="el rounded-sm" height="100%"
+                        <div class="image w-fit max-h-fit  my-auto p-2"><v-img min-width="100" max-width="100"
+                                min-height="120" max-height="120" class="el rounded-sm" height="100%"
                                 :src="JSON.parse(item.product.image)[0]" cover></v-img>
                         </div>
                         <div class="info my-auto p-2 w-fit">
-                            <div class="name font-extrabold ">{{ item.product.name }}</div>
-                            <div class="price font-light">Price: ${{ item.discountedPrice || item.product.price
+                            <div class="name  font-normal">{{ item.product.name }}</div>
+                            <div class="price font-bold">Price: ${{ item.discountedPrice || item.product.price
                                 }}
                             </div>
                             <div class="option font-thin" v-if="item.selectedOption">Option: {{ item.selectedOption }}
                             </div>
-                            <div class="price font-mono">Quantity: x{{ item.quantity }}</div>
+                            <div class="price font-light">Quantity: x{{ item.quantity }}</div>
                             <div class="remove flex my-auto space-x-2 p-2 mt-2"><button @click="removeFromCart(index)"
                                     class="bg-red-700 text-white my-auto px-2 py-1 rounded-md">Remove</button>
                                 <nuxt-link :to="`/products/${item.product.id}`"

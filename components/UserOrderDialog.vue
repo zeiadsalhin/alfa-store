@@ -15,12 +15,12 @@ const theme = useTheme();
 
 // Define props and emits
 const props = defineProps({
-    OrderItems: {
+    userOrders: {
         type: Object,
         required: true,
     },
 });
-const SelectedOrderData = ref(props.OrderItems)
+const SelectedOrderData = ref(props.userOrders)
 const emits = defineEmits(['trigger-update']);
 
 // Define methods

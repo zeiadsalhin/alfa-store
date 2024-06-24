@@ -181,7 +181,7 @@ async function UpdateEmail() {
                 </div>
                 <!--phone input and suffix-->
                 <div class="phone">
-                    <form @submit.prevent="UpdatePhone" class="w-full flex py-2 space-x-4">
+                    <form @submit.prevent="UpdatePhone" class="w-fit flex py-2 space-x-4">
                         <label for="id" class="text-xl my-auto">Phone:</label>
                         <div class="phoneinput flex">
                             <select v-if="!isDisabledp" @change=""
@@ -216,11 +216,11 @@ async function UpdateEmail() {
                     </form>
                 </div>
                 <div class="email">
-                    <form @submit.prevent="UpdateEmail" class="w-full flex py-2 space-x-4">
+                    <form @submit.prevent="UpdateEmail" class="w-fit flex py-2 space-x-2">
                         <label for="id" class="text-xl my-auto">Email:</label>
                         <input :disabled="isDisablede" v-model="email" class="text-lg p-0.5 my-auto w-fit"
                             :class="isDisablede ? '' : 'outline outline-1 outline-zinc-500'" required></input>
-                        <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-10"
+                        <v-btn v-if="isDisablede" @click="isDisablede = false" max-height="30" class="w-4"
                             variant="tonal"><v-icon>{{
                                 isDisablede ?
                                     'mdi-pencil' : '' }}</v-icon></v-btn>

@@ -36,6 +36,22 @@ const FetchOrdersData = async () => {
 //         fileInput.click();
 //     }
 // };
+
+// // Define a ref to store the received user addresses from child
+// const receivedUpdatedOrder = ref([]);
+
+// // Handler function to receive the emitted user addresses from child
+// const handleUpdateOrderDetails = (input) => {
+//     receivedUpdatedOrder.value = input;
+//     // addresserrorMessage.value = ''
+//     console.log(receivedUpdatedOrder.value);
+// };
+// Define methods
+const triggerOrderUpdate = () => {
+    console.log('Triggering order update in parent component');
+    // Perform your update logic here
+};
+
 // trigger edit Add
 const triggerAd = async (index) => {
     try {
@@ -144,7 +160,7 @@ const cancelEdit = () => {
                             <td class="min-w-40">{{ order.order_status[0].status }}</td>
                             <td class="min-w-32">{{ new Date(order.created_at).toLocaleString('en-US') }}</td>
                             <td>
-                                <AdminOrderDialog />
+                                <AdminOrderDialog :OrderItems="order" @trigger-update="triggerOrderUpdate" />
                             </td>
                         </tr>
                     </tbody>

@@ -40,6 +40,11 @@ const viewOrder = (orderId) => {
     navigateTo('/user/orders/' + userOrders.value[0][orderId].order_ref)
 
 }
+// Define methods
+const triggerOrderUpdate = () => {
+    console.log('Triggering order update in parent component');
+    // Perform your update logic here
+};
 </script>
 <template>
     <div class="mb-20">
@@ -72,7 +77,11 @@ const viewOrder = (orderId) => {
                         <tr v-for="(order, index) in userOrders[0]" :key="index" class="h-28">
                             <td class="max-w-44 text-sm">{{ order.order_ref }}</td>
                             <!-- <td class="max-w-44 text-sm">{{ order.order_no }}</td> -->
-                            <td class="max-w-40 text-sm"><p v-for="(p, index) in order.order_details[0].items" :key="index" class="w-1 flex flex-col">{{p.selectedOption?p.selectedOption:'no specific details'}}</p></td>
+                            <td class="max-w-40 text-sm">
+                                <p v-for="(p, index) in order.order_details[0].items" :key="index"
+                                    class="w-1 flex flex-col">
+                                    {{ p.selectedOption ? p.selectedOption : 'no specificdetails' }}</p>
+                            </td>
                             <td class="w-full">
                                 <div class="flex min-w-60">
                                     <v-img :src="JSON.parse(order.order_details[0].items[0].product.image)[0]"
@@ -85,8 +94,7 @@ const viewOrder = (orderId) => {
                             </td>
                             <td class="">{{ order.order_status[0].status }}</td>
                             <td>
-                                <v-btn @click="viewOrder(index)" variant="outlined" elevation="1" max-width="5"
-                                    max-height="30">view</v-btn>
+                                <UserOrderDialog :userOrders="order" @trigger-update="triggerOrderUpdate" />
                             </td>
                         </tr>
                     </tbody>
