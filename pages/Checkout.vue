@@ -1,6 +1,8 @@
 <script setup>
 import Swal from 'sweetalert2'
 import { useMainStore } from '~/store';
+import { useTheme } from 'vuetify'
+const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const UID = ref(null);
@@ -8,6 +10,12 @@ const router = useRouter()
 const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
 
+// access only if cart item !=0
+onMounted(() => {
+    if (cartItems.value.length == 0) {
+        navigateTo('/cart')
+    }
+})
 //data
 
 const errorMessage = ref('')
@@ -35,7 +43,7 @@ const handleUserAddresses = (input) => {
 };
 
 const coupon = ref(null)
-const paymentMethod = ref(null);
+const paymentMethod = ref('COD');
 const isPaymentD = ref(true);
 const FinalPrice = ref(null)
 const ShippingFee = ref(1.00);
@@ -194,44 +202,62 @@ useSeoMeta({
 })
 </script>
 <template>
-    <div class="mt-20">
+    <div class="mt-12">
         <div class="text-center" v-if="cartItems.length == 0">
             <v-img class="d-block mx-auto" src="" width="500"></v-img>
             <p>No Items Just Yet</p>
         </div>
         <v-container v-else>
-            <p id="addresserror" v-if="addresserrorMessage != null"
-                class="bg-red-700 text-white text-md mb-3a rounded-sm">
-                {{ addresserrorMessage }}
-            </p>
-            <ShippingCheckout @selected-address="handleUserAddresses" />
-
-            <div class="h1 text-xl mt-10">
-                <h1>Payment Method:</h1>
+            <div class="h1 text-3xl text-center py-2">
+                <h1 class="p-3">Checkout</h1>
+                <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-900"></div>
             </div>
-            <div class="p-1 mt-5">
-                <p id="paymethoderror" v-if="paymentMethod == null"
-                    class="bg-red-700 text-white text-md mb-3a rounded-sm">
-                    {{ paymenterrorMessage }}
-                </p>
-                <v-radio-group v-model="paymentMethod" @change="SetInvoice" :disabled="isPaymentD">
-                    <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
-                    <v-radio :disabled="true" value="VC" label="Pay with Vodafone Cash (VCN) (Soon)"></v-radio>
-                    <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
-                </v-radio-group>
-            </div>
-            <EPayments />
-
-            <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
-            <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
-            <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
-                <p class="text-lg">Have coupon? :</p>
-                <v-text-field v-model="coupon" variant="outlined" density="compact"
-                    :disabled="isDisabled"></v-text-field>
-                <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
-                <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
-                <span class="p-2 opacity-50 text-sm">Hint: remove to edit payment method</span>
-            </div>
+            <!--Stepper-->
+            <v-stepper-vertical color="gray" flat :theme="theme.global.current.value.dark ? 'dark' : 'light'"
+                class=" mt-5 mb-10" :items="['Shipping Address', 'Payment Method', 'Coupon (Optional)']">
+                <template #item.1>
+                    <div class="1">
+                        <p id="addresserror" v-if="addresserrorMessage != null"
+                            class="bg-red-700 text-white text-md mb-3 rounded-sm">
+                            {{ addresserrorMessage }}
+                        </p>
+                        <ShippingCheckout @selected-address="handleUserAddresses" />
+                    </div>
+                </template>
+                <template #item.2>
+                    <div class="2">
+                        <div class="p-1">
+                            <p id="paymethoderror" v-if="paymentMethod == null"
+                                class="bg-red-700 text-white text-md mb-3a rounded-sm">
+                                {{ paymenterrorMessage }}
+                            </p>
+                            <v-radio-group v-model="paymentMethod" @change="SetInvoice" :disabled="isPaymentD">
+                                <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
+                                <v-radio :disabled="true" value="VC"
+                                    label="Pay with Vodafone Cash (VCN) (Soon)"></v-radio>
+                                <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
+                            </v-radio-group>
+                        </div>
+                        <EPayments />
+                    </div>
+                </template>
+                <template #item.3 prev-text="Back" next-text="Next">
+                    <div class="3">
+                        <!-- <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-900"></div> -->
+                        <p v-if="FPMsg" class="bg-green-700 text-white p-1 m-2">{{ FPMsg }}</p>
+                        <p v-else class="bg-red-700 text-white m-2">{{ FPErMsg }}</p>
+                        <div class="coupon md:flex md:space-x-5 p-2 md:w-2/3">
+                            <p class="text-lg">Have coupon? :</p>
+                            <v-text-field v-model="coupon" variant="outlined" density="compact"
+                                :disabled="isDisabled"></v-text-field>
+                            <v-btn v-if="notapplied" @click="couponapply" variant="tonal" class="">Apply</v-btn>
+                            <v-btn v-else @click="removecoupon" variant="tonal" class="">Remove</v-btn>
+                            <span class="p-2 opacity-50 text-sm">Hint: remove to edit payment method</span>
+                        </div>
+                    </div>
+                </template>
+            </v-stepper-vertical>
+            <!-- <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-900"></div> -->
             <!--price calculations-->
             <div class="price calculations md:w-9/12">
                 <div class="subtotal flex justify-between mb-2 mt-5 text-lg">
@@ -254,10 +280,12 @@ useSeoMeta({
                 </div>
                 <div class="w-11/12 mx-auto h-1 bg-zinc-800 rounded-xl"></div>
                 <div class="SecuredCheckout mb-5 mt-5">
-                    <p class="flex opacity-60"><v-icon class="mx-3">mdi-shield-check</v-icon>Secure Checkout Guarantee
+                    <p class="flex opacity-60"><v-icon class="mx-3">mdi-shield-check</v-icon>Secure Checkout
+                        Guarantee
                     </p>
                 </div>
             </div>
+
             <div class="pay mt-5 flex-col text-center">
                 <!-- <Paypal /> -->
                 <!-- <p>Or</p> -->
@@ -279,7 +307,7 @@ useSeoMeta({
             </div>
         </v-container>
         <br /><br />
-        <Footer />
+        <!-- <Footer /> -->
         <!-- <ScrollTop /> -->
     </div>
 </template>

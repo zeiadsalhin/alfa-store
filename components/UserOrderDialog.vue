@@ -124,6 +124,10 @@ const dialog = ref(false)
                             <p class="text-md">{{ SelectedOrderData?.order_ref }} <v-icon @click="copyToClipboard"
                                     size="15" class="hover:cursor-pointer">mdi-content-copy</v-icon></p>
                         </div>
+                        <p class="text-md">
+                        <p class="font-bold">Last Update:</p>{{ new
+                            Date(SelectedOrderData?.updated_at).toLocaleString('en-us') }}
+                        </p>
                         <v-btn @click="CancelOrder" v-if="SelectedOrderData?.order_status[0]?.status != 'Canceled'"
                             variant="flat" color="red" elevation="1" prepend-icon="mdi-cancel" text="Cancel order"
                             max-height="40"></v-btn>

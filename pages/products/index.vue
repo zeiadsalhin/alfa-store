@@ -21,9 +21,18 @@
                                     </template>
                                 </v-img>
                                 <v-card-title class="text-md-body-1 font-weight-bold">{{
-                                    p.name
-                                    }}</v-card-title>
-                                <v-card-subtitle class="primary--text pb-3">
+                                    p.name.length > 25 ? (p.name).slice(0, 25) + '...' : p.name
+                                }}</v-card-title>
+                                <div v-if="p.discount_price" class="discount price flex mb-5">
+                                    <v-card-subtitle class="primary--text w-fit text-h6">
+                                        ${{ p.discount_price }}
+                                    </v-card-subtitle>
+                                    <v-card-subtitle
+                                        class="primary--text line-through decoration-red-600 decoration-2 w-fit mt-1">
+                                        Was ${{ p.price }}
+                                    </v-card-subtitle>
+                                </div>
+                                <v-card-subtitle v-else class="primary--text pb-4 text-h6">
                                     ${{ p.price }}
                                 </v-card-subtitle>
                                 <v-card-text>
@@ -58,7 +67,7 @@
                                         </template>
                                     </v-img>
                                     <v-card-title class="text-md-body-1 font-weight-bold">{{
-                                        p.name
+                                        p.name.length > 25 ? (p.name).slice(0, 25) + '...' : p.name
                                         }}</v-card-title>
                                     <div v-if="p.discount_price" class="discount price flex mb-5">
                                         <v-card-subtitle class="primary--text w-fit text-h6">

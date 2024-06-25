@@ -21,7 +21,7 @@ const fetchUserOrders = async () => {
             .from('user_orders')
             .select('*')
             .eq('uid', id)
-
+            .order('updated_at', { ascending: false })
         if (error) {
             throw error;
         }

@@ -82,14 +82,14 @@ export const useMainStore = defineStore('main', {
         return;
       }
 
-      const { data, error } = await supabase.auth.getSession();
+      const { data:userdata, error } = await supabase.auth.getSession();
       if (error) {
         console.error('Error fetching session:', error.message);
         // Handle error as needed
         return;
       }
 
-      const supabaseUserId = data.session.user.id;
+      // const supabaseUserId = data.session.user.id;
 
       const cartItems = this.items.map(item => ({
         product: { // Include the entire product object
@@ -108,7 +108,7 @@ export const useMainStore = defineStore('main', {
         const { data, error } = await supabase
           .from('users_cart')
           .upsert({
-            uid: supabaseUserId,
+            uid: (userdata.session.user.id),
             cart_items: cartItems,
           }, { onConflict: ['uid'] });
 

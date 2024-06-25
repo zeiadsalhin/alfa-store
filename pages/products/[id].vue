@@ -91,7 +91,7 @@ const ddb = async () => {
             admin.value = false
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 
 }

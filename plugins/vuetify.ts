@@ -3,7 +3,7 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
-
+import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 const customDarkTheme = {
   dark: true,
   colors: {
@@ -53,6 +53,9 @@ export default defineNuxtPlugin((app) => {
             lg: 800,
             xl: 1280,
         },
+    },
+    components: {
+      VStepperVertical,
     },
   })
   app.vueApp.use(vuetify)
