@@ -58,8 +58,27 @@ const addToCart = (product) => {
     }
 
 };
+// Buy now
+const ExpressCheckout = (product) => {
+    if (product.options) {
+        if (selectedoption.value) {
+            mainStore.addToCart(product, selectedoption.value, product.discount_price).then(() => { navigateTo('/checkout') });
+        } else {
+            Swal.fire({
+                title: 'Warning!',
+                icon: 'warning',
+                text: 'You must select an option',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false,
+            })
+        }
+    } else {
+        mainStore.addToCart(product, selectedoption.value, product.discount_price).then(() => { navigateTo('/checkout') });
+        console.log('no options', selectedoption.value);
+    }
 
-
+};
 
 // Display delete button for admin only 
 const ddb = async () => {
@@ -253,9 +272,9 @@ const DeleteProducts = async () => {
                                 <v-btn @click="addToCart(product)" min-height="45" min-width="150"
                                     class="md:m-2 my-2 w-full md:w-1/2" color="">
                                     <v-icon size="30" class="mx-2">mdi-cart</v-icon>Add To Cart</v-btn>
-                                <v-btn @click="addToCart(product), navigateTo('/checkout')" min-height="45"
-                                    min-width="120" class="md:m-2 my-2 w-full md:w-1/2" color="grey-lighten-1"><v-icon
-                                        size="30" class="mx-2">mdi-credit-card-fast-outline</v-icon>Buy
+                                <v-btn @click="ExpressCheckout(product)" min-height="45" min-width="120"
+                                    class="md:m-2 my-2 w-full md:w-1/2" color="grey-lighten-1"><v-icon size="30"
+                                        class="mx-2">mdi-credit-card-fast-outline</v-icon>Buy
                                     Now</v-btn>
                             </div>
                             <div v-else>

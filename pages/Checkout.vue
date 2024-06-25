@@ -11,6 +11,8 @@ const cartItems = computed(() => mainStore.items);
 //data
 
 const errorMessage = ref('')
+const successMessage = ref('');
+const dialogVisible = ref(false);
 const paymenterrorMessage = ref('')
 const addresserrorMessage = ref('')
 const isDisabled = ref(false);
@@ -145,8 +147,11 @@ async function proccess() {
             console.log(insertError);
             return;
         }
-
         // Show user dialog
+        setTimeout(() => {
+            successMessage.value = 'Order Placed Successfully'
+        }, 4000)
+
         // await Swal.fire({
         //     title: "Proceessing your order",
         //     icon: "info",
@@ -157,21 +162,20 @@ async function proccess() {
         //     text: "Please Wait",
         //     showConfirmButton: false,
         // }).then(() => {
-        setTimeout(() => {
-            Swal.fire({
-                title: "Order Complete (Experimental, thank you for testing)",
-                icon: "success",
-                allowEscapeKey: false,
-                allowOutsideClick: false,
-                timer: 3000,
-                timerProgressBar: true,
-                text: "Thank you, your order will be shipped",
-                showConfirmButton: false,
-            });
-            //Remove items from cart
-            mainStore.clearCart();
-            //  router.push("/user");
-        }, 4000);
+        // setTimeout(() => {
+        //     Swal.fire({
+        //         title: "Order Complete (Experimental, thank you for testing)",
+        //         icon: "success",
+        //         allowEscapeKey: false,
+        //         allowOutsideClick: false,
+        //         timer: 3000,
+        //         timerProgressBar: true,
+        //         text: "Thank you, your order will be shipped",
+        //         showConfirmButton: false,
+        //     });
+        //    
+        //     //  router.push("/user");
+        // }, 4000);
         // })
         confirmorderloader.value = true
     } catch (error) {
@@ -212,7 +216,7 @@ useSeoMeta({
                 </p>
                 <v-radio-group v-model="paymentMethod" @change="SetInvoice" :disabled="isPaymentD">
                     <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
-                    <v-radio value="VC" label="Pay with Vodafone Cash (VCN)"></v-radio>
+                    <v-radio :disabled="true" value="VC" label="Pay with Vodafone Cash (VCN) (Soon)"></v-radio>
                     <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
                 </v-radio-group>
             </div>
@@ -268,7 +272,7 @@ useSeoMeta({
                             totalPrice).toLocaleString('en-US') }}) -->
                 </v-btn>
             </div>
-            <OrderConfirmation />
+            <OrderConfirmation :successMessage="successMessage" />
             <div class="payments space-y-5 p-5">
                 <p>We accept:</p>
                 <v-img src="/payments.webp" width="300"></v-img>

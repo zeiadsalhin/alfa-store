@@ -6,12 +6,12 @@
                 <div v-for="(item, index) in items" :key="index" class="my-auto">
                     <div style="height: 0.01rem;" class="rounded-md w-full bg-slate-800"></div>
                     <div class="item flex my-auto max-auto y-2">
-                        <div class="image w-fit max-h-fit  my-auto p-2"><v-img min-width="100" max-width="100"
+                        <div class="image w-fit max-h-fit  my-auto p-2"><v-img min-width="120" max-width="120"
                                 min-height="120" max-height="120" class="el rounded-sm" height="100%"
                                 :src="JSON.parse(item.product.image)[0]" cover></v-img>
                         </div>
                         <div class="info my-auto p-2 w-fit">
-                            <div class="name  font-normal">{{ item.product.name }}</div>
+                            <div class="name text-lg font-normal">{{ item.product.name }}</div>
                             <div class="price font-bold">Price: ${{ item.discountedPrice || item.product.price
                                 }}
                             </div>

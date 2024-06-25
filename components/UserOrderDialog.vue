@@ -22,12 +22,20 @@ const props = defineProps({
     },
 });
 const SelectedOrderData = ref(props.userOrders)
-const emits = defineEmits(['trigger-update']);
+const FetchedOrderData = ref()
+const emits = defineEmits(['trigger-update', 'refetch-orders']);
+// const emit = defineEmits();
 
 // Define methods
 const handleUpdateClick = () => {
     emits('trigger-update');
-    console.log('Child:', SelectedOrderData.value);
+    // console.log('Child:', SelectedOrderData.value);
+    // console.log(JSON.parse(SelectedOrderData.value.order_details[0].items[0].product.image)[0]);
+};
+const refetchOrders = () => {
+    emits('refetch-orders');
+    dialog.value = false
+    // console.log('Child:', SelectedOrderData.value);
     // console.log(JSON.parse(SelectedOrderData.value.order_details[0].items[0].product.image)[0]);
 };
 
@@ -37,9 +45,10 @@ const copyToClipboard = () => {
     navigator.clipboard.writeText(textToCopy)
 }
 
-const overlay = ref(true)
+const overlay = ref(false)
 // Cancel Order
 const CancelOrder = async () => {
+    overlay.value = true
     const { data, error } = await supabase.auth.getSession()
     // UID.value = data.session.user.id
     try {
@@ -51,6 +60,15 @@ const CancelOrder = async () => {
         if (error) {
             throw error;
         } else {
+            const { data, error } = await supabase
+                .from('user_orders')
+                .select()
+                .eq('order_ref', SelectedOrderData.value.order_ref)
+            FetchedOrderData.value = [data][0]
+            SelectedOrderData.value = FetchedOrderData.value[0]
+            // console.log(SelectedOrderData.value);
+            // console.log(FetchedOrderData.value);
+            if (error) { throw error } else { overlay.value = false }
 
         }
     } catch (error) {
@@ -72,13 +90,13 @@ const dialog = ref(false)
                     <div class="p-2 space-y-3">
                         <div class="title flex space-x-4">
                             <p class="font-bold">Order:</p>
-                            <p class="text-md">{{ SelectedOrderData.order_no }}</p>
+                            <p class="text-md">{{ SelectedOrderData?.order_no }}</p>
                         </div>
                         <div class="Details flex space-x-4">
                             <p class="font-bold">Details:</p>
                             <div class="Options">
                                 <div class="flex opacity-80"
-                                    v-for="(option, index) in SelectedOrderData.order_details[0].items" :key="index">
+                                    v-for="(option, index) in SelectedOrderData?.order_details[0]?.items" :key="index">
                                     <p class="">x{{ option.quantity }} - </p>
                                     <p>{{ option.selectedOption ? option.selectedOption : '' }}</p>
                                 </div>
@@ -86,11 +104,11 @@ const dialog = ref(false)
                         </div>
                         <div class="payment flex space-x-4">
                             <p class="font-bold">Payment method:</p>
-                            <p class="text-md">{{ SelectedOrderData.payment_method[0].option }}</p>
+                            <p class="text-md">{{ SelectedOrderData?.payment_method[0]?.option }}</p>
                         </div>
                         <div class="invoice flex space-x-4">
                             <p class="font-bold">Invoice:</p>
-                            <p class="text-md">${{ SelectedOrderData.order_invoice[0].invoice_value }}</p>
+                            <p class="text-md">${{ SelectedOrderData?.order_invoice[0]?.invoice_value }}</p>
                         </div>
                         <!-- <div class="flex w-full"> -->
                         <!-- <v-img :src="JSON.parse(SelectedOrderData.order_details[0].items[0].product.image)[0]"
@@ -99,18 +117,18 @@ const dialog = ref(false)
                         <!-- </div> -->
                         <div class="status flex space-x-4">
                             <p class="font-bold">Status:</p>
-                            <p class="text-md">{{ SelectedOrderData.order_status[0].status }}</p>
+                            <p class="text-md">{{ SelectedOrderData?.order_status[0]?.status }}</p>
                         </div>
                         <div class="reference flex space-x-4">
                             <p class="font-bold">Order_ref:</p>
-                            <p class="text-md">{{ SelectedOrderData.order_ref }} <v-icon @click="copyToClipboard"
+                            <p class="text-md">{{ SelectedOrderData?.order_ref }} <v-icon @click="copyToClipboard"
                                     size="15" class="hover:cursor-pointer">mdi-content-copy</v-icon></p>
                         </div>
-                        <v-btn @click="CancelOrder" v-if="SelectedOrderData.order_status[0].status != 'Canceled'"
+                        <v-btn @click="CancelOrder" v-if="SelectedOrderData?.order_status[0]?.status != 'Canceled'"
                             variant="flat" color="red" elevation="1" prepend-icon="mdi-cancel" text="Cancel order"
                             max-height="40"></v-btn>
 
-                        <v-alert v-if="SelectedOrderData.order_status[0].status == 'Canceled'"
+                        <v-alert v-if="SelectedOrderData?.order_status[0]?.status == 'Canceled'"
                             text="Request In progress" title="Order Canceled" type="error" color="red"></v-alert>
 
                         <!--Overlay-->
@@ -133,7 +151,7 @@ const dialog = ref(false)
 
                     <v-btn text="Close" variant="plain" @click="dialog = false"></v-btn>
 
-                    <v-btn color="surface-current" text="Ok" variant="tonal" @click="dialog = false"></v-btn>
+                    <v-btn color="surface-current" text="Ok" variant="tonal" @click="refetchOrders"></v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>

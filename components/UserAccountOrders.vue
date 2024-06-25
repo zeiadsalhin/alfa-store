@@ -42,7 +42,7 @@ const viewOrder = (orderId) => {
 }
 // Define methods
 const triggerOrderUpdate = () => {
-    console.log('Triggering order update in parent component');
+    // console.log('Triggering order update in parent component');
     // Perform your update logic here
 };
 </script>
@@ -90,7 +90,7 @@ const triggerOrderUpdate = () => {
                                     <div class="flex-col ml-4 my-auto">
                                         <p class=" underline">{{
                                             order.order_details[0].items[0].product.name
-                                            }}
+                                        }}
                                             (#{{ order.order_details[0].items[0].product.id }})
                                         </p>
                                         <p v-for="(p, index) in order.order_details[0].items" :key="index"
@@ -103,7 +103,8 @@ const triggerOrderUpdate = () => {
                             </td>
                             <!-- <td class="">{{ order.order_status[0].status }}</td> -->
                             <td>
-                                <UserOrderDialog :userOrders="order" @trigger-update="triggerOrderUpdate" />
+                                <UserOrderDialog :userOrders="order" @trigger-update="triggerOrderUpdate"
+                                    @refetch-orders="fetchUserOrders" />
                             </td>
                         </tr>
                     </tbody>
