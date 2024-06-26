@@ -3,7 +3,7 @@
 // Magic link login
 const route = useRoute()
 onBeforeMount(() => {
-    handleuser()
+    // handleuser()
 })
 
 async function handleuser() {
