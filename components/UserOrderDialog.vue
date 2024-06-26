@@ -117,7 +117,11 @@ const dialog = ref(false)
                         <!-- </div> -->
                         <div class="status flex space-x-4">
                             <p class="font-bold">Status:</p>
-                            <p class="text-md">{{ SelectedOrderData?.order_status[0]?.status }}</p>
+                            <v-btn :readonly="true" variant="tonal"
+                                :color="SelectedOrderData?.order_status[0]?.status == 'Canceled' ? 'red' : SelectedOrderData?.order_status[0]?.status == 'Received' ? 'orange' : SelectedOrderData?.order_status[0]?.status == 'Out for Delivery' ? 'yellow' : 'green'"
+                                :prepend-icon="SelectedOrderData?.order_status[0]?.status == 'Canceled' ? 'mdi-cancel' : SelectedOrderData?.order_status[0]?.status == 'Received' ? 'mdi-clock' : SelectedOrderData?.order_status[0]?.status == 'Out for Delivery' ? 'mdi-truck-delivery' : 'mdi-package-check'">
+                                <p class="text-md">{{ SelectedOrderData?.order_status[0]?.status }}</p>
+                            </v-btn>
                         </div>
                         <div class="reference flex space-x-4">
                             <p class="font-bold">Order_ref:</p>

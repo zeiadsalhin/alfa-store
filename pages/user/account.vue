@@ -10,6 +10,25 @@ const phone = ref()
 const email = ref()
 const signin = ref()
 const auth = ref()
+
+
+onMounted(async () => {
+    try {
+        const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
+
+        if (data.session) {  // access only for users
+            dataview.value = true
+            console.log('this user is admin')
+            console.log('this user is regular')
+        } else {
+            navigateTo("/login")
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+});
 //seo 
 useSeoMeta({
     title: `Alfa Store - User Account`,

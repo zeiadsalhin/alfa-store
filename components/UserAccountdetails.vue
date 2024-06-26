@@ -172,7 +172,7 @@ async function UpdateEmail() {
             </div>
             <v-btn @click="LogOut" min-height="40" min-width="120" class="m-5" color="grey-darken-3"><v-icon
                     class="mx-1">mdi-exit-to-app</v-icon>Logout</v-btn>
-            <p class="mt-10">Last login: {{ signin.slice(0, 19).replace('T', ' ') }}</p>
+            <p class="mt-10">Last login: {{ signin }}</p>
             <div class="bg-zinc-800 w-1/3 mx-auto h-0.5 mt-10 mb-5"></div>
             <div class="details text-left md:px-10 px-5">
                 <div class="Accountdetails flex space-x-3 py-2 mb-3">

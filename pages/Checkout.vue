@@ -232,10 +232,19 @@ useSeoMeta({
                                 {{ paymenterrorMessage }}
                             </p>
                             <v-radio-group v-model="paymentMethod" @change="SetInvoice" :disabled="isPaymentD">
-                                <v-radio :disabled="true" label="Credit card (Soon)"></v-radio>
-                                <v-radio :disabled="true" value="VC"
-                                    label="Pay with Vodafone Cash (VCN) (Soon)"></v-radio>
-                                <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio>
+                                <div class="flex w-fit">
+                                    <v-radio :disabled="true" label="Credit card (Soon)"></v-radio><v-icon
+                                        class="my-auto ml-3 opacity-40">mdi-credit-card-fast</v-icon>
+                                </div>
+                                <div class="flex w-fit">
+                                    <v-radio :disabled="true" value="VC"
+                                        label="Pay with Vodafone Cash (VCN) (Soon)"></v-radio><v-icon
+                                        class="my-auto ml-3 opacity-40">mdi-wallet-outline</v-icon>
+                                </div>
+                                <div class="flex w-fit">
+                                    <v-radio value="COD" label="Cash on Delivery (COD)"></v-radio><v-icon
+                                        class="my-auto ml-3 opacity-60">mdi-cash-fast</v-icon>
+                                </div>
                             </v-radio-group>
                         </div>
                         <EPayments />

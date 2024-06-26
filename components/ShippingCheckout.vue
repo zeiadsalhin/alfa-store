@@ -147,7 +147,9 @@ const saveNewAddress = async () => {
         </div>
         <div v-if="!expanded" class="Use existing Address p-1 mt-2    ">
             <div>
-                <p v-if="userAddress[0]?.length != 0 && notguest" class="h1 text-lg py-1">Or Select an address:</p>
+                <p v-if="userAddress[0]?.length != 0 && notguest" class="h1 text-lg py-1"><v-icon class="mb-1 mr-2"
+                        size="20">mdi-map-marker</v-icon>Or Select an address:
+                </p>
                 <div v-for="address in userAddress[0]" :key="address.id"
                     class="font-semibold text-lg outline outline-1 outline-zinc-500  p-3 my-4 rounded-md "
                     :class="{ 'outline-4': selectedAddress === address }">

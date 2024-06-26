@@ -115,7 +115,7 @@ watch(user, () => {
         <!--Login Form Body-->
         <!--will only render when no user exist-->
         <div v-if="dataview"
-            class="p-1 md:p-5 md:my-20 mt-32 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
+            class="p-1 md:p-5 md:my-20 mt-20 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
             <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-800'"
                 class="p-2 mx-auto" width="350" alt="logo"></v-img>
             <!--Confirmation-->
@@ -143,24 +143,24 @@ watch(user, () => {
                 <p class="text-center my-auto text-xl font-semibold w-16">Or</p>
                 <div class="w-1/2 h-1 my-auto rounded-xl mx-auto bg-zinc-900 opacity-80"></div>
             </div>
-            <form id="form" class="space-y-5 p-5 w-11/12 md:w-1/3 h-fit text-center mx-auto justify-center flex-col"
+            <form id="form" class="space-y-5a p-5 w-11/12 md:w-1/3 h-fit text-center mx-auto justify-center flex-col"
                 @submit.prevent="signIn">
                 <!--input fields-->
                 <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
                     class="text relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 mx-auto">
                     <label :class="theme.global.current.value.dark ? 'text-white' : 'bg-zinc-100 text-zinc-800'"
                         class="label hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
-                        for="email">Email</label>
+                        for="email">Email*</label>
                     <input id="email" name="email" v-model="email" placeholder="" type="email" @focus="move"
                         @blur="back" class="text-black outline-none bg-transparent text-lg mt-4 mb-3 w-full"
                         :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                 </div>
                 <!---->
                 <div :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black'"
-                    class="pass mt-8 relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 mx-auto flex">
+                    class="pass mt-5 relative outline outline-1 px-2 outline-zinc-700 rounded-lg my-auto w-11/12 mx-auto flex">
                     <label :class="theme.global.current.value.dark ? 'text-white' : 'text-zinc-800'"
                         class="labelp hover:cursor-text text-left absolute top-4 bg-inherit rounded-md px-2 text-lg font-semibold"
-                        for="pass">Password</label>
+                        for="pass">Password*</label>
                     <input id="pass" name="password" v-model="password" placeholder="" @focus="movep" @blur="backp"
                         class="text-black outline-none bg-transparent text-lg mt-4 mb-3 w-full   "
                         :class="theme.global.current.value.dark ? 'text-white' : 'text-black'"
@@ -170,28 +170,39 @@ watch(user, () => {
                             {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                     </div>
                 </div>
-
+                <div class="options flex justify-between text-sm mt-1">
+                    <NuxtLink to="/login/oneClickLogin"><button type="button"
+                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack hover:underline">
+                            OneClick Login
+                        </button></NuxtLink>
+                    <NuxtLink to="/login/requestPasswordReset"><button type="button"
+                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack hover:underline">
+                            Forget Password?
+                        </button></NuxtLink>
+                </div>
                 <!--Display error message if any-->
                 <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
 
                 <!--Submit button-->
-                <button @click="" type="submit"
-                    :class="theme.global.current.value.dark ? 'bg-zinc-700 text-white hover:bg-zinc-600' : 'bg-zinc-700 hover:bg-zinc-500 text-white hover:text-gray-50'"
-                    class="px-5 m-5 py-2 w-44 text-lg rounded-md hover:cursor-pointer">
+                <v-btn @click="" type="submit" max-height="44" min-height="44" variant="tonal" prepend-icon="mdi-login"
+                    :ripple="false" :elevation="1" class="m-5 w-44 text-lg rounded-md hover:cursor-pointer">
                     <v-progress-circular v-if="authenticating" width="2" size="20" color="darken-blue-4" class="m-1"
                         indeterminate></v-progress-circular>
                     Log in
-                </button>
-                <NuxtLink to="requestPasswordReset"><button
-                        class="px-5 m-5 py-2 opacity-70 w-fit hover:cursor-pointer mx-auto block hover:underline">
-                        Forget Password?
-                    </button></NuxtLink>
-
+                </v-btn>
+                <div class="flex w-fit space-x-5 mx-auto mt-8">
+                    <!--navigate to login page-->
+                    <p class="mr- my-auto text-center">Don't have an account?</p>
+                    <NuxtLink to="/signup"><button type="button"
+                            class="py-2 opacity-70 w-fiat mx-auto block hover:underline">
+                            Sign Up
+                        </button></NuxtLink>
+                </div>
                 <!--Return to Sign Up page-->
-                <NuxtLink to="/signup"><button
+                <!-- <NuxtLink to="/signup"><button
                         class="px-5 m-5 py-2 w-fit hover:cursor-pointer mx-auto block hover:underline">
                         return to Sign Up
-                    </button></NuxtLink>
+                    </button></NuxtLink> -->
             </form>
         </div>
         <!--End of Body-->

@@ -1,7 +1,7 @@
 <script setup>
 useSeoMeta({
-    title: 'Alfa Store - Reset password',
-    ogTitle: 'Alfa Store -  Reset password',
+    title: 'Alfa Store - oneClick Login',
+    ogTitle: 'Alfa Store -  oneClick Login',
     description: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
     ogDescription: 'Welcome to most progressive E-commerce platform with Safest and Secured Payment in programming services',
     ogImage: 'https://alfastorecommerce.netlify.app/mainicon.ico',
@@ -14,11 +14,15 @@ const email = ref()
 const errMsg = ref()
 const succMsg = ref()
 
-async function resetpassword() { // reset password by email link included token
+async function oneClickLogin() { // reset password by email link included token
     const supabase = useSupabaseClient()
     try {
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email.value, {
-            redirectTo: 'https://alfastorecommerce.netlify.app/resetPassword',
+        const { data, error } = await supabase.auth.signInWithOtp({
+            email: email.value,
+            options: {
+                emailRedirectTo: 'https://alfastorecommerce.netlify.app/user',
+                shouldCreateUser: false
+            }
         })
         console.log("link sent")
         succMsg.value = 'Link sent Successfully, please check your email' // display user message for success
@@ -34,11 +38,11 @@ async function resetpassword() { // reset password by email link included token
         <!--renders on all states-->
         <div :class="theme.global.current.value.dark ? 'bg-zinc-900 text-white' : 'bg-zinc-100'"
             class="about mt-20 p-1 md:p-10 m-10 flex-co   l justify-center mx-auto w-11/12 h-fit shadow-inner rounded-md">
-            <h1 class="text-2xl md:text-5xl  text-center font-bold p-4">Reset Password</h1>
+            <h1 class="text-2xl md:text-5xl  text-center font-bold p-4">oneClick Login</h1>
 
             <div class="w-1/4 h-1 mt-5 rounded-xl mx-auto bg-zinc-800"></div>
             <form id="form" class="space-y-5 p-5 h-96 text-center mx-auto justify-center flex-col"
-                @submit.prevent="resetpassword">
+                @submit.prevent="oneClickLogin">
                 <div class="form mt-3">
                     <label class="p-3 text-md md:text-xl block ">Enter your Email:</label>
                     <input placeholder="Enter your registered Email" id="email" v-model="email"
@@ -53,7 +57,7 @@ async function resetpassword() { // reset password by email link included token
                 <button @click="" type="submit"
                     :class="theme.global.current.value.dark ? 'bg-zinc-950 text-white' : 'bg-zinc-700 text-white'"
                     class="px-5 py-2 md:w-1/4 mx-auto rounded-md hover:cursor-pointer hover:bg-zinc-600 hover:text-gray-800 bg-gray-800 ">
-                    Send reset link
+                    {{ succMsg ? 'Wait 60s' : 'Send login link' }}
                 </button>
             </form>
         </div>

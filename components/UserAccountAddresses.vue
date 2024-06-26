@@ -306,9 +306,9 @@ const DeleteAddress = async () => {
                     <strong>Country:</strong> {{ address.country }} <br>
                     <div class="grid grid-cols-2 grid-rows-2 w-11/12 mx-auto text-center justify-center space-x- mt-4">
                         <v-btn @click="updateValue(index)" class="m-1" min-height="40" max-width="100"
-                            color="grey-lighten-2">Edit</v-btn>
+                            color="grey-lighten-2"><v-icon>mdi-pencil</v-icon></v-btn>
                         <v-btn @click="DeleteAddressBegin(address.id)" class="m-1" min-height="40" max-width="100"
-                            color="red-darken-2">Delete</v-btn>
+                            color="red-darken-2"><v-icon>mdi-delete</v-icon></v-btn>
                         <v-btn @click="" class="m-2 col-span-2 w-fuasll flaex justify-center" min-height="40"
                             max-width="200" variant="outlined">Set as
                             default</v-btn>
