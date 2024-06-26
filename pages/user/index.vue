@@ -16,8 +16,8 @@ async function handleuser() {
     if (token_hash) {
         console.log(token_hash);
     } else {
-        // console.log('token hash Must be exist');
-        return navigateTo('/login')
+        console.log('token hash Must be exist');
+        // return navigateTo('/login')
     }
     if (session) {
         // console.log('Session Started:', session);
