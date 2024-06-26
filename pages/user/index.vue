@@ -3,20 +3,20 @@
 // Magic link login
 const route = useRoute()
 onBeforeMount(() => {
-    // handleuser()
+    handleuser()
 })
 
 async function handleuser() {
     const supabase = useSupabaseClient()
     const type = 'email'
-    const token_hash = route.query.token
+    const code_hash = route.query.code
 
-    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash, type })
+    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash: code_hash, type: 'email' })
 
-    if (token_hash) {
-        console.log(token_hash);
+    if (code_hash) {
+        console.log(code_hash);
     } else {
-        console.log('token hash Must be exist');
+        console.log('code hash Must be exist');
         // return navigateTo('/login')
     }
     if (session) {
