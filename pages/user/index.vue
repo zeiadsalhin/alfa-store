@@ -3,15 +3,15 @@
 // Magic link login
 const route = useRoute()
 onBeforeMount(() => {
-    handleuser()
+    // handleuser()
 })
 
 async function handleuser() {
     const supabase = useSupabaseClient()
-    // const type = 'email'
+    const type = 'email'
     const tokenHash = route.query.code
 
-    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' })
+    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type })
 
     if (tokenHash) {
         console.log(tokenHash);
