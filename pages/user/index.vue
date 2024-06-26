@@ -8,15 +8,15 @@ onBeforeMount(() => {
 
 async function handleuser() {
     const supabase = useSupabaseClient()
-    const type = 'email'
-    const code_hash = route.query.code
+    // const type = 'email'
+    const tokenHash = route.query.code
 
-    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash: code_hash, type: 'email' })
+    const { data: { session }, error, } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'email' })
 
-    if (code_hash) {
-        console.log(code_hash);
+    if (tokenHash) {
+        console.log(tokenHash);
     } else {
-        console.log('code hash Must be exist');
+        console.log('token hash Must be exist');
         // return navigateTo('/login')
     }
     if (session) {
@@ -26,7 +26,7 @@ async function handleuser() {
     }
     if (error) {
         // console.log(error);
-        errMsg.value = error.message;
+        // errMsg.value = error.message;
         throw error;
     }
 }
