@@ -20,7 +20,7 @@ async function oneClickLogin() { // reset password by email link included token
         const { data, error } = await supabase.auth.signInWithOtp({
             email: email.value,
             options: {
-                // emailRedirectTo: 'https://alfastorecommerce.netlify.app/user',
+                emailRedirectTo: 'https://alfastorecommerce.netlify.app/user/',
                 shouldCreateUser: false
             }
         })
