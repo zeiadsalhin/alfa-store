@@ -18,7 +18,6 @@ onMounted(async () => {
 
         if (data.session) {  // access only for users
             dataview.value = true
-            console.log('this user is admin')
             console.log('this user is regular')
         } else {
             navigateTo("/login")

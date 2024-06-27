@@ -115,9 +115,9 @@ watch(user, () => {
         <!--Login Form Body-->
         <!--will only render when no user exist-->
         <div v-if="dataview"
-            class="p-1 md:p-5 md:my-20 mt-20 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
+            class="p-1 md:p-5 md:my-20 mt-16 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
             <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-800'"
-                class="p-2 mx-auto" width="350" alt="logo"></v-img>
+                class="p-2 mx-auto" width="250" alt="logo"></v-img>
             <!--Confirmation-->
             <p v-if="emailconfirm"
                 class="fleax flex-roaw w-10/12 mt-5 mx-auto shadow-md rounded-sm bg-green-600 text-white my-2 p-3">A
@@ -170,13 +170,13 @@ watch(user, () => {
                             {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                     </div>
                 </div>
-                <div class="options flex justify-between text-sm mt-1">
+                <div class="options flex justify-between mx-auto w-10/12 text-sm mt-1">
                     <NuxtLink to="/login/oneClickLogin"><button type="button"
-                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack hover:underline">
+                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack underline">
                             OneClick Login
                         </button></NuxtLink>
                     <NuxtLink to="/login/requestPasswordReset"><button type="button"
-                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack hover:underline">
+                            class="py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack underline">
                             Forget Password?
                         </button></NuxtLink>
                 </div>

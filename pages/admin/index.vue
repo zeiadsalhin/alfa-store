@@ -19,7 +19,7 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
 })
 
-onMounted(async () => {
+onBeforeMount(async () => {
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
 
