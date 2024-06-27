@@ -53,20 +53,17 @@ async function resetpassword() { // reset password by email link included token
                 <!--Display error message if any-->
                 <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
                 <!--Confirmation message-->
-                <p class="text-green-600" v-if="succMsg">{{ succMsg }}</p>
-                <div class="buttons flex flex-col space-y-5">
+                <div class="">
+                    <p class="text-green-600 mb-2" v-if="succMsg">{{ succMsg }}</p>
                     <button @click="" type="submit"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-950 text-white' : 'bg-zinc-800 text-white'"
+                        :class="theme.global.current.value.dark ? 'bg-zinc-950 text-white' : 'bg-zinc-700 text-white'"
                         class="px-5 py-2 md:w-1/4 mx-auto rounded-md hover:cursor-pointer hover:bg-zinc-600 hover:text-gray-800 bg-gray-800 ">
-                        Send reset link
+                        {{ succMsg ? 'Sent ' : 'Send login link' }}
                     </button>
-                    <a href="mailto:https://mail.google.com/">
-                        <button type="button"
-                            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white hover:bg-zinc-700' : 'bg-zinc-500 text-white hover:bg-zinc-400'"
-                            class="px-3 py-2 md:w-1/4 mx-auto rounded-md hover:cursor-pointer  hover:text-gray-950 ">
-                            Open Mail
-                        </button></a>
                 </div>
+                <NuxtLink @click="$router.back()"><button type="button"
+                        class="mt-5 py-2 opacity-70 w-fit hover:cursor-pointer amx-auto bloack underline">Back</button>
+                </NuxtLink>
             </form>
         </div>
     </div>
