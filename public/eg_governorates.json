@@ -1,7 +1,4 @@
-[
-{"type":"header","version":"5.0.2","comment":"Export to JSON plugin for PHPMyAdmin"},
-{"type":"database","name":"test"},
-{"type":"table","name":"governorates","database":"test","data":
+
 [
 {"id":"1","governorate_name_ar":"القاهرة","governorate_name_en":"Cairo"},
 {"id":"2","governorate_name_ar":"الجيزة","governorate_name_en":"Giza"},
@@ -31,5 +28,4 @@
 {"id":"26","governorate_name_ar":"شمال سيناء","governorate_name_en":"North Sinai"},
 {"id":"27","governorate_name_ar":"سوهاج","governorate_name_en":"Sohag"}
 ]
-}
-]
+

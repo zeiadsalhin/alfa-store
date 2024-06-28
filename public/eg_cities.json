@@ -1,8 +1,4 @@
 [
-{"type":"header","version":"5.0.2","comment":"Export to JSON plugin for PHPMyAdmin"},
-{"type":"database","name":"test"},
-{"type":"table","name":"cities","database":"test","data":
-[
 {"id":"1","governorate_id":"1","city_name_ar":"15 مايو","city_name_en":"15 May"},
 {"id":"2","governorate_id":"1","city_name_ar":"الازبكية","city_name_en":"Al Azbakeyah"},
 {"id":"3","governorate_id":"1","city_name_ar":"البساتين","city_name_en":"Al Basatin"},
@@ -399,6 +395,4 @@
 {"id":"394","governorate_id":"27","city_name_ar":"طما","city_name_en":"Tama"},
 {"id":"395","governorate_id":"27","city_name_ar":"طهطا","city_name_en":"Tahta"},
 {"id":"396","governorate_id":"27","city_name_ar":"الكوثر","city_name_en":"Alkawthar"}
-]
-}
 ]

@@ -1,5 +1,6 @@
 <script setup>
 import Swal from 'sweetalert2'
+import axios from 'axios';
 import { useTheme } from 'vuetify'
 const theme = useTheme();
 const supabase = useSupabaseClient()
@@ -57,7 +58,7 @@ const updateValue = (addressId) => {
 };
 const editAddress = () => {
     editMode.value = true;
-
+    // fetchCities()
     if (newaddress.value == false) {
         userAddress.value = editedAddress.value[0][id.value];
         // userAddress.value = {  }
@@ -186,6 +187,53 @@ const DeleteAddress = async () => {
         console.log(error)
     }
 };
+
+// fetch cities 
+const cities = ref()
+async function fetchCities() {
+    try {
+        const response = await axios.get(`/eg_cities.json`);
+        if (response.status === 200) {
+            cities.value = (response.data)
+                .sort((a, b) => {
+                    // Accessing the common name of each country object
+                    const commonA = a.city_name_en.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+                    const commonB = b.city_name_en.toUpperCase();
+                    // Use localeCompare for string comparison
+                    return commonA.localeCompare(commonB);
+                });
+            // console.log(cities.value);
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    } catch (err) {
+        console.log(err);
+        cities.value = null;
+    }
+}
+// fetch Governorates 
+const states = ref()
+async function fetchStates() {
+    try {
+        const response = await axios.get(`/eg_governorates.json`);
+        if (response.status === 200) {
+            states.value = (response.data)
+                .sort((a, b) => {
+                    // Accessing the common name of each country object
+                    const commonA = a.governorate_name_en.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+                    const commonB = b.governorate_name_en.toUpperCase();
+                    // Use localeCompare for string comparison
+                    return commonA.localeCompare(commonB);
+                });
+            // console.log(cities.value);
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    } catch (err) {
+        console.log(err);
+        states.value = null;
+    }
+}
 </script>
 <template>
     <div class="mb-20">
@@ -264,18 +312,23 @@ const DeleteAddress = async () => {
                             class="outline outline-1 px-2 outline-zinc-700 rounded-lg  text-black  bg-transparent  p-3 w-full"
                             :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                     </div>
-                    <div class="5,6,7 grid md:grid-cols-3 grid-rows-3 md:grid-rows-1  gap-4 w-full">
+                    <div class="5,6,7 grid md:grid-rows-1  gap-4 w-full">
                         <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
-                            class="text  outline outline-1 px-2 outline-zinc-700 rounded-lg  w-full ">
-                            <input id="city" name="city" v-model="userAddress.city" placeholder="City*" type="text"
-                                @focus="move" @blur="back" class="text-black outline-none bg-transparent  p-3 w-full"
-                                :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                            class="text pxa-2  rounded-lg  w-full ">
+                            <v-select variant="outlined" id="city" name="city" :items="cities" @click="fetchCities"
+                                :item-title="'city_name_en'" :item-value="'city_name_en'" label="Select a city*"
+                                item-text="city_name_en" placeholder="City*" type="text" v-model="userAddress.city"
+                                class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                                :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                         </div>
                         <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
-                            class="text  outline outline-1 px-2 outline-zinc-700 rounded-lg  w-full ">
-                            <input id="state" name="state" v-model="userAddress.state" placeholder="State*" type="text"
-                                @focus="move" @blur="back" class="text-black outline-none bg-transparent  p-3 w-full"
-                                :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                            class="text pax-2 rounded-lg  w-full ">
+                            <v-select variant="outlined" id="state" name="state" :items="states" @click="fetchStates"
+                                :item-title="'governorate_name_en'" :item-value="'governorate_name_en'"
+                                label="Select a governorate*" item-text="governorate_name_en" placeholder="State*"
+                                type="text" v-model="userAddress.state"
+                                class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                                :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                         </div>
                         <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
                             class="text  outline outline-1 px-2 outline-zinc-700 rounded-lg  w-full ">
@@ -285,16 +338,15 @@ const DeleteAddress = async () => {
                                 :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                         </div>
                     </div>
-
-
                     <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
                         class="text md:flex  w-full text-left mx-auto">
-                        <label for="street" class="p-2 font-semibold text-lg my-auto">Country<span
-                                class="required text-red-600">*</span>:</label>
-                        <input :disabled="true" id="country" name="country" v-model="userAddress.country"
-                            placeholder="Country" type="text" @focus="move" @blur="back"
-                            class="opacity-70 outline outline-1 px-2 outline-zinc-700 rounded-lg  text-black outline-none bg-transparent text-lg p-3 w-full"
-                            :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                        <!-- <label for="street" class="p-2 font-semibold text-lg my-auto">Country<span
+                                class="required text-red-600">*</span>:</label> -->
+                        <v-select variant="outlined" id="country" name="country" :items="['Egypt']"
+                            :item-value="'Egypt'" label="Select a Country*" placeholder="Country*" type="text"
+                            v-model="userAddress.country"
+                            class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                            :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                     </div>
                 </div>
                 <!--Submit button-->
