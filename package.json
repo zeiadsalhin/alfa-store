@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.3.3",
     "@mdi/font": "^7.4.47",
     "@nuxt/content": "^2.12.1",
     "@nuxt/types": "^2.17.3",
@@ -18,6 +19,7 @@
     "axios": "^1.7.2",
     "content": "^4.0.6",
     "nuxt": "^3.11.2",
+    "nuxt-mail": "^5.0.1",
     "nuxt-webfontloader": "^1.1.0",
     "pinia": "^2.1.7",
     "sweetalert2": "^11.6.13",

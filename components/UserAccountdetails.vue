@@ -51,8 +51,14 @@ async function fetchCountryData() {
     try {
         const response = await axios.get(`https://restcountries.com/v3.1/all`);
         if (response.status === 200) {
-            countries.value = response.data;
-            // console.log(countries.value[0].idd.suffixes[0]);
+            countries.value = response.data.sort((a, b) => {
+                // Accessing the common name of each country object
+                const commonA = a.name.common.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+                const commonB = b.name.common.toUpperCase();
+                // Use localeCompare for string comparison
+                return commonA.localeCompare(commonB);
+            });
+            // console.log(countries.value);
             // console.log('tel code: ', country.value.idd.root);
         } else {
             throw new Error('Failed to fetch data');
@@ -186,11 +192,11 @@ async function UpdateEmail() {
                         <div class="phoneinput flex">
                             <select v-if="!isDisabledp" @change=""
                                 class="bg-zinc-950a w-12 p-0.5 bg-zinc-600 outline outline-1 outline-zinc-500 h-fit my-auto text-lg text-white rounded-l-lg">
-                                <option value="">+</option>
+                                <!-- <option value="">+</option> -->
                                 <option v-for="country in countries" :key="country.name.common"
                                     :value="country.idd?.root" class="bg-zinc-950 ">
-                                    {{ country.idd?.root }}{{ country.idd?.suffixes ? country.idd.suffixes[0] : '' }}
-                                    ({{ country.name.official }})
+                                    {{ (country.name?.common) }} ({{ country.idd?.root }}
+                                    {{ country.idd?.suffixes ? country.idd.suffixes : null }})
                                 </option>
                             </select>
                             <input :disabled="isDisabledp" v-model="phone"

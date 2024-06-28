@@ -23,6 +23,21 @@ export default defineNuxtConfig({
     'nuxt-paypal',
     '@pinia/nuxt',
     '@nuxtjs/supabase',
+    // ['nuxt-mail', {
+    //   message: {
+    //     name: 'support',
+    //     to: 'support@alfa.store',
+    //     bcc: 'zeyadali011@gmail.com'
+    //   },
+    //   smtp: {
+    //     host: "smtp-relay.brevo.com",
+    //     port: 587,
+    //     auth: {
+    //       user: 'pactelcompany@gmail.com',
+    //       pass: 'BR6GmALtE9apUQ5C',
+    //     },
+    //   },
+    // }],
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
