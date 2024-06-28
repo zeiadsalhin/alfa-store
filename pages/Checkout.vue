@@ -144,7 +144,7 @@ async function proccess() {
         }
         // 
         const { error: insertError } = await supabase.from('user_orders').insert({
-            uid: UID.value ? UID.value : 'Guest',
+            uid: UID.value ? UID.value : 'Guest_' + receivedAddresses.value.name + '-' + receivedAddresses.value.phone,
             order_no: '#' + mainStore.items[0].product.id + '-' + mainStore.items[0].product.name + ' x' + mainStore.items[0].quantity,
             order_details: [{ items: mainStore.items, shippingAddress: receivedAddresses.value, invoice: mainStore.checkoutPrice }],
             order_status: [{ status: `${paymentMethod.value == 'VC' ? 'Received,Payment Pending' : 'Received'}` }],

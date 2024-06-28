@@ -51,9 +51,13 @@ const fetchAddresses = async () => {
 
 }
 
+// phone format
+const formatphone = () => {
+    userNewAddress.value.phone = userNewAddress.value.phone.replace(/\D/g, '').slice(0, 11);
+};
 // Post code Format
 const formatpostcode = () => {
-    userNewAddress.value.postalCode = userNewAddress.value.postalCode.replace(/\D/g, '').slice(0, 8);;
+    userNewAddress.value.postalCode = userNewAddress.value.postalCode.replace(/\D/g, '').slice(0, 8);
 };
 // country Format
 const formatcountry = () => {
@@ -62,7 +66,7 @@ const formatcountry = () => {
 
 // save the new address
 const saveNewAddress = async () => {
-    if (!userNewAddress.value.apartment || !userNewAddress.value.building || !userNewAddress.value.neighborhood || !userNewAddress.value.street || !userNewAddress.value.city || !userNewAddress.value.state || !userNewAddress.value.postalCode || !userNewAddress.value.country) {
+    if (!userNewAddress.value.name || !userNewAddress.value.phone || !userNewAddress.value.email || !userNewAddress.value.apartment || !userNewAddress.value.building || !userNewAddress.value.neighborhood || !userNewAddress.value.street || !userNewAddress.value.city || !userNewAddress.value.state || !userNewAddress.value.postalCode || !userNewAddress.value.country) {
         // errorMessage.value = 'Please fill out all fields.'
         return;
     }
@@ -101,14 +105,29 @@ const saveNewAddress = async () => {
             <v-expand-transition>
                 <v-form lazy-validation id="form" class="mt-10 mb-10" @submit.prevent="saveNewAddress" v-if="expanded">
                     <!-- <p v-if="errorMessage" class="error bg-red-700 text-white p-1">{{ errorMessage }}</p> -->
-                    <p class="font-weight-bold p-2">Delivery Address</p>
+                    <p class="font-weight-bold p-2">Contact details</p>
                     <v-row>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.apartment" :rules="rules" outlined label="Apartment"
+                            <v-text-field v-model="userNewAddress.name" :rules="rules" outlined label="Full name*"
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.building" :rules="rules" outlined label="Building"
+                            <v-text-field v-model="userNewAddress.phone" :rules="rules" outlined @input="formatphone"
+                                label="Phone number*" type="tel"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                            <v-text-field v-model="userNewAddress.email" :rules="rules" outlined label="Email*"
+                                type="email"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <p class="font-weight-bold p-2">Delivery Address</p>
+                    <v-row>
+                        <v-col cols="12" md="4">
+                            <v-text-field v-model="userNewAddress.apartment" :rules="rules" outlined label="Apartment*"
+                                type="text"></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="4">
+                            <v-text-field v-model="userNewAddress.building" :rules="rules" outlined label="Building*"
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
@@ -116,23 +135,23 @@ const saveNewAddress = async () => {
                                 label="Neighborhood" type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.street" :rules="rules" outlined label="Street"
+                            <v-text-field v-model="userNewAddress.street" :rules="rules" outlined label="Street*"
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.city" :rules="rules" outlined label="City"
+                            <v-text-field v-model="userNewAddress.city" :rules="rules" outlined label="City*"
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.state" :rules="rules" outlined label="Governorate"
+                            <v-text-field v-model="userNewAddress.state" :rules="rules" outlined label="Governorate*"
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
                             <v-text-field v-model="userNewAddress.postalCode" :rules="rules" outlined
-                                @input="formatpostcode" label="Postal code" type="tel"></v-text-field>
+                                @input="formatpostcode" label="Postal code*" type="tel"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.country" :rules="rules" outlined label="Country"
+                            <v-text-field v-model="userNewAddress.country" :rules="rules" outlined label="Country*"
                                 @input="formatcountry" type="text"></v-text-field>
                         </v-col>
                     </v-row>
@@ -151,18 +170,22 @@ const saveNewAddress = async () => {
                         size="20">mdi-map-marker</v-icon>Or Select an address:
                 </p>
                 <div v-for="address in userAddress[0]" :key="address.id"
-                    class="font-semibold text-lg outline outline-1 outline-zinc-500  p-3 my-4 rounded-md "
+                    class="font-semibold text-lg outline outline-1 outline-zinc-500  px-2 my-4 rounded-md "
                     :class="{ 'outline-4': selectedAddress === address }">
-                    <v-radio-group v-model="selectedAddress" @change="emitUserAddresses(selectedAddress)">
+                    <v-radio-group v-model="selectedAddress" @change="emitUserAddresses(selectedAddress)" class="py-2">
                         <v-radio :id="'address_' + address.id" :value="address"
-                            :label="address.apartment + ' ' + 'bldg.' + ' ' + address.building + ' ' + 'neighborhood.' + ' ' + address.neighborhood + ' ' + address.street + ' ' + address.city + ' ' + address.country + ' ' + address.postalCode">
+                            :label="address?.name + ' ' + address?.phone + ', ' + address.apartment + ', ' + 'bldg.' + ' ' + address.building + ' ' + 'neighborhood.' + ' ' + address.neighborhood + ', ' + address.street + ', ' + address.city + ', ' + address.country + ', ' + address.postalCode">
                         </v-radio>
                     </v-radio-group>
                 </div>
                 <div v-if="selectedAddress" class="p-3">
                     <p class="text-lg font-semibold">Selected Address:</p>
-                    <p>apt.{{ selectedAddress.apartment }}, bldg.{{ selectedAddress.building }}, {{
-                        selectedAddress.neighborhood }}, {{ selectedAddress.street }}
+                    <p>{{ selectedAddress?.name }}</p>
+                    <p> {{ selectedAddress?.phone }}</p>
+                    <p> {{ selectedAddress?.email }}</p>
+                    <p> apt.{{ selectedAddress.apartment }},
+                        bldg.{{ selectedAddress.building }}, {{ selectedAddress.neighborhood }},
+                        {{ selectedAddress.street }}
                     </p>
                     <p>City: {{ selectedAddress.city }}, {{ selectedAddress.state }}</p>
                     <p>Location: {{ selectedAddress.country }},{{ selectedAddress.postalCode }}</p>

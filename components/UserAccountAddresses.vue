@@ -199,6 +199,33 @@ const DeleteAddress = async () => {
                 <div class="mainfields grid grid-flow-row auto-cols-auto gap-6">
                     <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
                         class="text flex w-full ">
+                        <label for="street" class="p-2 font-semibold text-lg text-left my-auto">Name<span
+                                class="required text-red-600">*</span>:</label>
+                        <input id="name" name="name" v-model="userAddress.name" placeholder="Full name ex: Joe Doe"
+                            type="text" @focus="move" @blur="back"
+                            class=" outline outline-1 outline-zinc-700 rounded-lg  px-2  text-black bg-transparent p-3 w-full"
+                            :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                    </div>
+                    <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
+                        class="text flex w-full ">
+                        <label for="street" class="p-2 font-semibold text-lg text-left my-auto">Phone<span
+                                class="required text-red-600">*</span>:</label>
+                        <input id="phone" name="phone" v-model="userAddress.phone" placeholder="ex: 01xxxxxxxxx"
+                            type="tel" @focus="move" @blur="back"
+                            class=" outline outline-1 outline-zinc-700 rounded-lg  px-2  text-black bg-transparent p-3 w-full"
+                            :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                    </div>
+                    <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
+                        class="text flex w-full ">
+                        <label for="street" class="p-2 font-semibold text-lg text-left my-auto">Email<span
+                                class="required text-red-600">*</span>:</label>
+                        <input id="email" name="email" v-model="userAddress.email" placeholder="email@email.com"
+                            type="text" @focus="move" @blur="back"
+                            class=" outline outline-1 outline-zinc-700 rounded-lg  px-2  text-black bg-transparent p-3 w-full"
+                            :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
+                    </div>
+                    <div :class="theme.global.current.value.dark ? ' text-white' : 'bg-zinc-100 text-black'"
+                        class="text flex w-full ">
                         <label for="street" class="p-2 font-semibold text-lg text-left my-auto">Street<span
                                 class="required text-red-600">*</span>:</label>
                         <input id="street" name="street" v-model="userAddress.street"
@@ -264,9 +291,9 @@ const DeleteAddress = async () => {
                         class="text md:flex  w-full text-left mx-auto">
                         <label for="street" class="p-2 font-semibold text-lg my-auto">Country<span
                                 class="required text-red-600">*</span>:</label>
-                        <input id="country" name="country" v-model="userAddress.country" placeholder="Country"
-                            type="text" @focus="move" @blur="back"
-                            class="outline outline-1 px-2 outline-zinc-700 rounded-lg  text-black outline-none bg-transparent text-lg p-3 w-full"
+                        <input :disabled="true" id="country" name="country" v-model="userAddress.country"
+                            placeholder="Country" type="text" @focus="move" @blur="back"
+                            class="opacity-70 outline outline-1 px-2 outline-zinc-700 rounded-lg  text-black outline-none bg-transparent text-lg p-3 w-full"
                             :class="theme.global.current.value.dark ? 'text-white' : 'text-black'" required>
                     </div>
                 </div>
@@ -292,10 +319,12 @@ const DeleteAddress = async () => {
 
         <div v-else>
             <div v-if="!loadingAddresses"
-                class="md:grid grid-cols-2 gap-2 justify-center md:space-x-  text-left text-lg shadow-md w-fit p-5 mx-auto">
+                class="md:grid grid-cols-2 gap-2 justify-center md:space-x-  text-left text-lg shadow-md w-11/12 p-5 mx-auto">
                 <div v-if="userAddress" v-for="(address, index) in userAddress[0]" :key="index"
-                    class=" mb-2 w-fit p-5 outline outline-zinc-700 shadow-lg">
-
+                    class=" mb-2 min-w-48  p-5 outline outline-zinc-700 shadow-lg">
+                    <strong>Name:</strong> {{ address.name }} <br>
+                    <strong>Phone:</strong> {{ address.phone }} <br>
+                    <strong>Email:</strong> {{ address.email }} <br>
                     <strong>Street:</strong> {{ address.street }} <br>
                     <strong>Building:</strong> {{ address.building }} <br>
                     <strong>Apartment:</strong> {{ address.apartment }} <br>
@@ -304,7 +333,7 @@ const DeleteAddress = async () => {
                     <strong>State:</strong> {{ address.state }} <br>
                     <strong>Postal Code:</strong> {{ address.postalCode }} <br>
                     <strong>Country:</strong> {{ address.country }} <br>
-                    <div class="grid grid-cols-2 grid-rows-2 w-11/12 mx-auto text-center justify-center space-x- mt-4">
+                    <div class="grid grid-cols-2 grid-rows-2 w-fit mx-auto text-center justify-center space-x- mt-4">
                         <v-btn @click="updateValue(index)" class="m-1" min-height="40" max-width="100"
                             color="grey-lighten-2"><v-icon>mdi-pencil</v-icon></v-btn>
                         <v-btn @click="DeleteAddressBegin(address.id)" class="m-1" min-height="40" max-width="100"
