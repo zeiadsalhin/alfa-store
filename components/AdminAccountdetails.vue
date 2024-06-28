@@ -1,6 +1,8 @@
 <script setup>
 import Swal from 'sweetalert2'
 import { useTheme } from 'vuetify'
+import { useMainStore } from '@/store';
+const mainStore = useMainStore();
 const theme = useTheme();
 const supabase = useSupabaseClient()
 const user = useSupabaseUser()
@@ -37,6 +39,7 @@ async function LogOut() {
             timer: 1000,
             showConfirmButton: false,
         }).then(() => {
+            mainStore.clearCart();
             navigateTo("/login")
         })
     } catch (error) {

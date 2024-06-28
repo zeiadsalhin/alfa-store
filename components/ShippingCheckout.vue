@@ -28,28 +28,27 @@ onMounted(() => {
 const notguest = ref(false);
 const fetchAddresses = async () => {
     const { data, error } = await supabase.auth.getSession()
-    if (data.session.user) {
-        const id = data.session.user.id
-        notguest.value = true
-        try {
-            const { data, error } = await supabase
-                .from('user_address')
-                .select('*')
-                .eq('uid', id)
+    const id = data?.session?.user.id ? data.session.user.id : 'guest-checkout_';
+    notguest.value = true
+    try {
+        const { data, error } = await supabase
+            .from('user_address')
+            .select('*')
+            .eq('uid', id)
 
-            if (error) {
-                throw error;
-            }
-            if (data) {
-                userAddress.value = [data]; // Store fetched address in an array
-                // console.log(userAddress.value);
-                // loadingAddresses.value = false
-            }
-
-        } catch (error) {
-            console.error('Error fetching user address:', error.message);
+        if (error) {
+            throw error;
         }
+        if (data) {
+            userAddress.value = [data]; // Store fetched address in an array
+            // console.log(userAddress.value);
+            // loadingAddresses.value = false
+        }
+
+    } catch (error) {
+        console.error('Error fetching user address:', error.message);
     }
+
 }
 
 // Post code Format
@@ -67,9 +66,10 @@ const saveNewAddress = async () => {
         // errorMessage.value = 'Please fill out all fields.'
         return;
     }
-    const { data, error } = await supabase.auth.getSession()
-    const id = data.session.user.id
+
     try {
+        const { data, error } = await supabase.auth.getSession()
+        const id = data?.session?.user.id ? data.session.user.id : 'guest-checkout_'
         // Insert address details into database
         const { error: insertError } = await supabase
             .from('user_address')

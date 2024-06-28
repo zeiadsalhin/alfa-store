@@ -11,7 +11,7 @@ function selectedoption(option) {
 </script>
 <template>
     <div>
-        <h1>Available Colors:</h1>
+        <h1>Available Options:</h1>
         <v-chip-group filter>
             <v-chip v-for="(option, i) in options" :key="i" :class="'text-' + option.toLowerCase()"
                 @click="selectedoption(option)"><v-icon size="x-small">mdi-circle</v-icon>

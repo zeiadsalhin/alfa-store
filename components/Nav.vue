@@ -83,15 +83,8 @@ async function getavatar() {
     const supabase = useSupabaseClient()
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
-        if (data.session.user) {
-            avatar.value = data.session.user.identities[0].identity_data.avatar_url
-            // displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
-
-        } else {
-            avatar.value = null
-            // console.log('this user is regular')
-
-        }
+        avatar.value = data?.session ? data.session.user.identities[0].identity_data.avatar_url : null
+        // displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
     } catch (error) {
         // console.log(error);
     }

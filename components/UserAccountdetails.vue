@@ -33,7 +33,7 @@ async function FetchUserData() {
         } else {
             dataview.value = true
             avatar.value = data.session.user.identities[0].identity_data.avatar_url
-            displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
+            displayname.value = data.session.user.identities[0].identity_data?.first_name ? data.session.user.identities[0].identity_data.first_name : data.session.user.identities[0].identity_data.full_name // Display registered username
             phone.value = data.session.user.phone// Display registered id
             email.value = data.session.user.email // Display registered email 
             const date = new Date(data.session.user.last_sign_in_at).toLocaleString('en-us')// last login

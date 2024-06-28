@@ -42,7 +42,7 @@ const triggerAd = async (index) => {
         adUpdate.value = { ...Adsitems.value[index] }
         if (adUpdate.value) {
             expanded.value = true;
-            const view = document.getElementById('editview');
+            const view = document.getElementById('Adeditview');
             var headerOffset = 80;
             var elementPosition = view.getBoundingClientRect().top;
             var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -140,7 +140,7 @@ const cancelEdit = () => {
         </div>
 
         <!--editing Ad-->
-        <div v-if="!loading" class="editP mt-10 p-2" id="editview">
+        <div v-if="!loading" class="editP mt-10 p-2" id="Adeditview">
             <!--success message-->
             <p v-if="updateSuccess" class="text-lg"><v-icon class="mx-1" color="green">mdi-check</v-icon>Ad details
                 updated

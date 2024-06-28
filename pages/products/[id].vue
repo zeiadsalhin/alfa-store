@@ -248,7 +248,9 @@ const DeleteProducts = async () => {
                                     {{ ((product.price)).toFixed() + ' $'
                                     }}
                                 </p>
-                                <p class="mr-4 mt-2">-% {{ (((product.price - product.discount_price) / product.price) *
+                                <p class="mr-4 mt-1 p-1.5 bg-[#D50000] text-white rounded-sm">% {{ (((product.price -
+                                    product.discount_price) /
+                                    product.price) *
                                     100).toFixed() }}
                                     off
                                 </p>
