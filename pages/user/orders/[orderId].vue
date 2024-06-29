@@ -4,6 +4,6 @@
 <template>
     <div class="mt-20">
         this is order id page
-        <BottomNav />
+        <!-- <BottomNav /> -->
     </div>
 </template>

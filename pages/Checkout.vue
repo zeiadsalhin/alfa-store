@@ -7,14 +7,21 @@ const supabase = useSupabaseClient()
 const user = useSupabaseUser()
 const UID = ref(null);
 const router = useRouter()
+const settings = ref(null)
 const mainStore = useMainStore();
 const cartItems = computed(() => mainStore.items);
 
 // access only if cart item !=0
-onMounted(() => {
+onBeforeMount(async () => {
     if (cartItems.value.length == 0) {
         navigateTo('/cart')
     }
+    const { data: config, error: configerror } = await supabase
+        .from('store_config')
+        .select('*')
+
+    settings.value = config[0]
+
 })
 //data
 
@@ -271,21 +278,21 @@ useSeoMeta({
             <div class="price calculations md:w-9/12">
                 <div class="subtotal flex justify-between mb-2 mt-5 text-lg">
                     <p>Total Sub:</p>
-                    <p>${{ (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US')
-                            }} (Including VAT%)</p>
+                    <p>{{ settings?.currency + ' ' + (FinalPrice > 0 && FinalPrice < totalPrice ? FinalPrice :
+                        totalPrice).toLocaleString('en-US') }} (Including %14 VAT)</p>
                             <p v-if="FinalPrice < totalPrice" class="text-red-700 text-md">- 100%</p>
                 </div>
                 <div v-if="paymentMethod == 'COD'" class="shippingfee flex justify-between mb-5 mt-2 text-lg">
                     <p class="flex">Shipping
                         <ShippingDialog />
                     </p>
-                    <p>${{ (ShippingFee).toLocaleString('en-US') }}</p>
+                    <p>{{ settings?.currency + ' ' + (ShippingFee).toLocaleString('en-US') }}</p>
                 </div>
                 <div class="total flex justify-between mb-5 mt-2 font-semibold text-2xl">
                     <p>Total:</p>
-                    <p class="font-bold">${{ (FinalPrice > 0 && FinalPrice < totalPrice ? (paymentMethod == 'COD' ?
-                        FinalPrice + ShippingFee : FinalPrice) : (paymentMethod == 'COD' ? totalPrice + ShippingFee :
-                            totalPrice)).toLocaleString('en-US') }}</p>
+                    <p class="font-bold">{{ settings?.currency + ' ' + (FinalPrice > 0 && FinalPrice < totalPrice ?
+                        (paymentMethod == 'COD' ? FinalPrice + ShippingFee : FinalPrice) : (paymentMethod == 'COD' ?
+                            totalPrice + ShippingFee : totalPrice)).toLocaleString('en-US') }}</p>
                 </div>
                 <div class="w-11/12 mx-auto h-1 bg-zinc-800 rounded-xl"></div>
                 <div class="SecuredCheckout mb-5 mt-5">
@@ -303,10 +310,10 @@ useSeoMeta({
                 <v-btn nuxt to="/cart" min-width="100" min-height="45" depressed>Back</v-btn>
                 <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">
                     <v-progress-circular v-if="confirmorderloader" width="2" size="20" color="zinc"
-                        class="text-zinc-300 mr-1" indeterminate></v-progress-circular>Complete Order ($
-                    {{ (FinalPrice < totalPrice ? FinalPrice : totalPrice) + (paymentMethod == 'COD' ? ShippingFee : 0)
-                        }}) <!-- & Pay (${{ (FinalPrice> 0 && FinalPrice < totalPrice ? FinalPrice :
-                            totalPrice).toLocaleString('en-US') }}) -->
+                        class="text-zinc-300 mr-1" indeterminate></v-progress-circular>Complete Order (
+                    {{ settings?.currency + ' ' + (FinalPrice < totalPrice ? FinalPrice : totalPrice) +
+                        (paymentMethod == 'COD' ? ShippingFee : 0) }}) <!-- & Pay (${{ (FinalPrice> 0 && FinalPrice <
+                            totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US') }}) -->
                 </v-btn>
             </div>
             <OrderConfirmation :successMessage="successMessage" />

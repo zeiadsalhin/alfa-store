@@ -13,7 +13,7 @@
                     p.name
                     }}</v-card-title>
                 <v-card-subtitle class="primary--text p-3 text-h6">
-                    ${{ p.discount_price ? p.discount_price : p.price }}
+                    {{ settings?.currency + ' ' + (p.discount_price ? p.discount_price : p.price) }}
                 </v-card-subtitle>
                 <v-card-text>
                     <v-chip x-small label outlined class="mr-1" v-for="(t, i) in p.tags" :key="`prod${p.id}-${i}`">
@@ -43,6 +43,7 @@ export default {
     data() {
         return {
             products: this.data,
+            settings: null,
         }
     },
     mounted() {
@@ -54,7 +55,11 @@ export default {
             const user = useSupabaseUser()
             try {
                 const { data, error } = await supabase.from('Products').select();
+                const { data: config, error: configerror } = await supabase
+                    .from('store_config')
+                    .select('*')
 
+                this.settings = config[0]
                 // console.log('Products:', data);
                 this.products = data.slice().reverse()
 

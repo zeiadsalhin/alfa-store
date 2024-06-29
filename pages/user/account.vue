@@ -42,6 +42,6 @@ useSeoMeta({
 <template>
     <div>
         <UserAccountdetails />
-        <BottomNav />
+        <!-- <BottomNav /> -->
     </div>
 </template>

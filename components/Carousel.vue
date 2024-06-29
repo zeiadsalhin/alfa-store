@@ -14,7 +14,7 @@
                                 <div v-if="item.discount_price" class="discounted price">
                                     <p
                                         class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
-                                        {{ ((item.price)).toFixed() + ' $'
+                                        {{ settings?.currency + ' ' + ((item.price)).toFixed()
                                         }}
                                     </p>
                                     <p class="mr-4 mt-2 inline-block">-% {{ (((item.price - item.discount_price) /
@@ -23,12 +23,12 @@
                                         off
                                     </p>
                                     <p class="text-h4 primary--text mt-3 font-weight-bold">
-                                        {{ (item.discount_price) + ' $' }}
+                                        {{ settings?.currency + ' ' + (item.discount_price) }}
                                     </p>
                                 </div>
                                 <div v-else>
                                     <p class="text-h4 primary--text mt-3 font-weight-bold">
-                                        {{ (item.price) + ' $' }}
+                                        {{ settings?.currency + ' ' + (item.price) }}
                                     </p>
                                 </div>
                                 <p class="text-md-body-2 md:mb-5 mb-2"></p>
@@ -61,6 +61,7 @@ export default {
         return {
             sale_items: true,
             items: '',
+            settings: null,
         }
     },
     mounted() {
@@ -73,7 +74,11 @@ export default {
             const user = useSupabaseUser()
             try {
                 const { data, error } = await supabase.from('Products').select('*');
+                const { data: config, error: configerror } = await supabase
+                    .from('store_config')
+                    .select('*')
 
+                this.settings = config[0]
                 // console.log('Products:', data);
                 this.items = data
 

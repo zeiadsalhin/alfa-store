@@ -79,12 +79,15 @@ async function fetchCartItems() {
 }
 
 // get user avatar
+const isUser = ref(true)
 async function getavatar() {
     const supabase = useSupabaseClient()
     try {
         const { data, error } = await supabase.auth.getSession(); // get session status from local cookies
         avatar.value = data?.session ? data.session.user.identities[0].identity_data.avatar_url : null
         // displayname.value = data.session.user.identities[0].identity_data.first_name || data.session.user.identities[0].identity_data.full_name // Display registered username
+        // get account type
+
     } catch (error) {
         // console.log(error);
     }
@@ -96,6 +99,11 @@ watch(user, () => {
     if (user.value) {
         fetchCartItems();
         getavatar();
+        if (user?.user_metadata?.role == 'admin') {
+            isUser.value = false
+        } else {
+            isUser.value = true
+        }
     } else {
         fetchCartItems();
         getavatar();
@@ -117,7 +125,7 @@ watch(user, () => {
                 <v-btn class="mr-md-2" icon>
                     <v-icon size="20">mdi-home</v-icon></v-btn>
             </nuxt-link> -->
-            <nuxt-link to="/admin">
+            <nuxt-link :to="isUser ? '/user/account' : '/admin'">
                 <v-btn class="mr-md-2" icon>
                     <v-avatar v-if="avatar" size="25"><v-img :src="avatar"></v-img></v-avatar>
                     <v-icon v-else size="20">mdi-account-outline</v-icon>

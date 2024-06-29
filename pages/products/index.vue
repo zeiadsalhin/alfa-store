@@ -25,15 +25,15 @@
                                 }}</v-card-title>
                                 <div v-if="p.discount_price" class="discount price flex mb-5">
                                     <v-card-subtitle class="primary--text w-fit text-h6">
-                                        ${{ p.discount_price }}
+                                        {{ settings?.currency + ' ' + p.discount_price }}
                                     </v-card-subtitle>
                                     <v-card-subtitle
                                         class="primary--text line-through decoration-red-600 decoration-2 w-fit mt-1">
-                                        Was ${{ p.price }}
+                                        Was {{ settings?.currency + ' ' + p.price }}
                                     </v-card-subtitle>
                                 </div>
                                 <v-card-subtitle v-else class="primary--text pb-4 text-h6">
-                                    ${{ p.price }}
+                                    {{ settings?.currency + ' ' + p.price }}
                                 </v-card-subtitle>
                                 <v-card-text>
                                     <v-chip x-small label outlined class="mr-1" v-for="(t, i) in p.tags"
@@ -71,15 +71,15 @@
                                         }}</v-card-title>
                                     <div v-if="p.discount_price" class="discount price flex mb-5">
                                         <v-card-subtitle class="primary--text w-fit text-h6">
-                                            ${{ p.discount_price }}
+                                            {{ settings?.currency + ' ' + p.discount_price }}
                                         </v-card-subtitle>
                                         <v-card-subtitle
                                             class="primary--text line-through decoration-red-600 decoration-2 w-fit mt-1">
-                                            Was ${{ p.price }}
+                                            Was {{ settings?.currency + ' ' + p.price }}
                                         </v-card-subtitle>
                                     </div>
                                     <v-card-subtitle v-else class="primary--text pb-4 text-h6">
-                                        ${{ p.price }}
+                                        {{ settings?.currency + ' ' + p.price }}
                                     </v-card-subtitle>
                                     <v-card-text>
                                         <v-chip x-small label outlined class="mr-1" v-for="(t, i) in p.tags"
@@ -126,6 +126,7 @@ export default {
             categories: null,
             products: null,
             search: null,
+            settings: null,
         };
     },
     mounted() {
@@ -137,7 +138,11 @@ export default {
             const user = useSupabaseUser()
             try {
                 const { data, error } = await supabase.from('Products').select();
+                const { data: config, error: configerror } = await supabase
+                    .from('store_config')
+                    .select('*')
 
+                this.settings = config[0]
                 // console.log('Products:', JSON.parse(data[2].image)[0]);
                 this.products = data
                 // console.log(JSON.parse(this.products[2].image.replace(/[\[\]']/g, '')));

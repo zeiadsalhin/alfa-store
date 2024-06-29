@@ -55,6 +55,6 @@ onMounted(async () => {
                 <!-- <nuxt /> -->
             </v-main>
         </v-layout>
-        <BottomNav />
+        <!-- <BottomNav /> -->
     </div>
 </template>

@@ -5,6 +5,6 @@ const invoice = ref('invoiceID')
     <div class="mt-20">
         This is user orders
         <nuxt-link :to="'/user/orders/' + invoice">Go to invoice</nuxt-link>
-        <BottomNav />
+        <!-- <BottomNav /> -->
     </div>
 </template>

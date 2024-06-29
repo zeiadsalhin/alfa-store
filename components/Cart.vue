@@ -12,7 +12,9 @@
                         </div>
                         <div class="info my-auto p-2 w-fit">
                             <div class="name text-lg font-normal">{{ item.product.name }}</div>
-                            <div class="price font-bold">Price: ${{ item.discountedPrice || item.product.price
+                            <div class="price font-bold">Price: {{ settings?.currency + ' ' +
+                                (item.discountedPrice ? item.discountedPrice :
+                                    item.product.price)
                                 }}
                             </div>
                             <div class="option font-thin" v-if="item.selectedOption">Option: {{ item.selectedOption }}
@@ -27,7 +29,7 @@
                     </div>
                 </div>
                 <div class="h-0.5 rounded-md w-full bg-slate-800"></div>
-                <div v-if="items.length != 0" class="total px-4 mb-5 text-xl">Subtotal: ${{
+                <div v-if="items.length != 0" class="total px-4 mb-5 text-xl">Subtotal: {{ settings?.currency + ' ' +
                     totalPrice.toLocaleString('en-US') }}</div>
             </div>
             <div v-if="items.length != 0" class="text-xl text-center mb-10"><v-btn variant="tonal" color="red-lighten-1"
@@ -38,7 +40,7 @@
                 <v-btn to="Checkout" color="grey-darken-3
 " class="w-11/12 bg-gray-600 my-2 p-2.5 text-lg rounded-md" min-height="40"><v-icon size="20"
                         class="mx-1">mdi-lock-outline</v-icon>
-                    Checkout(${{ totalPrice.toLocaleString('en-US') }})
+                    Checkout({{ settings?.currency + ' ' + totalPrice.toLocaleString('en-US') }})
                 </v-btn>
             </div>
             <div v-else class="empty text-center">
@@ -69,10 +71,17 @@ const mainStore = useMainStore();
 const cartItems = ref([]);
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
+const settings = ref()
 const items = computed(() => mainStore.items);
-onMounted(async () => {
+onBeforeMount(async () => {
     try {
+        const { data: config, error: configerror } = await supabase
+            .from('store_config')
+            .select('*')
+
+        settings.value = config[0]
         await mainStore.fetchCartFromSupabase();
+
     } catch {
         console.log('error fetching cart from database');
 

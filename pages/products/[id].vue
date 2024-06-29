@@ -121,6 +121,7 @@ const getreviews = async () => {
 }
 
 // get product data
+const settings = ref()
 const fetchProducts = async () => {
     const supabase = useSupabaseClient()
     const user = useSupabaseUser()
@@ -136,6 +137,12 @@ const fetchProducts = async () => {
         // console.log(product.value.name)
         // console.log('images are: ', JSON.parse(this.product.image));
 
+        const { data: config, error: configerror } = await supabase
+            .from('store_config')
+            .select('*')
+
+        settings.value = config[0]
+        // console.log(settings.value.currency);
     } catch (error) {
         console.error('Error fetching products:', error.message);
     }
@@ -245,25 +252,26 @@ const DeleteProducts = async () => {
                                 <p class="mt-2 font-semibold">Original Price:</p>
                                 <p
                                     class="text-h7 inline-block mr-4 mt-2 text-red-70 line-through decoration-2 decoration-red-700">
-                                    {{ ((product.price)).toFixed() + ' $'
+                                    {{ settings?.currency + ' ' + ((product.price)).toFixed()
                                     }}
                                 </p>
-                                <p class="mr-4 mt-1 p-1.5 bg-[#D50000] text-white rounded-sm">% {{ (((product.price -
-                                    product.discount_price) /
-                                    product.price) *
-                                    100).toFixed() }}
+                                <p class="mr-4 mt-1 p-1.5 bg-[#D50000] text-white rounded-sm font-bold">-% {{
+                                    (((product.price -
+                                        product.discount_price) /
+                                        product.price) *
+                                        100).toFixed() }}
                                     off
                                 </p>
                             </div>
                             <p class="text-h5 mb-7">
                                 Price:
-                                {{ (product.discount_price) + ' $' }}
+                                {{ settings?.currency + ' ' + (product.discount_price) }}
                             </p>
                         </div>
                         <div v-else>
                             <p class="text-h5 mb-4">
                                 Price:
-                                {{ (product.price) + ' $' }}
+                                {{ settings?.currency + ' ' + (product.price) }}
                             </p>
                         </div>
                         <Colors v-if="product.options" :options="product.options"
@@ -272,24 +280,46 @@ const DeleteProducts = async () => {
                         <div class="button flex flex-col md:flex-row mb-5">
                             <div v-if="product.stock" class="md:flex">
                                 <v-btn @click="addToCart(product)" min-height="45" min-width="150"
-                                    class="md:m-2 my-2 w-full md:w-1/2" color="">
+                                    class="md:m-2 my-2 w-full md:w-1/3" color="">
                                     <v-icon size="30" class="mx-2">mdi-cart</v-icon>Add To Cart</v-btn>
                                 <v-btn @click="ExpressCheckout(product)" min-height="45" min-width="120"
-                                    class="md:m-2 my-2 w-full md:w-1/2" color="grey-lighten-1"><v-icon size="30"
+                                    class="md:m-2 my-2 w-full md:w-1/3" color="grey-lighten-1"><v-icon size="30"
                                         class="mx-2">mdi-credit-card-fast-outline</v-icon>Buy
                                     Now</v-btn>
+                                <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="120"
+                                    class="md:m-2 my-2 w-full md:w-1/3" color="red-darken-4">Delete
+                                    product</v-btn>
                             </div>
                             <div v-else>
                                 <v-btn :readonly="true" min-height="45" class="m-1 mb-10  w-full">
                                     <v-icon size="30" class="m-1">mdi-cancel</v-icon>Out of stock</v-btn>
                             </div>
-                            <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="150" class="m-2"
-                                color="red-darken-4">Delete
-                                product</v-btn>
+
                         </div>
                     </v-col>
 
                 </v-row>
+
+                <div class="merchant w-full amx-auto p-3">
+                    <div class="h-0.5 w-full mx-auto bg-zinc-900 rounded-full"></div>
+                    <p class="p-1 mt-5 text-lg font-semibold">Details:</p>
+                    <div class="1 flex">
+                        <p class="px-2 py-1 opacity-80">Sold by: </p>
+                        <p class="px-2 py-1">Alfa Store</p>
+                    </div>
+                    <div class="2 flex">
+                        <p class="px-2 py-1 opacity-80">Ship by: </p>
+                        <p class="px-2 py-1">Alfa Store</p>
+                    </div>
+                    <div class="3 flex">
+                        <p class="px-2 py-1 opacity-80">Return: </p>
+                        <p class="px-2 py-1">Eligible within 14 days</p>
+                    </div>
+                    <div class="4 flex">
+                        <p class="px-2 py-1 opacity-80">Payment: </p>
+                        <p class="px-2 py-1">secureCheckout</p>
+                    </div>
+                </div>
                 <div class="added mt-5 px-5">
                     <p class="">Available from:</p>
                     <p class="text-left opacity-80">
@@ -297,7 +327,7 @@ const DeleteProducts = async () => {
                         {{ product.created_at.slice(11, 16) }}
                     </p>
                 </div>
-                <div class="images w-full mx-auto">
+                <div class="images w-full mx-auto mt-20">
                     <h1 class="p-5 text-2xl font-bold">Images:</h1>
                     <v-img v-for="(img, i) in JSON.parse(product.image)" :key="i" width="90%" class="el mx-auto m-5"
                         height="100%" :src="img"></v-img>

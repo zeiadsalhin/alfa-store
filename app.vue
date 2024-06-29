@@ -3,7 +3,12 @@
     <v-app>
       <Loader />
       <Nav />
-      <NuxtPage />
+      <AdminNav v-if="$route.path.includes('/admin')" />
+      <v-main>
+        <NuxtPage />
+      </v-main>
+      <BottomNavAdmin v-if="$route.path.includes('/admin')" />
+      <BottomNav v-if="$route.path.includes('/user')" />
     </v-app>
   </NuxtLayout>
 </template>
