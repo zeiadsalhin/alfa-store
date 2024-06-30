@@ -212,7 +212,7 @@ const DeleteProducts = async () => {
 <template>
     <div>
         <div v-if="product">
-            <v-container class="mt-20">
+            <v-container class="mt-0">
                 <Breadcrumbs />
                 <v-row justify="center">
                     <v-col cols="11" md="11">
