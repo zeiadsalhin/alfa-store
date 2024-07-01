@@ -120,12 +120,13 @@ watch(user, () => {
         <!--Login Form Body-->
         <!--will only render when no user exist-->
         <div v-if="dataview"
-            class="p-1 md:p-5 md:my-20 mt-16 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xl rounded-md bg-">
+            class="p-1 md:p-5 md:my-2a0 mt-5 flex-col justify-center mx-auto w-11/12 h-fit shadow-2xla rounded-md bg-">
             <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-800'"
                 class="p-2 mx-auto" width="250" alt="logo"></v-img>
             <!--Confirmation-->
             <p v-if="emailconfirm"
-                class="fleax flex-roaw w-10/12 mt-5 mx-auto shadow-md rounded-sm bg-green-600 text-white my-2 p-3">A
+                class="fleax flex-roaw w-10/12 mt-5 mx-auto shadow-md rounded-sm bg-green-600 text-white my-2 p-3">
+                <v-icon class="mx-1" size="20">mdi-email-check</v-icon>A
                 confirmation
                 sent to Your
                 email:

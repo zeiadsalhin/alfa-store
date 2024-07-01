@@ -1,7 +1,8 @@
 <template>
     <v-slide-group show-arrows1 center-active class="-pa-4" v-if="products">
         <v-slide-group-item v-for="(p, i) in products" :key="i">
-            <v-card :to="`/products/${p.id}`" color="surface" width="250" class="m-5">
+            <v-card :to="`/products/${p.id}`" :color="theme.global.current.value.dark ? 'surface' : 'grey-lighten-2'"
+                width="250" class="m-5">
                 <v-img height="200" :src="JSON.parse(p.image)[0]" cover>
                     <template #placeholder>
                         <v-row class="fill-height" justify="center" align="center">
@@ -11,8 +12,9 @@
                 </v-img>
                 <v-card-title class="text-md-body-1 font-weight-bold">{{
                     p.name
-                    }}</v-card-title>
-                <v-card-subtitle class="primary--text p-3 text-h6">
+                }}</v-card-title>
+                <v-card-subtitle class="primary--text bg-[#D50000] text-white m-1 w-fit p-3 text-subtitle-1">
+
                     {{ settings?.currency + ' ' + (p.discount_price ? p.discount_price : p.price) }}
                 </v-card-subtitle>
                 <v-card-text>
@@ -36,6 +38,10 @@
 
 
 </template>
+<script setup>
+import { useTheme } from 'vuetify'
+const theme = useTheme();
+</script>
 <script>
 import Swal from 'sweetalert2'
 

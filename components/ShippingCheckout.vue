@@ -1,4 +1,7 @@
 <script setup>
+import axios from 'axios';
+import { useTheme } from 'vuetify'
+const theme = useTheme();
 const supabase = useSupabaseClient()
 //data
 const userNewAddress = ref({});
@@ -63,6 +66,53 @@ const formatpostcode = () => {
 const formatcountry = () => {
     userNewAddress.value.country = userNewAddress.value.country.replace(/[^A-Za-z]/g, '').slice(0, 8);;
 };
+
+// fetch cities 
+const cities = ref()
+async function fetchCities() {
+    try {
+        const response = await axios.get(`/eg_cities.json`);
+        if (response.status === 200) {
+            cities.value = (response.data)
+                .sort((a, b) => {
+                    // Accessing the common name of each country object
+                    const commonA = a.city_name_en.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+                    const commonB = b.city_name_en.toUpperCase();
+                    // Use localeCompare for string comparison
+                    return commonA.localeCompare(commonB);
+                });
+            // console.log(cities.value);
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    } catch (err) {
+        console.log(err);
+        cities.value = null;
+    }
+}
+// fetch Governorates 
+const states = ref()
+async function fetchStates() {
+    try {
+        const response = await axios.get(`/eg_governorates.json`);
+        if (response.status === 200) {
+            states.value = (response.data)
+                .sort((a, b) => {
+                    // Accessing the common name of each country object
+                    const commonA = a.governorate_name_en.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+                    const commonB = b.governorate_name_en.toUpperCase();
+                    // Use localeCompare for string comparison
+                    return commonA.localeCompare(commonB);
+                });
+            // console.log(cities.value);
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    } catch (err) {
+        console.log(err);
+        states.value = null;
+    }
+}
 
 // save the new address
 const saveNewAddress = async () => {
@@ -139,20 +189,30 @@ const saveNewAddress = async () => {
                                 type="text"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.city" :rules="rules" outlined label="City*"
-                                type="text"></v-text-field>
+                            <v-select variant="outlined" id="city" name="city" :items="cities" @click="fetchCities"
+                                :item-title="'city_name_en'" :item-value="'city_name_en'" label="Select a city*"
+                                item-text="city_name_en" placeholder="City*" type="text" v-model="userNewAddress.city"
+                                class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                                :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.state" :rules="rules" outlined label="Governorate*"
-                                type="text"></v-text-field>
+                            <v-select variant="outlined" id="state" name="state" :items="states" @click="fetchStates"
+                                :item-title="'governorate_name_en'" :item-value="'governorate_name_en'"
+                                label="Select a governorate*" item-text="governorate_name_en" placeholder="State*"
+                                type="text" v-model="userNewAddress.state"
+                                class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                                :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                         </v-col>
                         <v-col cols="12" md="4">
                             <v-text-field v-model="userNewAddress.postalCode" :rules="rules" outlined
                                 @input="formatpostcode" label="Postal code*" type="tel"></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-text-field v-model="userNewAddress.country" :rules="rules" outlined label="Country*"
-                                @input="formatcountry" type="text"></v-text-field>
+                            <v-select variant="outlined" id="country" name="country" :items="['Egypt']"
+                                :item-value="'Egypt'" label="Select a Country*" placeholder="Country*" type="text"
+                                v-model="userNewAddress.country"
+                                class="text-blac outline-none bg-transparent my-auto  p- w-full"
+                                :theme="theme.global.current.value.dark ? 'dark' : 'light'" :required='true'></v-select>
                         </v-col>
                     </v-row>
                     <div class="buttons flex justify-start ">

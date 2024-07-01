@@ -53,7 +53,7 @@ const coupon = ref(null)
 const paymentMethod = ref('COD');
 const isPaymentD = ref(true);
 const FinalPrice = ref(null)
-const ShippingFee = ref(1.00);
+const ShippingFee = ref(50);
 const CheckoutPrice = ref(null);
 const confirmorderloader = ref(false);
 const FPMsg = ref(null)
@@ -311,8 +311,8 @@ useSeoMeta({
                 <v-btn @click="proccess" type="submit" min-width="50" min-height="45" color="primary">
                     <v-progress-circular v-if="confirmorderloader" width="2" size="20" color="zinc"
                         class="text-zinc-300 mr-1" indeterminate></v-progress-circular>Complete Order (
-                    {{ settings?.currency + ' ' + (FinalPrice < totalPrice ? FinalPrice : totalPrice) +
-                        (paymentMethod == 'COD' ? ShippingFee : 0) }}) <!-- & Pay (${{ (FinalPrice> 0 && FinalPrice <
+                    {{ settings?.currency + ' ' + ((FinalPrice < totalPrice ? FinalPrice : totalPrice) +
+                        (paymentMethod == 'COD' ? ShippingFee : 0)) }}) <!-- & Pay (${{ (FinalPrice> 0 && FinalPrice <
                             totalPrice ? FinalPrice : totalPrice).toLocaleString('en-US') }}) -->
                 </v-btn>
             </div>

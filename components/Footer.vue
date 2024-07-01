@@ -65,7 +65,9 @@ export default {
                 { icon: "", name: "Home", link: "/" },
                 { icon: "", name: "Products", link: "/products" },
                 { icon: "", name: "News", link: "#" },
-                { icon: "", name: "Offers", link: "#" },
+                { icon: "", name: "Offers", link: "#offers" },
+                { icon: "", name: "Terms of service", link: "#" },
+                { icon: "", name: "Shipping policy", link: "#" },
                 { icon: "", name: "Contact Us", link: "/Contact-us" },
             ],
         };

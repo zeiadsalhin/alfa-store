@@ -4,9 +4,8 @@
             <div class="bg-zinc-800 w-1.5 h-12 m-2 my-auto"></div>
             <p class="text-xl p-2">Get latest offers by subscribing to our newsletter</p>
         </div>
-        <v-card rounded="md" class="m-10 pa-2 text-center w-11/12 md:w-1/3 mx-auto" color="grey-darken-1
-
-" :dark='true'>
+        <v-card rounded="md" class="m-10 pa-2 text-center w-11/12 md:w-1/3 mx-auto"
+            :color="theme.global.current.value.dark ? 'grey-darken-4' : 'grey-lighten-4'" :dark='true'>
             <h2 class="text-3xl font-semibold p-2">Newsletter</h2>
             <p class="text-xl p-2">Subscribe</p>
             <form @submit.prevent="subscribe">
@@ -19,6 +18,10 @@
 
     </div>
 </template>
+<script setup>
+import { useTheme } from 'vuetify'
+const theme = useTheme();
+</script>
 <script>
 import Swal from 'sweetalert2'
 export default {

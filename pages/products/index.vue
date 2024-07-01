@@ -11,7 +11,9 @@
                 <div v-if="filteredProducts.length != 0" class="w-11/12 justify-center flex flex-wrap gap-4">
                     <div v-for="(p, i) in filteredProducts" :key="`product${p.id}-${i}`" class="w-fit">
                         <v-fade-transition>
-                            <v-card :to="'/products/' + p.id" color="surface" class="mb-5 mx-auto ml-6">
+                            <v-card :to="'/products/' + p.id"
+                                :color="theme.global.current.value.dark ? 'surface' : 'grey-lighten-3'"
+                                class="mb-5 mx-auto ml-6">
                                 <v-img :src="JSON.parse(p.image)[0]" width="300" height="200" cover>
                                     <template #placeholder>
                                         <v-row class="fill-height" justify="center" align="center">
@@ -29,7 +31,7 @@
                                     </v-card-subtitle>
                                     <v-card-subtitle
                                         class="primary--text line-through decoration-red-600 decoration-2 w-fit mt-1">
-                                        Was {{ settings?.currency + ' ' + p.price }}
+                                        {{ settings?.currency + ' ' + p.price }}
                                     </v-card-subtitle>
                                 </div>
                                 <v-card-subtitle v-else class="primary--text pb-4 text-h6">
@@ -57,7 +59,9 @@
                     <div v-if="products" class="w-11/12 justify-center flex flex-wrap gap-4">
                         <div v-for="(p, i) in products" :key="`product${p.id}-${i}`" class="w-fit">
                             <v-fade-transition>
-                                <v-card :to="'/products/' + p.id" color="surface" class="mb-5 mx-auto ml-6">
+                                <v-card :to="'/products/' + p.id"
+                                    :color="theme.global.current.value.dark ? 'surface' : 'grey-lighten-3'"
+                                    class="mb-5 mx-auto ml-6">
                                     <v-img :src="JSON.parse(p.image)[0]" width="300" height="200" cover>
                                         <template #placeholder>
                                             <v-row class="fill-height" justify="center" align="center">
@@ -70,13 +74,17 @@
                                         p.name.length > 25 ? (p.name).slice(0, 25) + '...' : p.name
                                         }}</v-card-title>
                                     <div v-if="p.discount_price" class="discount price flex mb-5">
-                                        <v-card-subtitle class="primary--text w-fit text-h6">
+                                        <v-card-subtitle class="primary--text w-fit text-h6  mt-0.5">
                                             {{ settings?.currency + ' ' + p.discount_price }}
                                         </v-card-subtitle>
                                         <v-card-subtitle
-                                            class="primary--text line-through decoration-red-600 decoration-2 w-fit mt-1">
-                                            Was {{ settings?.currency + ' ' + p.price }}
+                                            class="pa-1 bg-[#D50000] text-white rounded-sm font-w-bold my-auto w-fit">-%
+                                            {{ (((p.price - p.discount_price) / p.price) * 100).toFixed() }}
                                         </v-card-subtitle>
+                                        <!-- <v-card-subtitle
+                                            class="primary--text line-through decoration-[#D50000] decoration-2 text- w-fit mt-1">
+                                            {{ settings?.currency + ' ' + p.price }}
+                                        </v-card-subtitle> -->
                                     </div>
                                     <v-card-subtitle v-else class="primary--text pb-4 text-h6">
                                         {{ settings?.currency + ' ' + p.price }}
@@ -108,6 +116,8 @@
     </div>
 </template>
 <script setup>
+import { useTheme } from 'vuetify'
+const theme = useTheme();
 useSeoMeta({
     title: 'Alfa Store - All Products',
     ogTitle: 'Alfa Store -  All products',

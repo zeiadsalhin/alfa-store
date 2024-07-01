@@ -1,5 +1,5 @@
 <template>
-    <h1 class="text-2xl font-bold p-10 mx-auto text-center">Discover Latest offers</h1>
+    <h1 id="offers" class="text-2xl font-bold p-10 mx-auto text-center">Discover Latest offers</h1>
     <v-carousel height="65vh" :hide-delimiters="true" class="p-1">
         <v-carousel-item v-if="items" v-for="(item, i) in items" :key="i" :src="JSON.parse(item.image)[0]" cover>
             <v-img height="100vh">
@@ -27,8 +27,10 @@
                                     </p>
                                 </div>
                                 <div v-else>
-                                    <p class="text-h4 primary--text mt-3 font-weight-bold">
+                                    <p class="mt-3">From
+                                    <p class="text-h4 primary--text  font-weight-bold">
                                         {{ settings?.currency + ' ' + (item.price) }}
+                                    </p>
                                     </p>
                                 </div>
                                 <p class="text-md-body-2 md:mb-5 mb-2"></p>

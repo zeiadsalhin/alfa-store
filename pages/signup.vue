@@ -75,53 +75,59 @@ const passwordStrengthColor = computed(() => {
     }
 });
 async function signUpNewUser() { // Registration new user
-    try {
-        authenticating.value = true
-        const { data, error } = await supabase.auth.signUp({
-            email: email.value,
-            password: password.value,
-            options: {
-                data: {
-                    first_name: displayname.value,
-                    // last_name: 'second name',
-                    // role: 'user',
-                    phone: phone.value,
-                },
-            }
-        })
 
-        if (error) { throw error }; // throw console error
-        // successMsg.value = 'Success'
-        console.log('Signed up successfully')
-        Swal.fire({
-            title: 'Success',
-            icon: 'success',
-            text: 'You Signed Up successfully',
-            toast: true,
-            timer: 2000,
-            showConfirmButton: false,
-        }).then(() => {
-            router.push({ path: '/login', query: { confirmemail: email.value, token: data.user.id } }) // Navigate to login and pass email and token
-            // console.log(data);
-        })
-
-        // register user in newsletter
-        const { data2, error2 } = await supabase.from('NewsletterSubs').insert({ email: email.value });
-        if (error2) {
-            Swal.fire({
-                title: 'Error Submitting',
-                icon: 'error',
-                text: error2.message,
-                toast: true,
-                timer: 3000,
-                showConfirmButton: false,
+    if ((capital.value && number.value && special.value && minlength.value) == false) {
+        // console.log('password weak');
+        return
+    } else {
+        try {
+            authenticating.value = true
+            const { data, error } = await supabase.auth.signUp({
+                email: email.value,
+                password: password.value,
+                options: {
+                    data: {
+                        first_name: displayname.value,
+                        // last_name: 'second name',
+                        // role: 'user',
+                        phone: phone.value,
+                    },
+                }
             })
-            throw error2
-        }; // throw console error
-    } catch (error) {
-        errMsg.value = error
-        console.log(error)
-        authenticating.value = false
+
+            if (error) { throw error }; // throw console error
+            // successMsg.value = 'Success'
+            console.log('Signed up successfully')
+            Swal.fire({
+                title: 'Success',
+                icon: 'success',
+                text: 'You Signed Up successfully',
+                toast: true,
+                timer: 2000,
+                showConfirmButton: false,
+            }).then(() => {
+                router.push({ path: '/login', query: { confirmemail: email.value, token: data.user.id } }) // Navigate to login and pass email and token
+                // console.log(data);
+            })
+
+            // register user in newsletter
+            const { data2, error2 } = await supabase.from('NewsletterSubs').insert({ email: email.value });
+            if (error2) {
+                Swal.fire({
+                    title: 'Error Submitting',
+                    icon: 'error',
+                    text: error2.message,
+                    toast: true,
+                    timer: 3000,
+                    showConfirmButton: false,
+                })
+                throw error2
+            }; // throw console error
+        } catch (error) {
+            errMsg.value = error.message
+            console.log(error)
+            authenticating.value = false
+        }
     }
 }
 // sign in google
@@ -173,9 +179,8 @@ watch(user, () => {
     <div class="back">
         <!--Form Body-->
         <!--will only render when no user exist-->
-        <div v-if="dataview"
-            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-200 text-black'"
-            class="p-1 md:p-10 mt-20 flex-col justify-center mx-auto h-fit md:w-10/12 w-11/12 rounded-md shadow-inner">
+        <div v-if="dataview" :class="theme.global.current.value.dark ? 'bg-zinc-8a00 text-white' : ' text-black'"
+            class="p-1 md:p-10 mt-5 flex-col justify-center mx-auto h-fit md:w-10/12 w-11/12 rounded-mda shadow-innear">
             <v-img src="/icon.ico" :class="theme.global.current.value.dark ? 'bg-inherit ' : 'bg-zinc-700'"
                 class="p-5 mx-auto mb-5" width="350" alt="logo"></v-img>
 
@@ -199,25 +204,24 @@ watch(user, () => {
             <form id="form" class="p-5 text-center mx-auto justify-center flex-col w-full md:w-2/3"
                 @submit.prevent="signUpNewUser">
                 <div class="userdata fleax flex-arow w-full md:grid grid-cols-2  gap-1">
-                    <!--Display error message if any-->
-                    <p class="text-red-500" v-if="errMsg">{{ errMsg }}</p>
+
                     <div class="form mt-3 flex justify-center">
-                        <label class=" text-lg md:text-xl text-right p-3">Name<span
-                                class="required text-red-600">*</span></label>
-                        <input id="name" type="name" v-model="displayname" spellcheck="false"
-                            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-white text-black', isFocused1 ? 'ring-2' : 'ring-1'"
-                            class=" ring-zinc-500 h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
-                            @focus="isFocused1 = true" @blur="isFocused1 = false" required />
+                        <!-- <label class=" text-lg md:text-xl text-right p-3">Name<span
+                                class="required text-red-600">*</span></label> -->
+                        <v-text-field variant="outlined" label="Name*" id="name" type="name" v-model="displayname"
+                            :color="theme.global.current.value.dark ? '' : 'surface'"
+                            :bg-color="theme.global.current.value.dark ? '' : 'grey-lighten-4'" spellcheck="false"
+                            required></v-text-field>
                     </div>
                     <!--Error Message-->
                     <p id="errorn" class="hidden text-sm text-red-700">Please Check your Name</p>
 
                     <div class="form mt-3 flex justify-center">
-                        <label class="  text-lg md:text-xl  p-3">Email<span
-                                class="required text-red-600">*</span></label>
-                        <input id="email" v-model="email" spellcheck="false"
-                            :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused2 ? 'ring-2' : 'ring-1'"
-                            class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
+                        <!-- <label class="  text-lg md:text-xl  p-3">Email<span
+                                class="required text-red-600">*</span></label> -->
+                        <v-text-field variant="outlined" label="Email*" id="email" v-model="email"
+                            :color="theme.global.current.value.dark ? '' : 'surface'"
+                            :bg-color="theme.global.current.value.dark ? '' : 'grey-lighten-4'" spellcheck="false"
                             type="email" @focus="isFocused2 = true" @blur="isFocused2 = false" required />
 
                     </div>
@@ -225,23 +229,23 @@ watch(user, () => {
                     <p id="errore" class="hidden text-sm text-red-700">Please Check your Email</p>
                 </div>
                 <div class="form mt-3 flex justify-cente">
-                    <label class="  text-lg md:text-xl p-3">Phone<span class="required text-red-600">*</span></label>
-                    <input id="phone" v-model="phone" spellcheck="false"
-                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused3 ? 'ring-2' : 'ring-1'"
-                        class=" ring-zinc-500  h-fit my-auto p-2 md:p-3 rounded-md focus:outline-none border-2  w-full"
+                    <!-- <label class="  text-lg md:text-xl p-3">Phone<span class="required text-red-600">*</span></label> -->
+                    <v-text-field variant="outlined" label="Phone*" id="phone" v-model="phone"
+                        :color="theme.global.current.value.dark ? '' : 'surface'"
+                        :bg-color="theme.global.current.value.dark ? '' : 'grey-lighten-4'" spellcheck="false"
                         type="number" min="7" @focus="isFocused3 = true" @blur="isFocused3 = false" required />
                 </div>
 
-                <div class="form mt-3 mb-5 flex justify-center">
-                    <label class=" text-lg md:text-xl text-center p-2">Password<span
-                            class="required text-red-600">*</span></label>
-                    <div class="flex ring-zinc-500  w-full  rounded-md "
-                        :class="theme.global.current.value.dark ? 'bg-zinc-800 text-white' : 'bg-zinc-100 text-black', isFocused4 ? 'ring-2' : 'ring-1'">
-                        <input id="password" v-model="password"
-                            class="focus:outline-none rounded-md h-fit my-auto p-2 md:p-3 w-full"
+                <div class="form mt-3 mb-3 flex justify-center">
+                    <!-- <label class=" text-lg md:text-xl text-center p-2">Password<span
+                            class="required text-red-600">*</span></label> -->
+                    <div class="flex  w-full  bg-whiate  rounded-md ">
+                        <v-text-field variant="outlined" label="Password*" id="password" v-model="password"
+                            :color="theme.global.current.value.dark ? '' : 'surface'"
+                            :bg-color="theme.global.current.value.dark ? '' : 'grey-lighten-4'" class="my-auto p-"
                             :type="showPassword ? 'text' : 'password'" @input="validatePassword()" minlength="6"
                             @focus="isFocused4 = true" @blur="isFocused4 = false" required />
-                        <v-icon class="my-auto m-2 " size="25" @click="toggleVisibility">
+                        <v-icon class="mt-4 mx-2 " size="25" @click="toggleVisibility">
                             {{ showPassword ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                     </div>
                 </div>
@@ -268,6 +272,10 @@ watch(user, () => {
                         ? 'mdi-check' : 'mdi-close' }}</v-icon>Min length 6
                     </li>
                 </span>
+                <!--Display error message if any-->
+                <p class="bg-red-600 text-white p-1 m-2" v-if="errMsg"><v-icon class="mx-2"
+                        size="20">mdi-alert</v-icon>{{ errMsg
+                    }}</p>
                 <!--Submit button-->
                 <v-btn @click="" type="submit" max-height="44" min-height="44" variant="outlined" color="gray"
                     :elevation="1" prepend-icon="mdi-account-plus" :ripple="false"

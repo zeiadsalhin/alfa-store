@@ -279,14 +279,14 @@ const DeleteProducts = async () => {
                         <br />
                         <div class="button flex flex-col md:flex-row mb-5">
                             <div v-if="product.stock" class="md:flex">
-                                <v-btn @click="addToCart(product)" min-height="45" min-width="150"
+                                <v-btn @click="addToCart(product)" min-height="45" min-width="160"
                                     class="md:m-2 my-2 w-full md:w-1/3" color="">
                                     <v-icon size="30" class="mx-2">mdi-cart</v-icon>Add To Cart</v-btn>
-                                <v-btn @click="ExpressCheckout(product)" min-height="45" min-width="120"
+                                <v-btn @click="ExpressCheckout(product)" min-height="45" min-width="150"
                                     class="md:m-2 my-2 w-full md:w-1/3" color="grey-lighten-1"><v-icon size="30"
                                         class="mx-2">mdi-credit-card-fast-outline</v-icon>Buy
                                     Now</v-btn>
-                                <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="120"
+                                <v-btn v-if="admin" @click="DeleteProductBegin" min-height="45" min-width="150"
                                     class="md:m-2 my-2 w-full md:w-1/3" color="red-darken-4">Delete
                                     product</v-btn>
                             </div>
