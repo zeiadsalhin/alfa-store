@@ -23,8 +23,11 @@
 <script setup>
 const loading = ref(true);
 setTimeout(() => {
-    loading.value = false
+    // loading.value = false
 }, 1500);
+onNuxtReady(() => {
+    loading.value = false
+})
 </script>
 <style>
 .fixed {
