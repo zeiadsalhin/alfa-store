@@ -93,7 +93,7 @@ async function getQueue() {
         });
         if (response.status === 200) {
             // console.log(response.data.queue[0]);
-            nextQueue.value = { name: `${response.data.queue[0].name}`, artist: `${response.data.queue[0].artists[0].name}`, nextimg: `${response.data.queue[0].album.images[2].url}` }
+            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}` }
         }
     } catch (error) {
         console.log('Queue: ' + error);
@@ -106,9 +106,19 @@ watch(() => playData?.value?.name, (newVal, oldVal) => {
     }
 });
 
+watch(() => tokenExist?.value, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        checkCurrentlyPlaying();
+        console.log('player started');
+    } else {
+        console.log('no token, no player');
+    }
+});
+
 onMounted(() => {
     setTimeout(() => {
-        checkCurrentlyPlaying()
+        tokenExist.value != false ? checkCurrentlyPlaying() : console.log('no token, no player');
+
         // getQueue()
     }, 500);
     const playInt = setInterval(() => {
@@ -126,7 +136,9 @@ onMounted(() => {
 const router = useRouter();
 const authorize = () => {
     const client_id = '4a730932376f4ea693ed8077c3be587d';
-    const redirect_uri = 'http://localhost:3000/callback'; // Replace with your registered redirect URI
+    const redirect_uri = process.env.NODE_ENV === 'production'
+        ? 'https://alfastorecommerce.netlify.app/callback'
+        : 'http://localhost:3000/callback';// Replace with your registered redirect URI
     const scope = 'user-read-currently-playing user-read-playback-state'; // Specify scopes as needed
 
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`;
