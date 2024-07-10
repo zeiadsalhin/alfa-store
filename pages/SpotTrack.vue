@@ -126,7 +126,7 @@ onMounted(() => {
 const router = useRouter();
 const authorize = () => {
     const client_id = '4a730932376f4ea693ed8077c3be587d';
-    const redirect_uri = 'http://localhost:3000/callback'; // Replace with your registered redirect URI
+    const redirect_uri = 'https://alfastorecommerce.netlify.app/callback'; // Replace with your registered redirect URI
     const scope = 'user-read-currently-playing user-read-playback-state'; // Specify scopes as needed
 
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`;
