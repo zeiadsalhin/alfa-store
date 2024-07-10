@@ -195,7 +195,7 @@ const authorize = () => {
                                 class="m-2 mx-auto rounded-sm"></v-img>
                             <!-- </v-transition> -->
                         </v-lazy>
-                        <p class="font-bold text-xl max-w-60 mx-auto mt-5">{{ playData.name }}</p>
+                        <p class="font-bold text-xl max-w-80 mx-auto mt-5">{{ playData.name }}</p>
                         <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
                             {{
                                 artist.name }}</p>
