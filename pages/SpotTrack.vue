@@ -9,6 +9,7 @@ setTimeout(() => {
 // get current play
 const playData = ref(null);
 const playimg = ref(null);
+const coverimg = ref(null);
 const startTime = ref(0);
 const endTime = ref(0)
 const currentMilliseconds = ref(0);
@@ -61,11 +62,11 @@ async function checkCurrentlyPlaying() {
             currentMilliseconds.value = response.data.progress_ms
             totalMilliseconds.value = response.data.item.duration_ms
             //
-
+            playimg.value = ''
             //
             playData.value = response.data.item
             const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms)
-            playimg.value === response.data.item.album.images[1].url ? '' : playimg.value = response.data.item.album.images[1].url;
+            playimg.value = response.data.item.album.images[1].url
             //
             return true;
         } else {
@@ -93,7 +94,7 @@ async function getQueue() {
         });
         if (response.status === 200) {
             // console.log(response.data.queue[0]);
-            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}` }
+            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}`, length: `${((Math.floor(response?.data?.queue[0].duration_ms / 60000)) % 60).toString().padStart(2, '0')}:${((Math.floor(response?.data?.queue[0].duration_ms / 1000)) % 60).toString().padStart(2, '0')}` }
         }
     } catch (error) {
         console.log('Queue: ' + error);
@@ -112,6 +113,16 @@ watch(() => tokenExist?.value, (newVal, oldVal) => {
         console.log('player started');
     } else {
         console.log('no token, no player');
+    }
+});
+
+watch(() => playimg?.value, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        // console.log('Change image');
+        coverimg.value = ''
+        setTimeout(() => {
+            coverimg.value = playimg.value
+        }, 200);
     }
 });
 
@@ -158,36 +169,54 @@ const authorize = () => {
         <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
             <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
         </div>
-        <div v-if="playData && playimg" class="play text-center min-h-[22rem]">
-            <p class="p-3 text-lg">Playing now:</p>
-            <v-lazy>
-                <!-- <v-transition name="fade" mode="out-in"> -->
-                <v-img :src="playimg ? playimg : ''" max-width="150" max-height="150"
-                    class="m-2 mx-auto rounded-sm"></v-img>
-                <!-- </v-transition> -->
-            </v-lazy>
-            <p class="font-semibold max-w-60 mx-auto">{{ playData.name }}</p>
-            <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">{{
-                artist.name }}</p>
-            <div class="w-48 mx-auto mt-3">
-                <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
-            </div>
-            <div class="time flex w-52 mx-auto justify-between">
-                <p class="p-2">{{ startTime }}</p>
-                <p class="p-2">{{ endTime }}</p>
-            </div>
 
-            <div class="queue mx-auto flex flex-col justify-center p-5">
-                <p class="font-bold mb-5">Next:</p>
-                <v-lazy>
-                    <div class="next max-w-96 mx-auto flex justify-center">
-                        <v-img :src="nextQueue ? nextQueue.nextimg : ''" min-width="60" max-width="60" max-height="60"
-                            class="m-1 rounded-sm"></v-img>
-                        <p class="p-2 my-auto w-60">{{ (nextQueue?.name) }}</p>
+        <v-lazy name="fade" mode="out-in" v-if="playData && playimg">
+            <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="600" min-height="600"
+                gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
+                class="h-[22rem] min-h-[22rem] max-h-[22rem] transform transition-all ease-in-out duration-1000 fade-in">
+                <div class="play text-center min-h-[22rem]">
+
+                    <div class="content">
+                        <p class="p-3 text-lg">Playing now:</p>
+                        <v-lazy>
+                            <!-- <v-transition name="fade" mode="out-in"> -->
+                            <v-img :src="playimg ? playimg : ''" max-width="150" max-height="150"
+                                class="m-2 mx-auto rounded-sm"></v-img>
+                            <!-- </v-transition> -->
+                        </v-lazy>
+                        <p class="font-semibold max-w-60 mx-auto">{{ playData.name }}</p>
+                        <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
+                            {{
+                                artist.name }}</p>
+                        <div class="w-48 mx-auto mt-3">
+                            <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
+                        </div>
+                        <div class="time flex w-52 mx-auto justify-between">
+                            <p class="p-2">{{ startTime }}</p>
+                            <p class="p-2">{{ endTime }}</p>
+                        </div>
+
+                        <div class="queue mx-auto flex flex-col justify-center p-5">
+                            <p class="font-bold mb-5">Next:</p>
+                            <v-lazy>
+                                <div class="next max-w-96 mx-auto flex justify-center">
+                                    <v-img :src="nextQueue ? nextQueue.nextimg : ''" min-width="60" max-width="60"
+                                        max-height="60" class="m-1 rounded-sm"></v-img>
+                                    <div class="title">
+                                        <p class="p-2 my-auto w-60 mx-auto">{{ (nextQueue?.name) }}</p>
+                                        <p class="opacity-70 m-1 inline-block my-auto mx-auto w-fit">{{
+                                            (nextQueue?.artist)
+                                        }}
+                                        </p>
+                                    </div>
+                                    <p class="p-2 my-auto w-20">{{ nextQueue?.length }}</p>
+                                </div>
+                            </v-lazy>
+                        </div>
                     </div>
-                </v-lazy>
-            </div>
-        </div>
+                </div>
+            </v-img>
+        </v-lazy>
         <div v-else class="text-center">{{ playData }}</div>
     </div>
 </template>
