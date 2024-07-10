@@ -4,12 +4,14 @@ import axios from 'axios';
 
 const tokenExist = ref(false)
 setTimeout(() => {
-    localStorage.getItem('access_token') ? tokenExist.value = true : tokenExist.value = false
+    localStorage.getItem('access_token') ? localStorage.getItem('access_token') : tokenExist.value = false
 }, 10);
 
 // get current play
 const playData = ref(null);
 const playimg = ref(null);
+const startTime = ref(0);
+const endTime = ref(0)
 const currentMilliseconds = ref(0);
 const totalMilliseconds = ref(0);
 const progress = ref(0);
@@ -29,7 +31,7 @@ watchEffect(() => {
 async function checkCurrentlyPlaying() {
     try {
         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
-        const accessToken = localStorage.getItem('access_token'); // Replace with the access token you obtained
+        const accessToken = tokenExist.value // Replace with the access token you obtained
 
         const response = await axios.get(url, {
             headers: {
@@ -50,8 +52,9 @@ async function checkCurrentlyPlaying() {
 
                 const currentFormatted = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
                 const totalFormatted = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-
-                return `${currentFormatted} of ${totalFormatted}`;
+                startTime.value = currentFormatted
+                endTime.value = totalFormatted
+                return currentFormatted + totalFormatted;
             }
             //// Increment progress
             currentMilliseconds.value = response.data.progress_ms
@@ -135,9 +138,12 @@ const authorize = () => {
             </v-lazy>
             <p class="font-semibold">{{ playData.name }}</p>
             <p class="opacity-70 p-1">{{ playData.artist }}</p>
-            <p class="p-2">{{ playData.playback }}</p>
-            <div class="w-1/2 mx-auto">
+            <div class="w-48 mx-auto mt-3">
                 <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
+            </div>
+            <div class="time flex w-52 mx-auto justify-between">
+                <p class="p-2">{{ startTime }}</p>
+                <p class="p-2">{{ endTime }}</p>
             </div>
         </div>
         <div v-else class="text-center">{{ playData }}</div>
