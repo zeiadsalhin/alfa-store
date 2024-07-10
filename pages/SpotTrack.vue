@@ -210,17 +210,17 @@ const authorize = () => {
                         <div class="queue mx-auto flex flex-col justify-center p-5">
                             <p class="font-bold mb-5">Next:</p>
                             <v-lazy>
-                                <div class="next max-w-96 mx-auto flex justify-center">
+                                <div class="next max-w-96 mx-auto flex justify-between">
                                     <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
                                         max-height="60" class="m-1 rounded-sm"></v-img>
                                     <div class="title">
-                                        <p class="p-2 my-auto w-60 mx-auto">{{ (currQueue?.name) }}</p>
-                                        <p class="opacity-70 m-1 inline-block my-auto mx-auto w-fit">{{
+                                        <p class="p-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
+                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">{{
                                             (currQueue?.artist)
-                                        }}
+                                            }}
                                         </p>
                                     </div>
-                                    <p class="p-2 my-auto w-20">{{ currQueue?.length }}</p>
+                                    <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
                                 </div>
                             </v-lazy>
                         </div>
