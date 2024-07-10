@@ -5,7 +5,7 @@ import axios from 'axios';
 const tokenExist = ref(false)
 setTimeout(() => {
     localStorage.getItem('access_token') ? tokenExist.value = true : tokenExist.value = false
-}, 50);
+}, 10);
 
 // get current play
 const playData = ref(null);
@@ -73,11 +73,36 @@ async function checkCurrentlyPlaying() {
     }
 
 }
+// get queue
+async function getQueue() {
+    try {
+        const url = 'https://api.spotify.com/v1/me/player/queue';
+        const accessToken = localStorage.getItem('access_token'); // Replace with the access token you obtained
+
+        const response = await axios.get(url, {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+        if (response.status === 200 && response.data.is_playing) {
+            console.log(response.data);
+        }
+    } catch (error) {
+        console.log('Queue: ' + error);
+    }
+}
 onMounted(() => {
     checkCurrentlyPlaying()
-    setInterval(() => {
+    getQueue()
+    const playInt = setInterval(() => {
         checkCurrentlyPlaying()
+        if (!tokenExist.value) {
+            // tokenExist.value = false;
+            clearInterval(playInt);
+            return false;
+        }
     }, 3000);
+
 })
 
 // authorize spotify user 
