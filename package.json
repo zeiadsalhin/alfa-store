@@ -17,6 +17,7 @@
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@pinia/nuxt": "^0.5.1",
     "axios": "^1.7.2",
+    "buffer": "^6.0.3",
     "content": "^4.0.6",
     "nuxt": "^3.11.2",
     "nuxt-mail": "^5.0.1",
