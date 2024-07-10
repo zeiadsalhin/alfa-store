@@ -27,7 +27,6 @@ onMounted(async () => {
         const response = await axios.post(token_url, {
             code: code,
             redirect_uri: redirect_uri,
-            scope: scope,
             grant_type: 'authorization_code'
         }, {
             headers: {
