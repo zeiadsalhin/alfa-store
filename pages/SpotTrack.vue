@@ -78,7 +78,11 @@ async function checkCurrentlyPlaying() {
         }
     } catch (error) {
         console.log(error);
-        tokenExist.value = false
+        if (error.message == "Network Error") {
+            console.log('no internet');
+        } else {
+            tokenExist.value = false
+        }
     }
 
 }
@@ -213,7 +217,7 @@ const authorize = () => {
                                         <p class="p-2 my-auto w-60 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 m-1 inline-block my-auto mx-auto w-fit">{{
                                             (currQueue?.artist)
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20">{{ currQueue?.length }}</p>
