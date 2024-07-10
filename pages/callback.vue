@@ -14,9 +14,7 @@ const route = useRoute();
 const router = useRouter();
 const client_id = '4a730932376f4ea693ed8077c3be587d';
 const client_secret = '10253d2e780e4f71bb61a6da73241997';
-const redirect_uri = process.env.NODE_ENV === 'production'
-    ? 'https://alfastorecommerce.netlify.app/callback'
-    : 'http://localhost:3000/callback'; // Replace with your registered redirect URI
+const redirect_uri = 'https://alfastorecommerce.netlify.app/callback'; // Replace with your registered redirect URI
 const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
 
 onMounted(async () => {
