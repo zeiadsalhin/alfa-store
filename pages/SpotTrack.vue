@@ -16,6 +16,7 @@ const currentMilliseconds = ref(0);
 const totalMilliseconds = ref(0);
 const progress = ref(0);
 const nextQueue = ref(null);
+const currQueue = ref(null);
 const updateQueue = ref()
 
 // Simulate progress update (replace with your actual logic)
@@ -106,7 +107,7 @@ watch(() => playData?.value?.name, (newVal, oldVal) => {
         getQueue();
     }
 });
-
+// initialize with token
 watch(() => tokenExist?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         checkCurrentlyPlaying();
@@ -115,7 +116,7 @@ watch(() => tokenExist?.value, (newVal, oldVal) => {
         console.log('no token, no player');
     }
 });
-
+// cover image
 watch(() => playimg?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         // console.log('Change image');
@@ -125,15 +126,21 @@ watch(() => playimg?.value, (newVal, oldVal) => {
         }, 200);
     }
 });
+// queue manage
+watch(() => nextQueue?.value, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        // console.log('Change queue');
+        setTimeout(() => {
+            currQueue.value = nextQueue.value
+        }, 200);
+    }
+});
 
 onMounted(() => {
     setTimeout(() => {
         tokenExist.value != false ? checkCurrentlyPlaying() : console.log('no token, no player');
-
-        // getQueue()
     }, 500);
     const playInt = setInterval(() => {
-        // getQueue()
         checkCurrentlyPlaying()
         if (!tokenExist.value) {
             clearInterval(playInt);
@@ -180,18 +187,18 @@ const authorize = () => {
                         <p class="p-3 text-lg">Playing now:</p>
                         <v-lazy>
                             <!-- <v-transition name="fade" mode="out-in"> -->
-                            <v-img :src="playimg ? playimg : ''" max-width="150" max-height="150"
+                            <v-img :src="playimg ? playimg : ''" max-width="250" max-height="250"
                                 class="m-2 mx-auto rounded-sm"></v-img>
                             <!-- </v-transition> -->
                         </v-lazy>
-                        <p class="font-semibold max-w-60 mx-auto">{{ playData.name }}</p>
+                        <p class="font-bold text-xl max-w-60 mx-auto mt-5">{{ playData.name }}</p>
                         <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
                             {{
                                 artist.name }}</p>
-                        <div class="w-48 mx-auto mt-3">
+                        <div class="w-72 mx-auto mt-3">
                             <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
                         </div>
-                        <div class="time flex w-52 mx-auto justify-between">
+                        <div class="time flex w-[20rem]   mx-auto justify-between">
                             <p class="p-2">{{ startTime }}</p>
                             <p class="p-2">{{ endTime }}</p>
                         </div>
@@ -200,16 +207,16 @@ const authorize = () => {
                             <p class="font-bold mb-5">Next:</p>
                             <v-lazy>
                                 <div class="next max-w-96 mx-auto flex justify-center">
-                                    <v-img :src="nextQueue ? nextQueue.nextimg : ''" min-width="60" max-width="60"
+                                    <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
                                         max-height="60" class="m-1 rounded-sm"></v-img>
                                     <div class="title">
-                                        <p class="p-2 my-auto w-60 mx-auto">{{ (nextQueue?.name) }}</p>
+                                        <p class="p-2 my-auto w-60 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 m-1 inline-block my-auto mx-auto w-fit">{{
-                                            (nextQueue?.artist)
-                                        }}
+                                            (currQueue?.artist)
+                                            }}
                                         </p>
                                     </div>
-                                    <p class="p-2 my-auto w-20">{{ nextQueue?.length }}</p>
+                                    <p class="p-2 my-auto w-20">{{ currQueue?.length }}</p>
                                 </div>
                             </v-lazy>
                         </div>
