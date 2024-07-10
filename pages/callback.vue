@@ -17,8 +17,6 @@ const client_secret = '10253d2e780e4f71bb61a6da73241997';
 const redirect_uri = process.env.NODE_ENV === 'production'
     ? 'https://alfastorecommerce.netlify.app/callback'
     : 'http://localhost:3000/callback'; // Replace process.env.NODE_ENV === 'production' 
-  ?'https://alfastorecommerce.netlify.app/callback' 
-  : 'http://localhost:3000/callback';
 
 const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
 
