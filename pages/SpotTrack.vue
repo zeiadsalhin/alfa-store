@@ -1,11 +1,10 @@
 <script setup>
-// In your Nuxt 3 project, you might have a service or a component to handle API requests
 import axios from 'axios';
 
 const tokenExist = ref(false)
 setTimeout(() => {
-    localStorage.getItem('access_token') ? localStorage.getItem('access_token') : tokenExist.value = false
-}, 10);
+    localStorage.getItem('access_token') ? tokenExist.value = localStorage.getItem('access_token') : tokenExist.value = false
+}, 100);
 
 // get current play
 const playData = ref(null);
@@ -15,6 +14,8 @@ const endTime = ref(0)
 const currentMilliseconds = ref(0);
 const totalMilliseconds = ref(0);
 const progress = ref(0);
+const nextQueue = ref(null);
+const updateQueue = ref()
 
 // Simulate progress update (replace with your actual logic)
 watchEffect(() => {
@@ -31,7 +32,7 @@ watchEffect(() => {
 async function checkCurrentlyPlaying() {
     try {
         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
-        const accessToken = tokenExist.value // Replace with the access token you obtained
+        const accessToken = tokenExist.value; // Replace with the access token you obtained
 
         const response = await axios.get(url, {
             headers: {
@@ -60,8 +61,11 @@ async function checkCurrentlyPlaying() {
             currentMilliseconds.value = response.data.progress_ms
             totalMilliseconds.value = response.data.item.duration_ms
             //
-            playData.value = { name: `${response.data.item.name}`, artist: `${response.data.item.artists[0].name}`, playback: `${formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms)}` }
-            playimg.value === response.data.item.album.images[1].url ? '' : playimg.value = response.data.item.album.images[1].url
+
+            //
+            playData.value = response.data.item
+            const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms)
+            playimg.value === response.data.item.album.images[1].url ? '' : playimg.value = response.data.item.album.images[1].url;
             //
             return true;
         } else {
@@ -87,20 +91,30 @@ async function getQueue() {
                 'Authorization': `Bearer ${accessToken}`
             }
         });
-        if (response.status === 200 && response.data.is_playing) {
-            console.log(response.data);
+        if (response.status === 200) {
+            // console.log(response.data.queue[0]);
+            nextQueue.value = { name: `${response.data.queue[0].name}`, artist: `${response.data.queue[0].artists[0].name}`, nextimg: `${response.data.queue[0].album.images[2].url}` }
         }
     } catch (error) {
         console.log('Queue: ' + error);
     }
 }
+// Watch for changes in playData to call changeQueue
+watch(() => playData?.value?.name, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        getQueue();
+    }
+});
+
 onMounted(() => {
-    checkCurrentlyPlaying()
-    getQueue()
+    setTimeout(() => {
+        checkCurrentlyPlaying()
+        // getQueue()
+    }, 500);
     const playInt = setInterval(() => {
+        // getQueue()
         checkCurrentlyPlaying()
         if (!tokenExist.value) {
-            // tokenExist.value = false;
             clearInterval(playInt);
             return false;
         }
@@ -113,7 +127,7 @@ const router = useRouter();
 const authorize = () => {
     const client_id = '4a730932376f4ea693ed8077c3be587d';
     const redirect_uri = 'http://localhost:3000/callback'; // Replace with your registered redirect URI
-    const scope = 'user-read-currently-playing'; // Specify scopes as needed
+    const scope = 'user-read-currently-playing user-read-playback-state'; // Specify scopes as needed
 
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`;
 
@@ -128,22 +142,37 @@ const authorize = () => {
             <p>Click the button below to authorize your Spotify account.</p>
             <button @click="authorize">Authorize Spotify</button>
         </div>
-        <button v-if="!playData" @click="checkCurrentlyPlaying">Check track</button>
-        <div v-if="playData && playimg" class="play text-center">
+        <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
+            <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
+        </div>
+        <div v-if="playData && playimg" class="play text-center min-h-[22rem]">
             <p class="p-3 text-lg">Playing now:</p>
             <v-lazy>
                 <!-- <v-transition name="fade" mode="out-in"> -->
-                <v-img :src="playimg ? playimg : ''" max-width="150" max-height="150" class="m-2 mx-auto"></v-img>
+                <v-img :src="playimg ? playimg : ''" max-width="150" max-height="150"
+                    class="m-2 mx-auto rounded-sm"></v-img>
                 <!-- </v-transition> -->
             </v-lazy>
-            <p class="font-semibold">{{ playData.name }}</p>
-            <p class="opacity-70 p-1">{{ playData.artist }}</p>
+            <p class="font-semibold max-w-60 mx-auto">{{ playData.name }}</p>
+            <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">{{
+                artist.name }}</p>
             <div class="w-48 mx-auto mt-3">
                 <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
             </div>
             <div class="time flex w-52 mx-auto justify-between">
                 <p class="p-2">{{ startTime }}</p>
                 <p class="p-2">{{ endTime }}</p>
+            </div>
+
+            <div class="queue mx-auto flex flex-col justify-center p-5">
+                <p class="font-bold mb-5">Next:</p>
+                <v-lazy>
+                    <div class="next max-w-96 mx-auto flex justify-center">
+                        <v-img :src="nextQueue ? nextQueue.nextimg : ''" min-width="60" max-width="60" max-height="60"
+                            class="m-1 rounded-sm"></v-img>
+                        <p class="p-2 my-auto w-60">{{ (nextQueue?.name) }}</p>
+                    </div>
+                </v-lazy>
             </div>
         </div>
         <div v-else class="text-center">{{ playData }}</div>

@@ -7,6 +7,7 @@
 
 <script setup>
 import axios from 'axios';
+// const { $encodeBase64 } = useNuxtApp()
 import { Buffer } from 'buffer'
 
 const route = useRoute();
@@ -14,7 +15,6 @@ const router = useRouter();
 const client_id = '4a730932376f4ea693ed8077c3be587d';
 const client_secret = '10253d2e780e4f71bb61a6da73241997';
 const redirect_uri = 'https://alfastorecommerce.netlify.app/callback'; // Replace with your registered redirect URI
-const scope = 'user-read-playback-state'
 const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
 
 onMounted(async () => {
@@ -23,6 +23,7 @@ onMounted(async () => {
     try {
         //make post request to SPOTIFY API for access token, sending relavent info
         const token_url = 'https://accounts.spotify.com/api/token';
+        // const data = qs.stringify({ 'grant_type': 'client_credentials' });
 
         const response = await axios.post(token_url, {
             code: code,
