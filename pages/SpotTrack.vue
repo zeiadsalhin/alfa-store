@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import fetchWithAuth from '~/utils/api';
 import { getAccessToken } from '~/utils/token';
 
-
+const tokenExist = ref(null)
 // test area refresh token
 // const expiresIn = 5; // example: token expires in 1 hour (3600 seconds)
 // const expiryTimestamp = Date.now() + expiresIn * 1000;
@@ -37,29 +37,7 @@ watchEffect(() => {
     }
 });
 
-// token refresh
-const tokenExist = ref(null)
-async function WatchTokenExp() {
-    try {
-        const response = await fetchWithAuth('https://api.spotify.com/v1/me');
-        if (response.ok) {
-            // data.value = await response.json();
-            let token = await getAccessToken();
-            // console.log('Token VALID :' + token);
-            tokenExist.value = token
-            checkCurrentlyPlaying()
-            // setInterval(playInt)
-            // console.error('fetched data:', response.statusText);
-        } else {
-            console.error('Failed to fetch data:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-onBeforeMount(() => {
-    WatchTokenExp()
-})
+
 
 async function checkCurrentlyPlaying() {
     try {
@@ -172,6 +150,30 @@ watch(() => nextQueue?.value, (newVal, oldVal) => {
     }
 });
 
+// token refresh
+
+async function WatchTokenExp() {
+    try {
+        const response = await fetchWithAuth('https://api.spotify.com/v1/me');
+        if (response.ok) {
+            // data.value = await response.json();
+            let token = await getAccessToken();
+            console.log('Token VALID :' + token);
+            tokenExist.value = token
+            checkCurrentlyPlaying()
+            // setInterval(playInt)
+            // console.error('fetched data:', response.statusText);
+        } else {
+            console.error('Failed to fetch data:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+onBeforeMount(() => {
+    WatchTokenExp()
+})
+
 onMounted(async () => {
     // setTimeout(() => {
     // tokenExist.value != false ? await checkCurrentlyPlaying() : console.log('no token, no player');
@@ -253,7 +255,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                        }}
+                                            }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
