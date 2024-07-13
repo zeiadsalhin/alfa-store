@@ -46,7 +46,8 @@ async function WatchTokenExp() {
             // data.value = await response.json();
             let token = await getAccessToken();
             // console.log('Token VALID :' + token);
-            token ? tokenExist.value = token : tokenExist.value = null
+            tokenExist.value = token
+            checkCurrentlyPlaying()
             // setInterval(playInt)
             // console.error('fetched data:', response.statusText);
         } else {
@@ -250,7 +251,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
