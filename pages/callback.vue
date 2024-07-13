@@ -43,6 +43,9 @@ onMounted(async () => {
         console.log(response.data);
         localStorage.setItem('access_token', response.data.access_token);
         localStorage.setItem('refresh_token', response.data.refresh_token);
+        const expiresIn = response.data.expires_in;
+        const expiryTimestamp = Date.now() + expiresIn * 1000;
+        localStorage.setItem('expiryTimestamp', expiryTimestamp);
         navigateTo('/spotTrack')
     } catch (error) {
         //on fail, log the error in console

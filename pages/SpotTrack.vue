@@ -1,10 +1,33 @@
 <script setup>
 import axios from 'axios';
+import { ref, onMounted } from 'vue';
+import fetchWithAuth from '~/utils/api';
+import { getAccessToken } from '~/utils/token';
 
 const tokenExist = ref(false)
-setTimeout(() => {
-    localStorage.getItem('access_token') ? tokenExist.value = localStorage.getItem('access_token') : tokenExist.value = false
-}, 100);
+onBeforeMount(async () => {
+    try {
+        const response = await fetchWithAuth('https://api.spotify.com/v1/me');
+        if (response.ok) {
+            // data.value = await response.json();
+            let token = await getAccessToken();
+            // console.log('Token VALID :' + token);
+            token ? tokenExist.value = token : tokenExist.value = false
+        } else {
+            console.error('Failed to fetch data:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+},
+)
+
+// test area refresh token
+// const expiresIn = 5; // example: token expires in 1 hour (3600 seconds)
+// const expiryTimestamp = Date.now() + expiresIn * 1000;
+// setTimeout(() => {
+// console.log(Date.now() >= expiryTimestamp);
+// }, 8000);
 
 // get current play
 const playData = ref(null);
@@ -141,9 +164,9 @@ watch(() => nextQueue?.value, (newVal, oldVal) => {
 });
 
 onMounted(() => {
-    setTimeout(() => {
-        tokenExist.value != false ? checkCurrentlyPlaying() : console.log('no token, no player');
-    }, 500);
+    // setTimeout(() => {
+    tokenExist.value != false ? checkCurrentlyPlaying() : console.log('no token, no player');
+    // }, 500);
     const playInt = setInterval(() => {
         checkCurrentlyPlaying()
         if (!tokenExist.value) {
@@ -181,7 +204,7 @@ const authorize = () => {
             <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
         </div>
 
-        <v-lazy name="fade" mode="out-in" v-if="playData && playimg">
+        <v-lazy name="fade" mode="out-in" v-if="playData && playimg && tokenExist">
             <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="600" min-height="600"
                 gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
                 class="h-[22rem] min-h-[22rem] max-h-[22rem] transform transition-all ease-in-out duration-1000 fade-in">
@@ -199,6 +222,9 @@ const authorize = () => {
                         <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
                             {{
                                 artist.name }}</p>
+                        <p class="opacity-85   m-0.5">
+                            on {{ playData.album.name }}
+                        </p>
                         <div class="w-72 mx-auto mt-3">
                             <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
                         </div>
@@ -214,8 +240,8 @@ const authorize = () => {
                                     <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
                                         max-height="60" class="m-1 rounded-sm"></v-img>
                                     <div class="title">
-                                        <p class="p-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
-                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">{{
+                                        <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
+                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
                                             }}
                                         </p>
