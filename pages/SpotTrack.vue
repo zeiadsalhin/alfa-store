@@ -43,7 +43,7 @@ async function checkCurrentlyPlaying() {
     try {
         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
         const accessToken = tokenExist.value; // Replace with the access token you obtained
-
+        console.log('PLAYING TOKEN : ' + tokenExist.value);
         const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -89,7 +89,7 @@ async function checkCurrentlyPlaying() {
         if (error.message == "Network Error") {
             console.log('no internet');
         } else {
-            tokenExist.value = null
+            // tokenExist.value = null
         }
         return false;
     }
@@ -161,7 +161,7 @@ async function WatchTokenExp() {
 
             tokenExist.value = token
             console.log('Token VALID :' + tokenExist.value);
-            // checkCurrentlyPlaying()
+            checkCurrentlyPlaying()
             // setInterval(playInt)
             // console.error('fetched data:', response.statusText);
         } else {
@@ -172,23 +172,29 @@ async function WatchTokenExp() {
     }
 }
 onBeforeMount(() => {
-    WatchTokenExp()
+    // WatchTokenExp()
 })
-
+WatchTokenExp()
 onMounted(async () => {
-    // setTimeout(() => {
-    // tokenExist.value != false ? await checkCurrentlyPlaying() : console.log('no token, no player');
-    // }, 500);
-    const playInt = setInterval(async () => {
-        await checkCurrentlyPlaying()
-        if (tokenExist.value == 'sessionExpired') {
-            clearInterval(playInt);
-            console.log('player cleared');
-            return false;
-        }
-    }, 3000);
+    try {
+        // Initialize tokenExist.value here, assuming it's done somewhere in your code
+        // Example: tokenExist.value = await fetchToken();
+        const playInt = setInterval(async () => {
+            await checkCurrentlyPlaying();
+            // Handle token expiration logic if needed
+            if (tokenExist.value === 'sessionExpired') {
+                clearInterval(playInt);
+                console.log('player cleared');
+                return false;
+            }
+        }, 3000);
 
-})
+        // Optionally, call checkCurrentlyPlaying immediately on mount
+        // await checkCurrentlyPlaying();
+    } catch (error) {
+        console.error('Error during mount:', error);
+    }
+});
 
 // authorize spotify user 
 const router = useRouter();
@@ -208,6 +214,7 @@ const authorize = () => {
 </script>
 <template>
     <div>
+        <button @click="WatchTokenExp">Click</button>
         <div v-if="tokenExist == null">
             <h1>Spotify Authorization Example</h1>
             <p>Click the button below to authorize your Spotify account.</p>
