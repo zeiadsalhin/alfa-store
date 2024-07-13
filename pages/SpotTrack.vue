@@ -37,6 +37,7 @@ watchEffect(() => {
     }
 });
 
+// token refresh
 const tokenExist = ref(null)
 async function WatchTokenExp() {
     try {
@@ -46,6 +47,7 @@ async function WatchTokenExp() {
             let token = await getAccessToken();
             // console.log('Token VALID :' + token);
             token ? tokenExist.value = token : tokenExist.value = null
+            // setInterval(playInt)
             // console.error('fetched data:', response.statusText);
         } else {
             console.error('Failed to fetch data:', response.statusText);
@@ -104,7 +106,7 @@ async function checkCurrentlyPlaying() {
             return false;
         }
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
         if (error.message == "Network Error") {
             console.log('no internet');
         } else {
@@ -173,7 +175,7 @@ onMounted(async () => {
     // }, 500);
     const playInt = setInterval(async () => {
         await checkCurrentlyPlaying()
-        if (tokenExist.value == null) {
+        if (tokenExist.value == 'sessionExpired') {
             clearInterval(playInt);
             console.log('player cleared');
             return false;
@@ -248,7 +250,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                        }}
+                                            }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
