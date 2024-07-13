@@ -4,25 +4,7 @@ import { ref, onMounted } from 'vue';
 import fetchWithAuth from '~/utils/api';
 import { getAccessToken } from '~/utils/token';
 
-const tokenExist = ref(false)
-async function WatchTokenExp() {
-    try {
-        const response = await fetchWithAuth('https://api.spotify.com/v1/me');
-        if (response.ok) {
-            // data.value = await response.json();
-            let token = await getAccessToken();
-            // console.log('Token VALID :' + token);
-            token ? tokenExist.value = token : tokenExist.value = false
-        } else {
-            console.error('Failed to fetch data:', response.statusText);
-        }
-    } catch (error) {
-        console.error('Error:', error);
-    }
-}
-onBeforeMount(() => {
-    WatchTokenExp()
-})
+
 // test area refresh token
 // const expiresIn = 5; // example: token expires in 1 hour (3600 seconds)
 // const expiryTimestamp = Date.now() + expiresIn * 1000;
@@ -54,6 +36,27 @@ watchEffect(() => {
         progress.value = 0; // Handle division by zero or totalMilliseconds being zero
     }
 });
+
+const tokenExist = ref(null)
+async function WatchTokenExp() {
+    try {
+        const response = await fetchWithAuth('https://api.spotify.com/v1/me');
+        if (response.ok) {
+            // data.value = await response.json();
+            let token = await getAccessToken();
+            // console.log('Token VALID :' + token);
+            token ? tokenExist.value = token : tokenExist.value = null
+            // console.error('fetched data:', response.statusText);
+        } else {
+            console.error('Failed to fetch data:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+onBeforeMount(() => {
+    WatchTokenExp()
+})
 
 async function checkCurrentlyPlaying() {
     try {
@@ -105,7 +108,7 @@ async function checkCurrentlyPlaying() {
         if (error.message == "Network Error") {
             console.log('no internet');
         } else {
-            tokenExist.value = false
+            tokenExist.value = null
         }
     }
 
@@ -170,8 +173,9 @@ onMounted(async () => {
     // }, 500);
     const playInt = setInterval(async () => {
         await checkCurrentlyPlaying()
-        if (!tokenExist.value) {
+        if (tokenExist.value == null) {
             clearInterval(playInt);
+            console.log('player cleared');
             return false;
         }
     }, 3000);
