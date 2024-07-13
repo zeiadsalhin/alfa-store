@@ -39,7 +39,7 @@ watchEffect(() => {
 
 
 
-async function checkCurrentlyPlaying() {
+const checkCurrentlyPlaying=async(() =>{
     try {
         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
         const accessToken = tokenExist.value; // Replace with the access token you obtained
@@ -94,7 +94,7 @@ async function checkCurrentlyPlaying() {
         return false;
     }
 
-}
+})
 // get queue
 async function getQueue() {
     try {
