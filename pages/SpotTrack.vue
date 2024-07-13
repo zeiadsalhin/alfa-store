@@ -94,7 +94,7 @@ async function checkCurrentlyPlaying() {
         return false;
     }
 
-})
+}
 // get queue
 async function getQueue() {
     try {
