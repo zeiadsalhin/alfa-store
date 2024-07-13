@@ -99,7 +99,7 @@ async function checkCurrentlyPlaying() {
 async function getQueue() {
     try {
         const url = 'https://api.spotify.com/v1/me/player/queue';
-        const accessToken = localStorage.getItem('access_token'); // Replace with the access token you obtained
+        const accessToken = tokenExist.value; // Replace with the access token you obtained
 
         const response = await axios.get(url, {
             headers: {
@@ -123,8 +123,8 @@ watch(() => playData?.value?.name, (newVal, oldVal) => {
 // initialize with token
 watch(() => tokenExist?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
-        checkCurrentlyPlaying();
         tokenExist.value = newVal
+        checkCurrentlyPlaying();
         console.log('player started' + tokenExist.value);
     } else {
         console.log('no token, no player');
@@ -158,9 +158,10 @@ async function WatchTokenExp() {
         if (response.ok) {
             // data.value = await response.json();
             let token = await getAccessToken();
-            console.log('Token VALID :' + token);
+
             tokenExist.value = token
-            checkCurrentlyPlaying()
+            console.log('Token VALID :' + tokenExist.value);
+            // checkCurrentlyPlaying()
             // setInterval(playInt)
             // console.error('fetched data:', response.statusText);
         } else {
