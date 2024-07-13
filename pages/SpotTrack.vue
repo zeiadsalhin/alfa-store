@@ -1,29 +1,23 @@
 <script setup>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
+import { ref, watchEffect, watch, onMounted } from 'vue';
 import fetchWithAuth from '~/utils/api';
 import { getAccessToken } from '~/utils/token';
 
-const tokenExist = ref(null)
-// test area refresh token
-// const expiresIn = 5; // example: token expires in 1 hour (3600 seconds)
-// const expiryTimestamp = Date.now() + expiresIn * 1000;
-// setTimeout(() => {
-// console.log(Date.now() >= expiryTimestamp);
-// }, 8000);
+const tokenExist = ref(null);
 
 // get current play
 const playData = ref(null);
 const playimg = ref(null);
 const coverimg = ref(null);
 const startTime = ref(0);
-const endTime = ref(0)
+const endTime = ref(0);
 const currentMilliseconds = ref(0);
 const totalMilliseconds = ref(0);
 const progress = ref(0);
 const nextQueue = ref(null);
 const currQueue = ref(null);
-const updateQueue = ref()
+let playInt = null;
 
 // Simulate progress update (replace with your actual logic)
 watchEffect(() => {
@@ -36,8 +30,6 @@ watchEffect(() => {
         progress.value = 0; // Handle division by zero or totalMilliseconds being zero
     }
 });
-
-
 
 async function checkCurrentlyPlaying() {
     try {
@@ -63,25 +55,25 @@ async function checkCurrentlyPlaying() {
 
                 const currentFormatted = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
                 const totalFormatted = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-                startTime.value = currentFormatted
-                endTime.value = totalFormatted
+                startTime.value = currentFormatted;
+                endTime.value = totalFormatted;
                 return currentFormatted + totalFormatted;
             }
+
             //// Increment progress
-            currentMilliseconds.value = response.data.progress_ms
-            totalMilliseconds.value = response.data.item.duration_ms
-            //
-            playimg.value = ''
-            //
-            playData.value = response.data.item
-            const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms)
-            playimg.value = response.data.item.album.images[0].url
-            //
+            currentMilliseconds.value = response.data.progress_ms;
+            totalMilliseconds.value = response.data.item.duration_ms;
+
+            playimg.value = '';
+            playData.value = response.data.item;
+            const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms);
+            playimg.value = response.data.item.album.images[0].url;
+
             return true;
         } else {
             // console.log('No track currently playing.');
-            playData.value = 'No track currently playing.'
-            playimg.value = ''
+            playData.value = 'No track currently playing.';
+            playimg.value = '';
             return false;
         }
     } catch (error) {
@@ -93,8 +85,8 @@ async function checkCurrentlyPlaying() {
         }
         return false;
     }
-
 }
+
 // get queue
 async function getQueue() {
     try {
@@ -108,62 +100,71 @@ async function getQueue() {
         });
         if (response.status === 200) {
             // console.log(response.data.queue[0]);
-            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}`, length: `${((Math.floor(response?.data?.queue[0].duration_ms / 60000)) % 60).toString().padStart(2, '0')}:${((Math.floor(response?.data?.queue[0].duration_ms / 1000)) % 60).toString().padStart(2, '0')}` }
+            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}`, length: `${((Math.floor(response?.data?.queue[0].duration_ms / 60000)) % 60).toString().padStart(2, '0')}:${((Math.floor(response?.data?.queue[0].duration_ms / 1000)) % 60).toString().padStart(2, '0')}` };
         }
     } catch (error) {
         console.log('Queue: ' + error);
     }
 }
+
 // Watch for changes in playData to call changeQueue
 watch(() => playData?.value?.name, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         getQueue();
     }
 });
-// initialize with token
+
+// Watch for changes in tokenExist to update currently playing and start interval
 watch(() => tokenExist?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
-        tokenExist.value = newVal
+        if (playInt) {
+            clearInterval(playInt);
+        }
         checkCurrentlyPlaying();
         console.log('player started' + tokenExist.value);
+        playInt = setInterval(async () => {
+            await checkCurrentlyPlaying();
+            if (tokenExist.value === 'sessionExpired') {
+                clearInterval(playInt);
+                console.log('player cleared');
+                return false;
+            }
+        }, 3000);
     } else {
         console.log('no token, no player');
     }
 });
+
 // cover image
 watch(() => playimg?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         // console.log('Change image');
-        coverimg.value = ''
+        coverimg.value = '';
         setTimeout(() => {
-            coverimg.value = playimg.value
+            coverimg.value = playimg.value;
         }, 200);
     }
 });
+
 // queue manage
 watch(() => nextQueue?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         // console.log('Change queue');
         setTimeout(() => {
-            currQueue.value = nextQueue.value
+            currQueue.value = nextQueue.value;
         }, 200);
     }
 });
 
 // token refresh
-
 async function WatchTokenExp() {
     try {
         const response = await fetchWithAuth('https://api.spotify.com/v1/me');
         if (response.ok) {
-            // data.value = await response.json();
             let token = await getAccessToken();
-
-            tokenExist.value = token
+            tokenExist.value = token;
             console.log('Token VALID :' + tokenExist.value);
-            checkCurrentlyPlaying()
-            // setInterval(playInt)
-            // console.error('fetched data:', response.statusText);
+            checkCurrentlyPlaying();
         } else {
             console.error('Failed to fetch data:', response.statusText);
         }
@@ -171,26 +172,15 @@ async function WatchTokenExp() {
         console.error('Error:', error);
     }
 }
-onBeforeMount(() => {
-    // WatchTokenExp()
-})
-WatchTokenExp()
+WatchTokenExp();
+
 onMounted(async () => {
     try {
         // Initialize tokenExist.value here, assuming it's done somewhere in your code
         // Example: tokenExist.value = await fetchToken();
-        const playInt = setInterval(async () => {
-            await checkCurrentlyPlaying();
-            // Handle token expiration logic if needed
-            if (tokenExist.value === 'sessionExpired') {
-                clearInterval(playInt);
-                console.log('player cleared');
-                return false;
-            }
-        }, 3000);
-
-        // Optionally, call checkCurrentlyPlaying immediately on mount
-        // await checkCurrentlyPlaying();
+        if (!tokenExist.value) {
+            tokenExist.value = await getAccessToken();
+        }
     } catch (error) {
         console.error('Error during mount:', error);
     }
@@ -202,7 +192,7 @@ const authorize = () => {
     const client_id = '4a730932376f4ea693ed8077c3be587d';
     const redirect_uri = process.env.NODE_ENV === 'production'
         ? 'https://alfastorecommerce.netlify.app/callback'
-        : 'http://localhost:3000/callback';// Replace with your registered redirect URI
+        : 'http://localhost:3000/callback'; // Replace with your registered redirect URI
 
     const scope = 'user-read-currently-playing user-read-playback-state'; // Specify scopes as needed
 
@@ -263,7 +253,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
