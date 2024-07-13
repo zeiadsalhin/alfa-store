@@ -113,6 +113,7 @@ async function checkCurrentlyPlaying() {
         } else {
             tokenExist.value = null
         }
+        return false;
     }
 
 }
@@ -145,7 +146,8 @@ watch(() => playData?.value?.name, (newVal, oldVal) => {
 watch(() => tokenExist?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         checkCurrentlyPlaying();
-        console.log('player started');
+        tokenExist.value = newVal
+        console.log('player started' + tokenExist.value);
     } else {
         console.log('no token, no player');
     }
