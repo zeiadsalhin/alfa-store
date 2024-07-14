@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     // '@nuxtjs/google-fonts',
     '@nuxt/content',
+    '@emanuele-em/nuxt-swipe',
     'nuxt-paypal',
     '@pinia/nuxt',
     '@nuxtjs/supabase',

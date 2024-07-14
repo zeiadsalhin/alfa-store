@@ -252,7 +252,7 @@ onMounted(() => {
                     account.
                 </p>
                 <button @click="authorize"
-                    class="bg-zinc-800 p-4 font-semibold focus:ring-4 ring-green-700 focus:scale-105    rounded-3xl"
+                    class="bg-zinc-800 p-4 font-semibold focus:ring-4 ring-green-700 focus:scale-105 text-md rounded-3xl"
                     variant="tonal" rounded="xl">Authorize
                     Spotify</button>
             </div>
@@ -260,7 +260,9 @@ onMounted(() => {
         <!-- <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
             <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
         </div> -->
-
+        <Swipe>
+            <slot />
+        </Swipe>
         <!-- <div v-else class="text-center">{{ playData }}</div> -->
     </div>
 </template>

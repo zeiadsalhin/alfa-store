@@ -181,6 +181,7 @@ async function WatchTokenExp() {
 onBeforeMount(async () => {
     try {
         // Initialize tokenExist.value here, assuming it's done somewhere in your code
+        await WatchTokenExp();
         if (!tokenExist.value) {
             const TokenListen = setInterval(async () => {
                 await WatchTokenExp();
@@ -205,6 +206,7 @@ const toggleMiniplayer = () => {
     miniPlayer.value = !miniPlayer.value
 }
 
+// close player on back
 const route = useRoute()
 watch(() => route.fullPath, (newVal, oldVal) => {
     if (newVal !== oldVal) {
@@ -212,75 +214,91 @@ watch(() => route.fullPath, (newVal, oldVal) => {
         fullPlayer.value = false
     }
 });
+
+// close full player on swipe down
+const nuxtApp = useNuxtApp()
+nuxtApp.$bus.$on('swipe', (direction) => {
+    switch (direction) {
+        case 'down':
+            fullPlayer.value = false
+            break;
+        default:
+            break;
+    }
+})
 </script>
 <template>
     <v-dialog v-model="fullPlayer" :fullscreen="true" :hide-overlay="true" :opacity="0" close-delay="10000"
         :close-on-back="true" transition="dialog-bottom-transition" class="bg-zinc-950 bg-opacity-80 backdrop-blur-sm">
-        <div v-if="playData == 'No track currently playing.'" class="flex justify-around w-full p-4">
-            <p class="p-3 text-lg">Playing now:</p>
-            <v-btn icon @click="toggleMiniplayer" variant="text" :ripple="false" class="m-2 ms-16 me-5">
-                <v-icon>mdi-chevron-down</v-icon> </v-btn>
-        </div>
-        <v-lazy name="fade" mode="out-in" v-if="playData && playimg && tokenExist">
-            <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="auto" min-height="600"
-                gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
-                class="h-screen min-h-screen max-h-screen transform transition-all ease-in-out duration-1000 fade-in">
-                <div class="play text-center min-h-screen">
+        <Swipe>
+            <div v-if="playData == 'No track currently playing.'" class="flex justify-around w-full p-4">
+                <p class="p-3 text-lg">Playing now:</p>
+                <v-btn icon @click="toggleMiniplayer" variant="text" :ripple="false" class="m-2 ms-16 me-5">
+                    <v-icon>mdi-chevron-down</v-icon> </v-btn>
+            </div>
+            <v-lazy name="fade" mode="out-in" v-if="playData && playimg && tokenExist">
+                <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="auto" min-height="600"
+                    gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
+                    class="h-screen min-h-screen max-h-screen transform transition-all ease-in-out duration-1000 fade-in">
+                    <div class="play text-center min-h-screen">
 
-                    <div class="content">
-                        <div @click="toggleMiniplayer" class="flex justify-around space-x-48 w-full p-1">
-                            <p class="p-3 text-lg my-auto min-w-fit">Playing now:</p>
-                            <v-btn icon variant="text" :ripple="false" class="m-2 ms-14a me-5 w-fit">
-                                <v-icon size="40">mdi-chevron-down</v-icon> </v-btn>
-                        </div>
+                        <div class="content">
+                            <div @click="toggleMiniplayer" class="flex justify-around space-x-48 w-full p-1">
+                                <p class="p-3 text-lg my-auto min-w-fit">Playing now:</p>
+                                <v-btn icon variant="text" :ripple="false" class="m-2 ms-14a me-5 w-fit">
+                                    <v-icon size="40">mdi-chevron-down</v-icon> </v-btn>
+                            </div>
 
-                        <v-lazy>
-                            <!-- <v-transition name="fade" mode="out-in"> -->
-                            <v-img :src="playimg ? playimg : ''" max-width="100%" max-height="100%"
-                                class="m-2 mx-auto rounded-sm w-[19rem]"></v-img>
-                            <!-- </v-transition> -->
-                        </v-lazy>
-                        <p class="font-bold text-xl max-w-80 mx-auto mt-5">{{ playData?.name }}</p>
-                        <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
-                            {{
-                                artist.name }}</p>
-                        <p class="opacity-85   m-0.5">
-                            on {{ (playData?.album?.name).length > 31 ?
-                                (playData?.album?.name).slice(0, 40) + '...' : (playData?.album?.name) }}
-                        </p>
-                        <div class="w-72 mx-auto mt-3">
-                            <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
-                        </div>
-                        <div class="time flex w-[20rem]   mx-auto justify-between">
-                            <p class="p-2">{{ startTime }}</p>
-                            <p class="p-2">{{ endTime }}</p>
-                        </div>
-
-                        <div v-if="currQueue"
-                            class="queue mx-auto flex flex-col justify-center p-5 min-h[6.8rem] h-[6.8rem] bga-white">
-                            <p class="font-bold mb-">Next:</p>
                             <v-lazy>
-                                <div class="next max-w-96 mx-auto flex justify-between min-h[4.25rem] h-[4.25rem]">
-                                    <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
-                                        max-height="60" class="m-1 rounded-sm"></v-img>
-                                    <div class="title min-w-fit">
-                                        <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name).length > 22 ?
-                                            (currQueue?.name).slice(0, 22) + '...' : (currQueue?.name) }}
-                                        </p>
-                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by
-                                            {{ (currQueue?.artist) }}
-                                        </p>
-                                    </div>
-                                    <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
-                                </div>
+                                <!-- <v-transition name="fade" mode="out-in"> -->
+                                <v-img :src="playimg ? playimg : ''" max-width="100%" max-height="100%"
+                                    class="m-2 mx-auto rounded-sm w-[19rem]"></v-img>
+                                <!-- </v-transition> -->
                             </v-lazy>
-                        </div>
+                            <p class="font-bold text-xl max-w-80 mx-auto mt-5">{{ playData?.name }}</p>
+                            <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists"
+                                :key="index">
+                                {{
+                                    artist.name }}</p>
+                            <p class="opacity-85   m-0.5">
+                                on {{ (playData?.album?.name).length > 31 ?
+                                    (playData?.album?.name).slice(0, 40) + '...' : (playData?.album?.name) }}
+                            </p>
+                            <div class="w-72 mx-auto mt-3">
+                                <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
+                            </div>
+                            <div class="time flex w-[20rem]   mx-auto justify-between">
+                                <p class="p-2">{{ startTime }}</p>
+                                <p class="p-2">{{ endTime }}</p>
+                            </div>
 
+                            <div v-if="currQueue"
+                                class="queue mx-auto flex flex-col justify-center p-5 min-h[6.8rem] h-[6.8rem] bga-white">
+                                <p class="font-bold mb-">Next:</p>
+                                <v-lazy>
+                                    <div class="next max-w-96 mx-auto flex justify-between min-h[4.25rem] h-[4.25rem]">
+                                        <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
+                                            max-height="60" class="m-1 rounded-sm"></v-img>
+                                        <div class="title min-w-fit">
+                                            <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name).length >
+                                                22 ?
+                                                (currQueue?.name).slice(0, 22) + '...' : (currQueue?.name) }}
+                                            </p>
+                                            <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by
+                                                {{ (currQueue?.artist) }}
+                                            </p>
+                                        </div>
+                                        <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
+                                    </div>
+                                </v-lazy>
+                            </div>
+
+                        </div>
                     </div>
-                </div>
-            </v-img>
-        </v-lazy>
-        <div v-else class="text-center">{{ playData }}</div>
+                </v-img>
+            </v-lazy>
+            <div v-else class="text-center">{{ playData }}</div>
+        </Swipe>
     </v-dialog>
     <v-bottom-navigation v-if="playData && playimg && tokenExist" @click="toggleMiniplayer" permanent min-height="auto"
         height="90" transition="dialog-bottom-transition" class="bg-transparent bg-opacity-50 backdrop-blur-2xl w-full">
@@ -288,29 +306,31 @@ watch(() => route.fullPath, (newVal, oldVal) => {
             transition="dialog-bottom-transition">
             <v-progress-linear v-model="progress" :height="3" color="secondary"></v-progress-linear>
 
-            <div class="content flex w-full mx-auto">
+            <div class="content flex w-full mx-auto m-2">
                 <div class="queue mx-auto flex flex-col justify-center w-full p-a5 min-h[6.8ream] h-[6a.8rem]">
                     <v-lazy>
-                        <div class="next max-w-96 mx-auto flex justify-start ">
-                            <v-img :src="playimg ? playimg : ''" min-width="65" max-width="65" max-height="65"
-                                class="m-1 rounded-sm"></v-img>
-                            <div class="title text-[0.8rem] min-w-[12rem] w-fit text-left">
-                                <p class="ml-2 mt-2 my-auto max-w-72 text-left font-semibold text-[1.1rem]">{{
-                                    (playData?.name)?.length > 20 ?
-                                        (playData?.name).slice(0, 20) + '...' : (playData?.name) }}
-                                </p>
-                                <p class="opacity-70 ml-2 inline-block my-auto text-left w-full">
-                                    {{ (playData?.album?.artists[0].name)?.length > 20 ?
-                                        (playData?.album?.artists[0].name).slice(0, 20) + '...' :
-                                        (playData?.album?.artists[0].name) }}
-                                </p>
+                        <div class="next max-w-full mx-auto flex justify-between ">
+                            <div class="trackinfo  max-w-full flex justify-start ">
+                                <v-img :src="playimg ? playimg : ''" min-width="65" max-width="65" max-height="65"
+                                    class="m-1 rounded-sm"></v-img>
+                                <div class="title text-[0.8rem] min-w-[12rem] w-fit text-left">
+                                    <p class="ml-2 mt-2 my-auto max-w-72 text-left font-semibold text-[1.2rem]">{{
+                                        (playData?.name)?.length > 21 ?
+                                            (playData?.name).slice(0, 21) + '...' : (playData?.name) }}
+                                    </p>
+                                    <p class="opacity-70 ml-2 inline-block my-auto text-left text-[0.9rem] w-full">
+                                        {{ (playData?.album?.artists[0].name)?.length > 27 ?
+                                            (playData?.album?.artists[0].name).slice(0, 27) + '...' :
+                                            (playData?.album?.artists[0].name) }}
+                                    </p>
+                                </div>
                             </div>
                             <p class="p-2 my-auto w-14 flex justify-end text-[0.8rem]">{{ endTime }}</p>
                         </div>
                     </v-lazy>
                 </div>
-                <v-btn variant="text" :ripple="false" max-width="40" min-width="30" class="m-2  aw-5">
-                    <v-icon size="30">mdi-chevron-up</v-icon> </v-btn>
+                <button variant="text" :ripple="false" max-width="40" min-width="30" class="m-2  aw-5">
+                    <v-icon size="30">mdi-chevron-up</v-icon> </button>
             </div>
         </v-sheet>
     </v-bottom-navigation>

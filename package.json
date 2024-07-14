@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
+    "@emanuele-em/nuxt-swipe": "^1.0.2",
     "@mdi/font": "^7.4.47",
     "@nuxt/content": "^2.12.1",
     "@nuxt/types": "^2.17.3",
