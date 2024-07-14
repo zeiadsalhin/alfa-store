@@ -77,11 +77,14 @@ async function checkCurrentlyPlaying() {
             return false;
         }
     } catch (error) {
-        console.log(error.message);
-        if (error.message == "Network Error") {
+        console.log(error.code);
+        if (!error.message == "Network Error") {
             console.log('no internet');
+            await WatchTokenExp()
         } else {
-            // tokenExist.value = null
+            // tokenExist.value = 'sessionExpired'
+            await WatchTokenExp()
+            return false;
         }
         return false;
     }
@@ -120,7 +123,7 @@ watch(() => tokenExist?.value, (newVal, oldVal) => {
         if (playInt) {
             clearInterval(playInt);
         }
-        checkCurrentlyPlaying();
+        // checkCurrentlyPlaying();
         console.log('player started' + tokenExist.value);
         playInt = setInterval(async () => {
             await checkCurrentlyPlaying();
@@ -166,20 +169,21 @@ async function WatchTokenExp() {
             console.log('Token VALID :' + tokenExist.value);
             checkCurrentlyPlaying();
         } else {
-            console.error('Failed to fetch data:', response.statusText);
+            console.error('Failed to fetch new token:', response.statusText);
         }
     } catch (error) {
         console.error('Error:', error);
     }
 }
-WatchTokenExp();
+// WatchTokenExp();
 
-onMounted(async () => {
+onBeforeMount(async () => {
     try {
         // Initialize tokenExist.value here, assuming it's done somewhere in your code
         // Example: tokenExist.value = await fetchToken();
         if (!tokenExist.value) {
-            tokenExist.value = await getAccessToken();
+            // tokenExist.value = await getAccessToken();
+            await WatchTokenExp();
         }
     } catch (error) {
         console.error('Error during mount:', error);
@@ -204,7 +208,7 @@ const authorize = () => {
 </script>
 <template>
     <div>
-        <button @click="WatchTokenExp">Click</button>
+        <!-- <button @click="WatchTokenExp">Click</button> -->
         <div v-if="tokenExist == null">
             <h1>Spotify Authorization Example</h1>
             <p>Click the button below to authorize your Spotify account.</p>
@@ -253,7 +257,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                            }}
+                                        }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>

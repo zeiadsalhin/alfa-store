@@ -1,6 +1,6 @@
 export const getAccessToken = () => localStorage.getItem('access_token');
 export const getRefreshToken = () => localStorage.getItem('refresh_token');
-
+const setAccessTokenTry = (state) => localStorage.setItem('Token_Refresh', 'TRUE x2');
 export const setAccessToken = (token) => localStorage.setItem('access_token', token);
 export const setRefreshToken = (token) => localStorage.setItem('refresh_token', token);
 
@@ -26,6 +26,7 @@ export const refreshAccessToken = async () => {
 
     if (response.ok) {
         setAccessToken(data.access_token);
+        setAccessTokenTry()
         if (data.refresh_token) {
             setRefreshToken(data.refresh_token);
         }
