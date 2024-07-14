@@ -205,72 +205,62 @@ const authorize = () => {
     // Redirect user to Spotify authorization page
     navigateTo(authUrl, { external: true });
 };
+onMounted(() => {
+    setTimeout(() => {
+        document.getElementById("aaa").classList.remove('translate-y-10');
+        document.getElementById("aaa").classList.add('-translate-y-10');
+        // Apply the Tailwind CSS class
+
+    }, 200);
+})
 </script>
 <template>
     <div>
-        <!-- <button @click="WatchTokenExp">Click</button> -->
-        <div v-if="tokenExist == null">
-            <h1>Spotify Authorization Example</h1>
-            <p>Click the button below to authorize your Spotify account.</p>
-            <button @click="authorize">Authorize Spotify</button>
-        </div>
+        <v-img id="aaa" src="/wallpaper.jpeg" cover max-height="auto" min-height="100" height="auto"
+            gradient="to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.1)),linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.6)"
+            class="aaa translate-y-10  h-screen min-h-screen max-h-screen transform transition-all ease-in-out duration-1000 fade-in">
+            <div v-if="tokenExist == null" class="flex flex-col justify-center items-center h-screen w-full">
+
+                <div class="images flex justify-center space-x-4">
+                    <v-img src="/my-spoti-white.svg" max-width="150" max-height="150" min-width="150" min-height="150"
+                        class="pa-3 my-auto"></v-img>
+                    <svg class="my-auto" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        version="1.1" width="25" height="25" viewBox="0 0 256 256" xml:space="preserve">
+                        <defs>
+                        </defs>
+                        <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 1; fill: none; fill-rule: nonzero; opacity: 0.7;"
+                            transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+                            <path
+                                d="M 41.242 69.371 l -8.953 8.954 c -0.288 0.287 -0.627 0.331 -0.803 0.331 c -0.176 0 -0.515 -0.044 -0.803 -0.332 L 11.676 59.317 c -0.443 -0.443 -0.443 -1.163 0 -1.606 l 24.98 -24.98 c 0.288 -0.288 0.626 -0.331 0.802 -0.331 h 0 c 0.176 0 0.515 0.043 0.803 0.331 l 16.362 16.362 l 8.025 -8.025 L 46.287 24.707 c -4.869 -4.869 -12.789 -4.868 -17.657 0 L 3.65 49.686 c -4.867 4.868 -4.867 12.789 0 17.656 l 19.007 19.007 c 2.434 2.434 5.631 3.65 8.828 3.65 c 3.197 0 6.394 -1.217 8.827 -3.65 l 13.961 -13.961 C 50.063 74.716 46.357 73.631 41.242 69.371 z"
+                                style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 1; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;"
+                                transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+                            <path
+                                d="M 48.758 20.629 l 8.953 -8.954 c 0.288 -0.287 0.627 -0.331 0.803 -0.331 c 0.176 0 0.515 0.044 0.803 0.332 l 19.007 19.007 c 0.443 0.443 0.443 1.163 0 1.606 l -24.98 24.98 c -0.288 0.288 -0.626 0.331 -0.802 0.331 h 0 c -0.176 0 -0.515 -0.043 -0.803 -0.331 L 35.377 40.907 l -8.025 8.025 l 16.362 16.361 c 4.869 4.869 12.789 4.868 17.657 0 l 24.98 -24.979 c 4.867 -4.868 4.867 -12.789 0 -17.656 L 67.342 3.651 C 64.908 1.217 61.711 0 58.514 0 c -3.197 0 -6.394 1.217 -8.827 3.65 L 35.725 17.611 C 39.937 15.284 43.643 16.369 48.758 20.629 z"
+                                style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 1; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;"
+                                transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+                        </g>
+                    </svg>
+                    <v-img src="/public/spotify.svg" max-width="80" max-height="80" min-width="80" min-height="80"
+                        class="my-auto brightness-75 invert"></v-img>
+                </div>
+
+                <h1 class="text-[2rem] font-black p-3">Welcome to My Spoti !</h1>
+                <p class="text-lg text-center font-semibold mt-3 p-3">To Start the App please Connect your Spotify
+                    Account
+                </p>
+                <p class="text- text-center font-semibold mt-3 mb-6">Click the button below to authorize your Spotify
+                    account.
+                </p>
+                <button @click="authorize"
+                    class="bg-zinc-800 p-4 font-semibold focus:ring-4 ring-green-700 focus:scale-105    rounded-3xl"
+                    variant="tonal" rounded="xl">Authorize
+                    Spotify</button>
+            </div>
+        </v-img>
         <!-- <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
             <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
         </div> -->
 
-        <v-lazy name="fade" mode="out-in" v-if="playData && playimg && tokenExist">
-            <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="auto" min-height="600"
-                gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
-                class="h-[22rem] min-h-[22rem] max-h-[22rem] transform transition-all ease-in-out duration-1000 fade-in">
-                <div class="play text-center min-h-[22rem]">
-
-                    <div class="content">
-                        <p class="p-3 text-lg">Playing now:</p>
-                        <v-lazy>
-                            <!-- <v-transition name="fade" mode="out-in"> -->
-                            <v-img :src="playimg ? playimg : ''" max-width="250" max-height="250"
-                                class="m-2 mx-auto rounded-sm"></v-img>
-                            <!-- </v-transition> -->
-                        </v-lazy>
-                        <p class="font-bold text-xl max-w-80 mx-auto mt-5">{{ playData.name }}</p>
-                        <p class="opacity-70 m-1 inline-block" v-for="(artist, index) in playData.artists" :key="index">
-                            {{
-                                artist.name }}</p>
-                        <p class="opacity-85   m-0.5">
-                            on {{ playData.album.name }}
-                        </p>
-                        <div class="w-72 mx-auto mt-3">
-                            <v-progress-linear v-model="progress" :height="2" color="secondary"></v-progress-linear>
-                        </div>
-                        <div class="time flex w-[20rem]   mx-auto justify-between">
-                            <p class="p-2">{{ startTime }}</p>
-                            <p class="p-2">{{ endTime }}</p>
-                        </div>
-
-                        <div v-if="currQueue"
-                            class="queue mx-auto flex flex-col justify-center p-5 min-h[6.8rem] h-[6.8rem] bga-white">
-                            <p class="font-bold mb-5">Next:</p>
-                            <v-lazy>
-                                <div class="next max-w-96 mx-auto flex justify-between min-h[4.25rem] h-[4.25rem]">
-                                    <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
-                                        max-height="60" class="m-1 rounded-sm"></v-img>
-                                    <div class="title">
-                                        <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name).length > 31 ?
-                                            (currQueue?.name).slice(0, 31) + '...' : (currQueue?.name) }}
-                                        </p>
-                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by
-                                            {{ (currQueue?.artist) }}
-                                        </p>
-                                    </div>
-                                    <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
-                                </div>
-                            </v-lazy>
-                        </div>
-
-                    </div>
-                </div>
-            </v-img>
-        </v-lazy>
-        <div v-else class="text-center">{{ playData }}</div>
+        <!-- <div v-else class="text-center">{{ playData }}</div> -->
     </div>
 </template>

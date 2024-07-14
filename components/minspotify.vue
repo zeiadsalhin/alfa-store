@@ -204,6 +204,14 @@ const toggleMiniplayer = () => {
     fullPlayer.value = !fullPlayer.value
     miniPlayer.value = !miniPlayer.value
 }
+
+const route = useRoute()
+watch(() => route.fullPath, (newVal, oldVal) => {
+    if (newVal !== oldVal) {
+        // console.log('Close on Change url');
+        fullPlayer.value = false
+    }
+});
 </script>
 <template>
     <v-dialog v-model="fullPlayer" :fullscreen="true" :hide-overlay="true" :opacity="0" close-delay="10000"
@@ -220,17 +228,16 @@ const toggleMiniplayer = () => {
                 <div class="play text-center min-h-screen">
 
                     <div class="content">
-                        <div class="flex justify-end w-full p-1">
-                            <p class="p-3 text-lg my-auto">Playing now:</p>
-                            <v-btn icon @click="toggleMiniplayer" variant="text" :ripple="false"
-                                class="m-2 ms-14 ame-5 w-fit">
+                        <div @click="toggleMiniplayer" class="flex justify-around space-x-48 w-full p-1">
+                            <p class="p-3 text-lg my-auto min-w-fit">Playing now:</p>
+                            <v-btn icon variant="text" :ripple="false" class="m-2 ms-14a me-5 w-fit">
                                 <v-icon size="40">mdi-chevron-down</v-icon> </v-btn>
                         </div>
 
                         <v-lazy>
                             <!-- <v-transition name="fade" mode="out-in"> -->
                             <v-img :src="playimg ? playimg : ''" max-width="100%" max-height="100%"
-                                class="m-2 mx-auto rounded-sm w-10/12"></v-img>
+                                class="m-2 mx-auto rounded-sm w-[19rem]"></v-img>
                             <!-- </v-transition> -->
                         </v-lazy>
                         <p class="font-bold text-xl max-w-80 mx-auto mt-5">{{ playData?.name }}</p>
@@ -275,7 +282,7 @@ const toggleMiniplayer = () => {
         </v-lazy>
         <div v-else class="text-center">{{ playData }}</div>
     </v-dialog>
-    <v-bottom-navigation v-if="playData && playimg && tokenExist" @click="toggleMiniplayer" permanenta min-height="auto"
+    <v-bottom-navigation v-if="playData && playimg && tokenExist" @click="toggleMiniplayer" permanent min-height="auto"
         height="90" transition="dialog-bottom-transition" class="bg-transparent bg-opacity-50 backdrop-blur-2xl w-full">
         <v-sheet :absolute="true" min-height="auto" height="auto" class="bg-transparent w-full" v-model="miniPlayer"
             transition="dialog-bottom-transition">
@@ -285,10 +292,10 @@ const toggleMiniplayer = () => {
                 <div class="queue mx-auto flex flex-col justify-center w-full p-a5 min-h[6.8ream] h-[6a.8rem]">
                     <v-lazy>
                         <div class="next max-w-96 mx-auto flex justify-start ">
-                            <v-img :src="playimg ? playimg : ''" min-width="70" max-width="70" max-height="70"
+                            <v-img :src="playimg ? playimg : ''" min-width="65" max-width="65" max-height="65"
                                 class="m-1 rounded-sm"></v-img>
-                            <div class="title text-[1rem] min-w-[12rem] w-fit text-left">
-                                <p class="ml-2 mt-2 my-auto max-w-72 text-left font-semibold text-lg">{{
+                            <div class="title text-[0.8rem] min-w-[12rem] w-fit text-left">
+                                <p class="ml-2 mt-2 my-auto max-w-72 text-left font-semibold text-[1.1rem]">{{
                                     (playData?.name)?.length > 20 ?
                                         (playData?.name).slice(0, 20) + '...' : (playData?.name) }}
                                 </p>
