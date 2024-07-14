@@ -19,147 +19,147 @@ const nextQueue = ref(null);
 const currQueue = ref(null);
 let playInt = null;
 
-// Simulate progress update (replace with your actual logic)
-watchEffect(() => {
-    const currentTotalSeconds = Math.floor(currentMilliseconds.value / 1000);
-    const totalTotalSeconds = Math.floor(totalMilliseconds.value / 1000);
+// // Simulate progress update (replace with your actual logic)
+// watchEffect(() => {
+//     const currentTotalSeconds = Math.floor(currentMilliseconds.value / 1000);
+//     const totalTotalSeconds = Math.floor(totalMilliseconds.value / 1000);
 
-    if (totalTotalSeconds > 0) {
-        progress.value = (currentTotalSeconds / totalTotalSeconds) * 100;
-    } else {
-        progress.value = 0; // Handle division by zero or totalMilliseconds being zero
-    }
-});
+//     if (totalTotalSeconds > 0) {
+//         progress.value = (currentTotalSeconds / totalTotalSeconds) * 100;
+//     } else {
+//         progress.value = 0; // Handle division by zero or totalMilliseconds being zero
+//     }
+// });
 
-async function checkCurrentlyPlaying() {
-    try {
-        const url = 'https://api.spotify.com/v1/me/player/currently-playing';
-        const accessToken = tokenExist.value; // Replace with the access token you obtained
-        // console.log('PLAYING TOKEN : ' + tokenExist.value);
-        const response = await axios.get(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-        if (response.status === 200 && response.data.is_playing) {
-            // calculate duration 
-            function formatMillisecondsToMinSec(currentMilliseconds, totalMilliseconds) {
-                const currentTotalSeconds = Math.floor(currentMilliseconds / 1000);
-                const totalTotalSeconds = Math.floor(totalMilliseconds / 1000);
+// async function checkCurrentlyPlaying() {
+//     try {
+//         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
+//         const accessToken = tokenExist.value; // Replace with the access token you obtained
+//         // console.log('PLAYING TOKEN : ' + tokenExist.value);
+//         const response = await axios.get(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`
+//             }
+//         });
+//         if (response.status === 200 && response.data.is_playing) {
+//             // calculate duration 
+//             function formatMillisecondsToMinSec(currentMilliseconds, totalMilliseconds) {
+//                 const currentTotalSeconds = Math.floor(currentMilliseconds / 1000);
+//                 const totalTotalSeconds = Math.floor(totalMilliseconds / 1000);
 
-                const currentMinutes = Math.floor(currentTotalSeconds / 60);
-                const currentSeconds = currentTotalSeconds % 60;
+//                 const currentMinutes = Math.floor(currentTotalSeconds / 60);
+//                 const currentSeconds = currentTotalSeconds % 60;
 
-                const totalMinutes = Math.floor(totalTotalSeconds / 60);
-                const totalSeconds = totalTotalSeconds % 60;
+//                 const totalMinutes = Math.floor(totalTotalSeconds / 60);
+//                 const totalSeconds = totalTotalSeconds % 60;
 
-                const currentFormatted = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
-                const totalFormatted = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
-                startTime.value = currentFormatted;
-                endTime.value = totalFormatted;
-                return currentFormatted + totalFormatted;
-            }
+//                 const currentFormatted = `${currentMinutes.toString().padStart(2, '0')}:${currentSeconds.toString().padStart(2, '0')}`;
+//                 const totalFormatted = `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+//                 startTime.value = currentFormatted;
+//                 endTime.value = totalFormatted;
+//                 return currentFormatted + totalFormatted;
+//             }
 
-            //// Increment progress
-            currentMilliseconds.value = response.data.progress_ms;
-            totalMilliseconds.value = response.data.item.duration_ms;
+//             //// Increment progress
+//             currentMilliseconds.value = response.data.progress_ms;
+//             totalMilliseconds.value = response.data.item.duration_ms;
 
-            playimg.value = '';
-            playData.value = response.data.item;
-            const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms);
-            playimg.value = response.data.item.album.images[0].url;
+//             playimg.value = '';
+//             playData.value = response.data.item;
+//             const playback = formatMillisecondsToMinSec(response.data.progress_ms, response.data.item.duration_ms);
+//             playimg.value = response.data.item.album.images[0].url;
 
-            return true;
-        } else {
-            // console.log('No track currently playing.');
-            playData.value = 'No track currently playing.';
-            playimg.value = '';
-            return false;
-        }
-    } catch (error) {
-        console.log(error.code);
-        if (!error.message == "Network Error") {
-            console.log('no internet');
-            await WatchTokenExp()
-        } else {
-            // tokenExist.value = 'sessionExpired'
-            await WatchTokenExp()
-            return false;
-        }
-        return false;
-    }
-}
+//             return true;
+//         } else {
+//             // console.log('No track currently playing.');
+//             playData.value = 'No track currently playing.';
+//             playimg.value = '';
+//             return false;
+//         }
+//     } catch (error) {
+//         console.log(error.code);
+//         if (!error.message == "Network Error") {
+//             console.log('no internet');
+//             await WatchTokenExp()
+//         } else {
+//             // tokenExist.value = 'sessionExpired'
+//             await WatchTokenExp()
+//             return false;
+//         }
+//         return false;
+//     }
+// }
 
-// get queue
-async function getQueue() {
-    try {
-        const url = 'https://api.spotify.com/v1/me/player/queue';
-        const accessToken = tokenExist.value; // Replace with the access token you obtained
+// // get queue
+// async function getQueue() {
+//     try {
+//         const url = 'https://api.spotify.com/v1/me/player/queue';
+//         const accessToken = tokenExist.value; // Replace with the access token you obtained
 
-        const response = await axios.get(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        });
-        if (response.status === 200) {
-            // console.log(response.data.queue[0]);
-            nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}`, length: `${((Math.floor(response?.data?.queue[0].duration_ms / 60000)) % 60).toString().padStart(2, '0')}:${((Math.floor(response?.data?.queue[0].duration_ms / 1000)) % 60).toString().padStart(2, '0')}` };
-        }
-    } catch (error) {
-        console.log('Queue: ' + error);
-    }
-}
+//         const response = await axios.get(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`
+//             }
+//         });
+//         if (response.status === 200) {
+//             // console.log(response.data.queue[0]);
+//             nextQueue.value = { name: `${response?.data?.queue[0].name}`, artist: `${response?.data?.queue[0].artists[0].name}`, nextimg: `${response?.data?.queue[0].album.images[2].url}`, length: `${((Math.floor(response?.data?.queue[0].duration_ms / 60000)) % 60).toString().padStart(2, '0')}:${((Math.floor(response?.data?.queue[0].duration_ms / 1000)) % 60).toString().padStart(2, '0')}` };
+//         }
+//     } catch (error) {
+//         console.log('Queue: ' + error);
+//     }
+// }
 
-// Watch for changes in playData to call changeQueue
-watch(() => playData?.value?.name, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-        getQueue();
-    }
-});
+// // Watch for changes in playData to call changeQueue
+// watch(() => playData?.value?.name, (newVal, oldVal) => {
+//     if (newVal !== oldVal) {
+//         getQueue();
+//     }
+// });
 
-// Watch for changes in tokenExist to update currently playing and start interval
-watch(() => tokenExist?.value, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-        if (playInt) {
-            clearInterval(playInt);
-        }
-        // checkCurrentlyPlaying();
-        console.log('player started' + tokenExist.value);
-        playInt = setInterval(async () => {
-            await checkCurrentlyPlaying();
-            if (tokenExist.value === 'sessionExpired') {
-                clearInterval(playInt);
-                console.log('player cleared');
-                return false;
-            }
-        }, 3000);
-    } else {
-        console.log('no token, no player');
-    }
-});
+// // Watch for changes in tokenExist to update currently playing and start interval
+// watch(() => tokenExist?.value, (newVal, oldVal) => {
+//     if (newVal !== oldVal) {
+//         if (playInt) {
+//             clearInterval(playInt);
+//         }
+//         // checkCurrentlyPlaying();
+//         console.log('player started' + tokenExist.value);
+//         playInt = setInterval(async () => {
+//             await checkCurrentlyPlaying();
+//             if (tokenExist.value === 'sessionExpired') {
+//                 clearInterval(playInt);
+//                 console.log('player cleared');
+//                 return false;
+//             }
+//         }, 3000);
+//     } else {
+//         console.log('no token, no player');
+//     }
+// });
 
-// cover image
-watch(() => playimg?.value, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-        // console.log('Change image');
-        coverimg.value = '';
-        setTimeout(() => {
-            coverimg.value = playimg.value;
-        }, 200);
-    }
-});
+// // cover image
+// watch(() => playimg?.value, (newVal, oldVal) => {
+//     if (newVal !== oldVal) {
+//         // console.log('Change image');
+//         coverimg.value = '';
+//         setTimeout(() => {
+//             coverimg.value = playimg.value;
+//         }, 200);
+//     }
+// });
 
-// queue manage
-watch(() => nextQueue?.value, (newVal, oldVal) => {
-    if (newVal !== oldVal) {
-        // console.log('Change queue');
-        setTimeout(() => {
-            currQueue.value = nextQueue.value;
-        }, 200);
-    }
-});
+// // queue manage
+// watch(() => nextQueue?.value, (newVal, oldVal) => {
+//     if (newVal !== oldVal) {
+//         // console.log('Change queue');
+//         setTimeout(() => {
+//             currQueue.value = nextQueue.value;
+//         }, 200);
+//     }
+// });
 
-// token refresh
+// // token refresh
 async function WatchTokenExp() {
     try {
         const response = await fetchWithAuth('https://api.spotify.com/v1/me');
@@ -167,7 +167,7 @@ async function WatchTokenExp() {
             let token = await getAccessToken();
             tokenExist.value = token;
             // console.log('Token VALID :' + tokenExist.value);
-            checkCurrentlyPlaying();
+            // checkCurrentlyPlaying();
         } else {
             console.error('Failed to fetch new token:', response.statusText);
         }
@@ -214,12 +214,12 @@ const authorize = () => {
             <p>Click the button below to authorize your Spotify account.</p>
             <button @click="authorize">Authorize Spotify</button>
         </div>
-        <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
+        <!-- <div v-if="!playData && tokenExist" class="flex justify-center items-center min-h-screen">
             <v-progress-circular color="grey-darken-1" indeterminate class="my-auto"></v-progress-circular>
-        </div>
+        </div> -->
 
         <v-lazy name="fade" mode="out-in" v-if="playData && playimg && tokenExist">
-            <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="600" min-height="600"
+            <v-img id="playCover" :src="coverimg ? coverimg : ''" cover max-height="auto" min-height="600"
                 gradient="to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0)),linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)),linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)"
                 class="h-[22rem] min-h-[22rem] max-h-[22rem] transform transition-all ease-in-out duration-1000 fade-in">
                 <div class="play text-center min-h-[22rem]">
@@ -247,23 +247,26 @@ const authorize = () => {
                             <p class="p-2">{{ endTime }}</p>
                         </div>
 
-                        <div class="queue mx-auto flex flex-col justify-center p-5">
+                        <div v-if="currQueue"
+                            class="queue mx-auto flex flex-col justify-center p-5 min-h[6.8rem] h-[6.8rem] bga-white">
                             <p class="font-bold mb-5">Next:</p>
                             <v-lazy>
-                                <div class="next max-w-96 mx-auto flex justify-between">
+                                <div class="next max-w-96 mx-auto flex justify-between min-h[4.25rem] h-[4.25rem]">
                                     <v-img :src="currQueue ? currQueue.nextimg : ''" min-width="60" max-width="60"
                                         max-height="60" class="m-1 rounded-sm"></v-img>
                                     <div class="title">
-                                        <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
-                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
-                                            (currQueue?.artist)
-                                            }}
+                                        <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name).length > 31 ?
+                                            (currQueue?.name).slice(0, 31) + '...' : (currQueue?.name) }}
+                                        </p>
+                                        <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by
+                                            {{ (currQueue?.artist) }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
                                 </div>
                             </v-lazy>
                         </div>
+
                     </div>
                 </div>
             </v-img>

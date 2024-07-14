@@ -7,6 +7,7 @@
       <v-main>
         <NuxtPage />
       </v-main>
+      <minspotify />
       <BottomNavAdmin v-if="$route.path.includes('/admin')" />
       <BottomNav v-if="$route.path.includes('/user')" />
     </v-app>
