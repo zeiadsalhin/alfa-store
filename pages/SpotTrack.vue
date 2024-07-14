@@ -35,7 +35,7 @@ async function checkCurrentlyPlaying() {
     try {
         const url = 'https://api.spotify.com/v1/me/player/currently-playing';
         const accessToken = tokenExist.value; // Replace with the access token you obtained
-        console.log('PLAYING TOKEN : ' + tokenExist.value);
+        // console.log('PLAYING TOKEN : ' + tokenExist.value);
         const response = await axios.get(url, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -166,7 +166,7 @@ async function WatchTokenExp() {
         if (response.ok) {
             let token = await getAccessToken();
             tokenExist.value = token;
-            console.log('Token VALID :' + tokenExist.value);
+            // console.log('Token VALID :' + tokenExist.value);
             checkCurrentlyPlaying();
         } else {
             console.error('Failed to fetch new token:', response.statusText);
@@ -257,7 +257,7 @@ const authorize = () => {
                                         <p class="px-2 mt-2 my-auto max-w-72 mx-auto">{{ (currQueue?.name) }}</p>
                                         <p class="opacity-70 mxa-1 inline-block my-auto mx-auto w-fit">by {{
                                             (currQueue?.artist)
-                                        }}
+                                            }}
                                         </p>
                                     </div>
                                     <p class="p-2 my-auto w-20 flex justify-end">{{ currQueue?.length }}</p>
