@@ -122,7 +122,7 @@ watch(() => tokenExist?.value, (newVal, oldVal) => {
     if (newVal !== oldVal) {
         if (playInt) {
             clearInterval(playInt);
-            clearInterval(TokenListen)
+            // clearInterval(TokenListen)
         }
         // checkCurrentlyPlaying();
         console.log('player started' + tokenExist.value);
